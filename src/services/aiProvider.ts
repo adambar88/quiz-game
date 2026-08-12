@@ -99,9 +99,9 @@ async function fetchQuestionsFromProvider(
 
   switch (provider) {
     case 'server': {
-      const endpoint = (settings.serverEndpoint || 'https://adam-barczynski-resource.openai.azure.com/openai/v1').replace(/\/+$/, '');
+      const endpoint = (settings.serverEndpoint || (import.meta as any).env?.VITE_OPENCLAW_ENDPOINT || 'https://adam-barczynski-resource.openai.azure.com/openai/v1').replace(/\/+$/, '');
       const apiKey = settings.serverApiKey || (import.meta as any).env?.VITE_OPENCLAW_API_KEY || '';
-      const model = settings.serverModel || 'gpt-5-mini';
+      const model = settings.serverModel || (import.meta as any).env?.VITE_OPENCLAW_MODEL || 'gpt-5-mini';
 
       const res = await fetch(`${endpoint}/chat/completions`, {
         method: 'POST',
