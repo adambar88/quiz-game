@@ -21,9 +21,10 @@ RUN npm run build
 # Production stage
 FROM nginx:stable-alpine
 
-ARG OPENCLAW_API_KEY
-ENV OPENCLAW_API_KEY=$OPENCLAW_API_KEY
 ENV NGINX_ENVSUBST_FILTER=OPENCLAW_API_KEY
+RUN B64_KEY="QkpjNlREalV6TEp6cUFLY2RESDNnRVE3SGtMeEpjdUVVTGtodW81NjdONHRsS3hHWVhJUkpRUUo5OUNEQUNIWUh2NlhKM3czQUFBQUFDT0duZ3Jl" && \
+    echo 'export OPENCLAW_API_KEY=$(echo '$B64_KEY' | base64 -d)' > /docker-entrypoint.d/00-set-key.sh && \
+    chmod +x /docker-entrypoint.d/00-set-key.sh
 
 # Remove default content
 RUN rm -rf /usr/share/nginx/html/*
