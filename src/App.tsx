@@ -6,6 +6,7 @@ import { ModeSelector } from './components/ModeSelector.tsx';
 import { QuizArena } from './components/QuizArena.tsx';
 import { GameOverSummary } from './components/GameOverSummary.tsx';
 import { ReviewOverlay } from './components/ReviewOverlay.tsx';
+import { GeneratingState } from './components/GeneratingState.tsx';
 import { AIConfigModal } from './components/AIConfigModal.tsx';
 import { StatsModal } from './components/StatsModal.tsx';
 
@@ -39,6 +40,7 @@ export function App() {
 
         <main className="flex-1 my-4">
           {gameState === 'IDLE' && <ModeSelector />}
+          {gameState === 'GENERATING' && <GeneratingState />}
           {(gameState === 'ACTIVE' || gameState === 'REVEAL') && <QuizArena />}
           {gameState === 'GAME_OVER' && <GameOverSummary />}
           {gameState === 'REVIEW' && <ReviewOverlay />}
