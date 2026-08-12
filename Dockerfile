@@ -21,6 +21,10 @@ RUN npm run build
 # Production stage
 FROM nginx:stable-alpine
 
+ARG OPENCLAW_API_KEY
+ENV OPENCLAW_API_KEY=$OPENCLAW_API_KEY
+ENV NGINX_ENVSUBST_FILTER=OPENCLAW_API_KEY
+
 # Remove default content
 RUN rm -rf /usr/share/nginx/html/*
 
