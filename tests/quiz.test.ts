@@ -143,8 +143,8 @@ describe('Deterministic Seed Hash & PRNG', () => {
 
 describe('AI Prompts & JSON Schema Validation', () => {
   it('should build provider system prompts and user prompts', () => {
-    const groqPrompt = getSystemPrompt('groq');
-    expect(groqPrompt).toContain('JSON');
+    const serverPrompt = getSystemPrompt('server');
+    expect(serverPrompt).toContain('JSON');
 
     const userPrompt = buildUserPrompt({ category: 'Computer Science', difficulty: 'hard', count: 5 });
     expect(userPrompt).toContain('Computer Science');
@@ -227,10 +227,6 @@ describe('QuestionEngine & Offline Fallback', () => {
         serverEndpoint: 'https://adam-barczynski-resource.openai.azure.com/openai/v1',
         serverApiKey: '',
         serverModel: 'gpt-5-mini',
-        groqApiKey: '',
-        openaiApiKey: '',
-        geminiApiKey: '',
-        ollamaEndpoint: '',
         fallbackToOffline: true,
       },
     });

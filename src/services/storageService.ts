@@ -1,14 +1,10 @@
 import type { AIProvider, Category, Difficulty } from '../types/quiz.ts';
 
 export interface AISettings {
-  activeProvider: AIProvider | 'ollama' | 'offline';
+  activeProvider: 'server' | 'offline';
   serverEndpoint: string;
   serverApiKey: string;
   serverModel: string;
-  groqApiKey: string;
-  openaiApiKey: string;
-  geminiApiKey: string;
-  ollamaEndpoint: string;
   fallbackToOffline: boolean;
 }
 
@@ -44,10 +40,6 @@ const DEFAULT_AI_SETTINGS: AISettings = {
   serverEndpoint: (import.meta as any).env?.VITE_OPENCLAW_ENDPOINT || 'https://adam-barczynski-resource.openai.azure.com/openai/v1',
   serverApiKey: (import.meta as any).env?.VITE_OPENCLAW_API_KEY || '',
   serverModel: (import.meta as any).env?.VITE_OPENCLAW_MODEL || 'gpt-5-mini',
-  groqApiKey: '',
-  openaiApiKey: '',
-  geminiApiKey: '',
-  ollamaEndpoint: 'http://localhost:11434/api/generate',
   fallbackToOffline: true,
 };
 

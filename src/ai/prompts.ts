@@ -68,18 +68,8 @@ ${QUESTION_FORMAT_INSTRUCTIONS}
 /**
  * Get Provider-Specific System Prompt
  */
-export function getSystemPrompt(provider: AIProvider): string {
-  switch (provider) {
-    case 'server':
-    case 'openai':
-      return OPENAI_GPT4O_MINI_SYSTEM_PROMPT;
-    case 'groq':
-      return GROQ_LLAMA3_SYSTEM_PROMPT;
-    case 'gemini':
-      return GEMINI_FLASH_SYSTEM_PROMPT;
-    default:
-      return OPENAI_GPT4O_MINI_SYSTEM_PROMPT;
-  }
+export function getSystemPrompt(_provider?: AIProvider): string {
+  return OPENAI_GPT4O_MINI_SYSTEM_PROMPT;
 }
 
 /**

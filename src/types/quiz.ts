@@ -88,7 +88,7 @@ export interface DailyChallengeSession {
   questions: Question[];
 }
 
-export type AIProvider = 'server' | 'openai' | 'groq' | 'gemini';
+export type AIProvider = 'server';
 
 export interface AIQuestionPromptParams {
   category: Category;

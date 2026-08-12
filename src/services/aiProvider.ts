@@ -113,7 +113,7 @@ async function fetchQuestionsFromProvider(
         body: JSON.stringify({
           model: model,
           messages: [
-            { role: 'system', content: getSystemPrompt('openai') },
+            { role: 'system', content: getSystemPrompt('server') },
             { role: 'user', content: buildUserPrompt(params) },
           ],
           temperature: 0.7,
@@ -130,127 +130,6 @@ async function fetchQuestionsFromProvider(
       const validated = validateAndParseAIResponse(content);
       if (!validated.valid) {
         throw new Error(`OpenClaw Server LLM response invalid: ${validated.errors.join('; ')}`);
-      }
-      return validated.questions;
-    }
-
-    case 'groq': {
-      if (!settings.groqApiKey) throw new Error('Groq API Key is required.');
-      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${settings.groqApiKey}`,
-        },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages: [
-            { role: 'system', content: getSystemPrompt('groq') },
-            { role: 'user', content: buildUserPrompt(params) },
-          ],
-          temperature: 0.7,
-        }),
-      });
-      if (!res.ok) {
-        const errText = await res.text();
-        throw new Error(`Groq HTTP ${res.status}: ${errText}`);
-      }
-      const data = await res.json();
-      const content = data.choices?.[0]?.message?.content || '';
-      const validated = validateAndParseAIResponse(content);
-      if (!validated.valid) {
-        throw new Error(`Groq response invalid: ${validated.errors.join('; ')}`);
-      }
-      return validated.questions;
-    }
-
-    case 'openai': {
-      if (!settings.openaiApiKey) throw new Error('OpenAI API Key is required.');
-      const res = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${settings.openaiApiKey}`,
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          messages: [
-            { role: 'system', content: getSystemPrompt('openai') },
-            { role: 'user', content: buildUserPrompt(params) },
-          ],
-          temperature: 0.7,
-          response_format: { type: 'json_object' },
-        }),
-      });
-      if (!res.ok) {
-        const errText = await res.text();
-        throw new Error(`OpenAI HTTP ${res.status}: ${errText}`);
-      }
-      const data = await res.json();
-      const content = data.choices?.[0]?.message?.content || '';
-      const validated = validateAndParseAIResponse(content);
-      if (!validated.valid) {
-        throw new Error(`OpenAI response invalid: ${validated.errors.join('; ')}`);
-      }
-      return validated.questions;
-    }
-
-    case 'gemini': {
-      if (!settings.geminiApiKey) throw new Error('Gemini API Key is required.');
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${settings.geminiApiKey}`;
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [
-            {
-              role: 'user',
-              parts: [
-                { text: `${getSystemPrompt('gemini')}\n\n${buildUserPrompt(params)}` },
-              ],
-            },
-          ],
-          generationConfig: {
-            responseMimeType: 'application/json',
-            temperature: 0.7,
-          },
-        }),
-      });
-      if (!res.ok) {
-        const errText = await res.text();
-        throw new Error(`Gemini HTTP ${res.status}: ${errText}`);
-      }
-      const data = await res.json();
-      const content = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-      const validated = validateAndParseAIResponse(content);
-      if (!validated.valid) {
-        throw new Error(`Gemini response invalid: ${validated.errors.join('; ')}`);
-      }
-      return validated.questions;
-    }
-
-    case 'ollama': {
-      const endpoint = settings.ollamaEndpoint || 'http://localhost:11434/api/generate';
-      const prompt = `System Instructions:\n${getSystemPrompt('groq')}\n\nTask:\n${buildUserPrompt(params)}`;
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'llama3',
-          prompt: prompt,
-          stream: false,
-          format: 'json',
-        }),
-      });
-      if (!res.ok) {
-        const errText = await res.text();
-        throw new Error(`Ollama HTTP ${res.status}: ${errText}`);
-      }
-      const data = await res.json();
-      const content = data.response || '';
-      const validated = validateAndParseAIResponse(content);
-      if (!validated.valid) {
-        throw new Error(`Ollama response invalid: ${validated.errors.join('; ')}`);
       }
       return validated.questions;
     }

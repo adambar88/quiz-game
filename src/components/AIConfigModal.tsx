@@ -12,7 +12,7 @@ export const AIConfigModal: React.FC = () => {
 
   if (!showAIModal) return null;
 
-  const handleProviderChange = (provider: AIProvider | 'ollama' | 'offline') => {
+  const handleProviderChange = (provider: 'server' | 'offline') => {
     setFormData((prev) => ({ ...prev, activeProvider: provider }));
     setTestResult(null);
   };
@@ -52,23 +52,19 @@ export const AIConfigModal: React.FC = () => {
           {/* Provider Selection Tabs */}
           <div>
             <label className="block text-xs font-semibold uppercase text-[var(--text-dim)] mb-2">
-              Active Question Provider
+              Active Question Engine
             </label>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+            <div className="grid grid-cols-2 gap-2">
               {(
                 [
-                  ['server', 'OpenClaw Server'],
+                  ['server', 'OpenClaw Server LLM'],
                   ['offline', 'Offline Static Bank'],
-                  ['groq', 'Groq Llama3'],
-                  ['openai', 'GPT-4o mini'],
-                  ['gemini', 'Gemini 1.5'],
-                  ['ollama', 'Ollama Local'],
                 ] as const
               ).map(([id, label]) => (
                 <button
                   key={id}
                   onClick={() => handleProviderChange(id)}
-                  className={`p-2 rounded-lg text-xs font-medium text-center transition-all ${
+                  className={`p-2.5 rounded-lg text-xs font-medium text-center transition-all ${
                     formData.activeProvider === id
                       ? 'bg-emerald-500 text-black font-bold ring-2 ring-emerald-400'
                       : 'bg-white/5 hover:bg-white/10 text-[var(--text-dim)]'
@@ -82,32 +78,34 @@ export const AIConfigModal: React.FC = () => {
 
           {/* Provider API Credentials */}
           {formData.activeProvider === 'server' && (
-            <div className="space-y-3 p-3 rounded-lg bg-emerald-500/5 border border-emerald-500/20">
+            <div className="space-y-3 p-3.5 rounded-lg bg-emerald-500/5 border border-emerald-500/20">
               <div className="flex items-center justify-between text-xs text-emerald-400 font-semibold mb-1">
-                <span>🤖 OpenClaw Server LLM (Pre-configured)</span>
-                <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20">Active</span>
+                <span>🤖 OpenClaw Server LLM Endpoint</span>
+                <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 font-bold">Active</span>
               </div>
 
               <div>
                 <label className="block text-[11px] font-semibold text-[var(--text-dim)] mb-1">
-                  Azure OpenAI / OpenClaw Endpoint URL
+                  Server Base URL
                 </label>
                 <input
                   type="text"
                   value={formData.serverEndpoint}
                   onChange={(e) => setFormData({ ...formData, serverEndpoint: e.target.value })}
+                  placeholder="https://adam-barczynski-resource.openai.azure.com/openai/v1"
                   className="w-full px-3 py-1.5 rounded-lg bg-black/40 border border-[var(--border)] text-xs font-mono"
                 />
               </div>
 
               <div>
                 <label className="block text-[11px] font-semibold text-[var(--text-dim)] mb-1">
-                  API Key
+                  API Key (Optional / Pre-configured)
                 </label>
                 <input
                   type="password"
                   value={formData.serverApiKey}
                   onChange={(e) => setFormData({ ...formData, serverApiKey: e.target.value })}
+                  placeholder="Leave empty to use server default"
                   className="w-full px-3 py-1.5 rounded-lg bg-black/40 border border-[var(--border)] text-xs font-mono"
                 />
               </div>
@@ -124,65 +122,6 @@ export const AIConfigModal: React.FC = () => {
                   className="w-full px-3 py-1.5 rounded-lg bg-black/40 border border-[var(--border)] text-xs font-mono"
                 />
               </div>
-            </div>
-          )}
-          {formData.activeProvider === 'groq' && (
-            <div>
-              <label className="block text-xs font-semibold uppercase text-[var(--text-dim)] mb-1">
-                Groq API Key (llama-3.3-70b-versatile)
-              </label>
-              <input
-                type="password"
-                value={formData.groqApiKey}
-                onChange={(e) => setFormData({ ...formData, groqApiKey: e.target.value })}
-                placeholder="gsk_..."
-                className="w-full px-3 py-2 rounded-lg bg-black/40 border border-[var(--border)] text-sm focus:outline-none focus:border-emerald-500 font-mono"
-              />
-            </div>
-          )}
-
-          {formData.activeProvider === 'openai' && (
-            <div>
-              <label className="block text-xs font-semibold uppercase text-[var(--text-dim)] mb-1">
-                OpenAI API Key (gpt-4o-mini)
-              </label>
-              <input
-                type="password"
-                value={formData.openaiApiKey}
-                onChange={(e) => setFormData({ ...formData, openaiApiKey: e.target.value })}
-                placeholder="sk-proj-..."
-                className="w-full px-3 py-2 rounded-lg bg-black/40 border border-[var(--border)] text-sm focus:outline-none focus:border-emerald-500 font-mono"
-              />
-            </div>
-          )}
-
-          {formData.activeProvider === 'gemini' && (
-            <div>
-              <label className="block text-xs font-semibold uppercase text-[var(--text-dim)] mb-1">
-                Gemini API Key (gemini-1.5-flash)
-              </label>
-              <input
-                type="password"
-                value={formData.geminiApiKey}
-                onChange={(e) => setFormData({ ...formData, geminiApiKey: e.target.value })}
-                placeholder="AIzaSy..."
-                className="w-full px-3 py-2 rounded-lg bg-black/40 border border-[var(--border)] text-sm focus:outline-none focus:border-emerald-500 font-mono"
-              />
-            </div>
-          )}
-
-          {formData.activeProvider === 'ollama' && (
-            <div>
-              <label className="block text-xs font-semibold uppercase text-[var(--text-dim)] mb-1">
-                Ollama Endpoint URL
-              </label>
-              <input
-                type="text"
-                value={formData.ollamaEndpoint}
-                onChange={(e) => setFormData({ ...formData, ollamaEndpoint: e.target.value })}
-                placeholder="http://localhost:11434/api/generate"
-                className="w-full px-3 py-2 rounded-lg bg-black/40 border border-[var(--border)] text-sm focus:outline-none focus:border-emerald-500 font-mono"
-              />
             </div>
           )}
 
