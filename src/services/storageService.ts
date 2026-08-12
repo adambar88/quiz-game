@@ -37,8 +37,8 @@ export interface QuizStats {
 
 const DEFAULT_AI_SETTINGS: AISettings = {
   activeProvider: 'server',
-  serverEndpoint: (import.meta as any).env?.VITE_OPENCLAW_ENDPOINT || 'https://adam-barczynski-resource.openai.azure.com/openai/v1',
-  serverApiKey: (import.meta as any).env?.VITE_OPENCLAW_API_KEY || '',
+  serverEndpoint: (import.meta as any).env?.VITE_OPENCLAW_ENDPOINT || '/quiz/api/ai',
+  serverApiKey: '',
   serverModel: (import.meta as any).env?.VITE_OPENCLAW_MODEL || 'gpt-5-mini',
   fallbackToOffline: true,
 };

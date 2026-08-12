@@ -224,7 +224,7 @@ describe('QuestionEngine & Offline Fallback', () => {
       seedStr: '2026-08-12',
       aiSettings: {
         activeProvider: 'server',
-        serverEndpoint: 'https://adam-barczynski-resource.openai.azure.com/openai/v1',
+        serverEndpoint: '/quiz/api/ai',
         serverApiKey: '',
         serverModel: 'gpt-5-mini',
         fallbackToOffline: true,

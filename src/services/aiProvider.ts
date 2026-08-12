@@ -99,17 +99,24 @@ async function fetchQuestionsFromProvider(
 
   switch (provider) {
     case 'server': {
-      const endpoint = (settings.serverEndpoint || (import.meta as any).env?.VITE_OPENCLAW_ENDPOINT || 'https://adam-barczynski-resource.openai.azure.com/openai/v1').replace(/\/+$/, '');
+      const rawEndpoint = settings.serverEndpoint || (import.meta as any).env?.VITE_OPENCLAW_ENDPOINT || '/quiz/api/ai';
+      const endpoint = rawEndpoint.replace(/\/+$/, '');
       const apiKey = settings.serverApiKey || (import.meta as any).env?.VITE_OPENCLAW_API_KEY || '';
       const model = settings.serverModel || (import.meta as any).env?.VITE_OPENCLAW_MODEL || 'gpt-5-mini';
 
-      const res = await fetch(`${endpoint}/chat/completions`, {
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      if (apiKey) {
+        headers['api-key'] = apiKey;
+        headers['Authorization'] = `Bearer ${apiKey}`;
+      }
+
+      const fetchUrl = `${endpoint}/chat/completions`;
+
+      const res = await fetch(fetchUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'api-key': apiKey,
-          Authorization: `Bearer ${apiKey}`,
-        },
+        headers,
         body: JSON.stringify({
           model: model,
           messages: [

@@ -92,7 +92,7 @@ export const AIConfigModal: React.FC = () => {
                   type="text"
                   value={formData.serverEndpoint}
                   onChange={(e) => setFormData({ ...formData, serverEndpoint: e.target.value })}
-                  placeholder="https://adam-barczynski-resource.openai.azure.com/openai/v1"
+                  placeholder="/quiz/api/ai"
                   className="w-full px-3 py-1.5 rounded-lg bg-black/40 border border-[var(--border)] text-xs font-mono"
                 />
               </div>
