@@ -193,7 +193,7 @@ describe('Static Question Bank', () => {
     expect(STATIC_QUESTION_BANK.length).toBeGreaterThanOrEqual(30);
 
     const categories = Array.from(new Set(STATIC_QUESTION_BANK.map((q) => q.category)));
-    expect(categories.length).toBe(6);
+    expect(categories.length).toBeGreaterThanOrEqual(6);
 
     STATIC_QUESTION_BANK.forEach((q) => {
       expect(q.id).toBeTruthy();

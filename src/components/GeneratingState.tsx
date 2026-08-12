@@ -16,7 +16,7 @@ export const GeneratingState: React.FC = () => {
     quizStore.startQuiz();
   };
 
-  const categoryName = category === 'all' ? t.allCategories : (t.categories[category as Category] || category);
+  const categoryName = category === 'all' ? t.allCategories : ((t.categories as Record<string, string>)[category] || category);
   const modeTitle = t.modes[mode]?.title || mode;
 
   return (

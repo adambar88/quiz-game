@@ -39,7 +39,7 @@ export const QuizArena: React.FC = () => {
 
   if (!currentQ) return null;
 
-  const categoryTranslated = t.categories[currentQ.category as Category] || currentQ.category;
+  const categoryTranslated = (t.categories as Record<string, string>)[currentQ.category] || currentQ.category;
   const difficultyTranslated = t.difficulties[currentQ.difficulty as Difficulty] || currentQ.difficulty;
 
   return (

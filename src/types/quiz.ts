@@ -4,13 +4,31 @@
 
 export type Difficulty = 'easy' | 'medium' | 'hard' | 'expert';
 
-export type Category = 
-  | 'Computer Science' 
-  | 'Web Dev' 
-  | 'Science' 
-  | 'Mathematics' 
-  | 'History' 
-  | 'Pop Culture';
+export type Category =
+  | 'Computer Science'
+  | 'Web Dev'
+  | 'AI & Machine Learning'
+  | 'Cybersecurity'
+  | 'Gaming & Esports'
+  | 'Science'
+  | 'Physics & Astronomy'
+  | 'Mathematics'
+  | 'Geography & Earth'
+  | 'Medicine & Health'
+  | 'History'
+  | 'Polish History'
+  | 'Mythology & Folklore'
+  | 'Politics & Civics'
+  | 'Philosophy & Psychology'
+  | 'Pop Culture'
+  | 'Cinema & Television'
+  | 'Music'
+  | 'Literature & Books'
+  | 'Art & Architecture'
+  | 'Sports'
+  | 'Food & Culinary'
+  | 'Business & Finance'
+  | 'Automotive & Transport';
 
 export interface Question {
   id: string;

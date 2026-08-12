@@ -23,7 +23,7 @@ Each object in the JSON array MUST strictly match this schema:
 RULES:
 1. "options" MUST contain EXACTLY 4 distinct choices.
 2. "correctIndex" MUST be an integer between 0 and 3 inclusive, corresponding to the correct option.
-3. "category" MUST be one of: "Computer Science", "Web Dev", "Science", "Mathematics", "History", "Pop Culture".
+3. "category" MUST be one of: "Computer Science", "Web Dev", "AI & Machine Learning", "Cybersecurity", "Gaming & Esports", "Science", "Physics & Astronomy", "Mathematics", "Geography & Earth", "Medicine & Health", "History", "Polish History", "Mythology & Folklore", "Politics & Civics", "Philosophy & Psychology", "Pop Culture", "Cinema & Television", "Music", "Literature & Books", "Art & Architecture", "Sports", "Food & Culinary", "Business & Finance", "Automotive & Transport".
 4. "difficulty" MUST be one of: "easy", "medium", "hard", "expert".
 5. Distractors must be plausible but unambiguously incorrect.
 `;

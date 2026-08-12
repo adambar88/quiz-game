@@ -93,7 +93,7 @@ export const ModeSelector: React.FC = () => {
                       : 'bg-white/5 hover:bg-white/10 text-[var(--text-dim)]'
                   }`}
                 >
-                  {t.categories[cat as Category] || cat}
+                  {(t.categories as Record<string, string>)[cat] || cat}
                 </button>
               ))}
             </div>
