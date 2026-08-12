@@ -123,7 +123,7 @@ async function fetchQuestionsFromProvider(
             { role: 'system', content: getSystemPrompt('server') },
             { role: 'user', content: buildUserPrompt(params) },
           ],
-          temperature: 0.7,
+          temperature: 1,
         }),
       });
 
