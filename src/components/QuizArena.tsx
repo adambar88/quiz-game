@@ -5,6 +5,8 @@ import { AnswerReveal } from './AnswerReveal.tsx';
 import { translations } from '../i18n/translations.ts';
 import type { Category, Difficulty } from '../types/quiz.ts';
 
+import { CATEGORY_METADATA } from '../data/categories.ts';
+
 export const QuizArena: React.FC = () => {
   const {
     questions,
@@ -41,6 +43,7 @@ export const QuizArena: React.FC = () => {
 
   const categoryTranslated = (t.categories as Record<string, string>)[currentQ.category] || currentQ.category;
   const difficultyTranslated = t.difficulties[currentQ.difficulty as Difficulty] || currentQ.difficulty;
+  const catMeta = CATEGORY_METADATA[currentQ.category];
 
   return (
     <div className="flex flex-col gap-5">
@@ -52,7 +55,10 @@ export const QuizArena: React.FC = () => {
             {t.questionCount} {currentIndex + 1} {t.of} {questions.length}
           </span>
           <span className="text-[var(--text-dim)]">•</span>
-          <span className="px-2 py-0.5 rounded bg-white/5 font-medium">{categoryTranslated}</span>
+          <span className="px-2 py-0.5 rounded bg-white/5 font-medium flex items-center gap-1">
+            <span>{catMeta?.icon || '💡'}</span>
+            <span>{categoryTranslated}</span>
+          </span>
         </div>
 
         {/* Mode Specific Stats (Lives for survival / ELO rating) */}

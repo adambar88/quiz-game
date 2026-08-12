@@ -3,6 +3,7 @@ import type { Category, Difficulty } from '../types/quiz.ts';
 import { VALID_CATEGORIES } from '../ai/validators.ts';
 import { quizStore, useQuizStore, type QuizMode } from '../state/useQuizStore.ts';
 import { translations } from '../i18n/translations.ts';
+import { CATEGORY_METADATA } from '../data/categories.ts';
 
 export const ModeSelector: React.FC = () => {
   const { mode, category, difficulty, customPrompt, seedStr, generationError, gameState, lang } = useQuizStore();
@@ -66,36 +67,51 @@ export const ModeSelector: React.FC = () => {
 
       {/* Mode Specific Controls */}
       <div className="p-5 glass-panel flex flex-col gap-4">
-        {/* Category Selection */}
+        {/* Category Selection with Visual Icons */}
         {mode !== 'daily' && mode !== 'custom' && (
           <div>
-            <label className="block text-xs font-semibold text-[var(--text-dim)] uppercase tracking-wider mb-2">
-              {t.categoryLabel}
-            </label>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex items-center justify-between mb-2.5">
+              <label className="block text-xs font-semibold text-[var(--text-dim)] uppercase tracking-wider">
+                {t.categoryLabel}
+              </label>
+              <span className="text-[11px] font-mono text-[var(--text-dim)]">
+                {category === 'all' ? t.allCategories : ((t.categories as Record<string, string>)[category] || category)}
+              </span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[280px] overflow-y-auto pr-1">
               <button
                 onClick={() => quizStore.setCategory('all')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                className={`p-2.5 rounded-xl border text-xs font-semibold transition-all flex items-center gap-2.5 ${
                   category === 'all'
-                    ? 'bg-emerald-500 text-black font-bold'
-                    : 'bg-white/5 hover:bg-white/10 text-[var(--text-dim)]'
+                    ? 'bg-emerald-500 text-black font-bold border-emerald-400 ring-2 ring-emerald-400/30'
+                    : 'bg-white/5 hover:bg-white/10 text-[var(--text-dim)] border-[var(--border)]'
                 }`}
               >
-                {t.allCategories}
+                <span className="text-lg">🎲</span>
+                <span className="truncate">{t.allCategories}</span>
               </button>
-              {VALID_CATEGORIES.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => quizStore.setCategory(cat as Category)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                    category === cat
-                      ? 'bg-emerald-500 text-black font-bold'
-                      : 'bg-white/5 hover:bg-white/10 text-[var(--text-dim)]'
-                  }`}
-                >
-                  {(t.categories as Record<string, string>)[cat] || cat}
-                </button>
-              ))}
+              {VALID_CATEGORIES.map((cat) => {
+                const meta = CATEGORY_METADATA[cat as Category];
+                const isSelected = category === cat;
+                const catName = (t.categories as Record<string, string>)[cat] || cat;
+
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => quizStore.setCategory(cat as Category)}
+                    className={`p-2.5 rounded-xl border text-xs font-medium transition-all flex items-center gap-2.5 text-left group ${
+                      isSelected
+                        ? 'bg-emerald-500 text-black font-bold border-emerald-400 ring-2 ring-emerald-400/30'
+                        : 'bg-white/5 hover:bg-white/10 text-[var(--text)] border-[var(--border)]'
+                    }`}
+                  >
+                    <span className="text-lg transition-transform group-hover:scale-110 flex-shrink-0">
+                      {meta?.icon || '💡'}
+                    </span>
+                    <span className="truncate">{catName}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
