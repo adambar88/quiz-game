@@ -1,0 +1,15 @@
+{
+  "short_name": "Quiz",
+  "name": "Quiz — barczynski.dev",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ],
+  "start_url": "/quiz/",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "display": "standalone"
+}
