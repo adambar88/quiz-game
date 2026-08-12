@@ -7,6 +7,8 @@ import { haptics } from '../services/haptics.ts';
 import { storageService, type AISettings, type QuizStats } from '../services/storageService.ts';
 import { QuestionEngine } from '../services/questionEngine.ts';
 
+import { translations, type Language } from '../i18n/translations.ts';
+
 export type GameState = 'IDLE' | 'GENERATING' | 'ACTIVE' | 'REVEAL' | 'GAME_OVER' | 'REVIEW';
 export type QuizMode = 'classic' | 'survival' | 'blitz' | 'custom' | 'daily';
 
@@ -26,6 +28,7 @@ export interface QuizStoreState {
   questionCount: number;
   customPrompt: string;
   seedStr: string;
+  lang: Language;
 
   questions: Question[];
   currentIndex: number;
@@ -68,6 +71,7 @@ let storeState: QuizStoreState = {
   questionCount: 10,
   customPrompt: '',
   seedStr: new Date().toISOString().split('T')[0],
+  lang: storageService.getLanguage(),
 
   questions: [],
   currentIndex: 0,
@@ -150,6 +154,11 @@ export const quizStore = {
     updateState({ seedStr });
   },
 
+  setLanguage(lang: Language) {
+    storageService.setLanguage(lang);
+    updateState({ lang });
+  },
+
   toggleSound() {
     const muted = soundEngine.toggleMute();
     updateState({ soundMuted: muted });
@@ -172,7 +181,7 @@ export const quizStore = {
     soundEngine.playClick();
     haptics.vibrateClick();
 
-    const { mode, category, difficulty, questionCount, customPrompt, seedStr, aiSettings } = storeState;
+    const { mode, category, difficulty, questionCount, customPrompt, seedStr, aiSettings, lang } = storeState;
 
     updateState({
       gameState: 'GENERATING',
@@ -189,6 +198,7 @@ export const quizStore = {
         customPrompt,
         seedStr,
         aiSettings,
+        lang,
       });
 
       if (!questions || questions.length === 0) {

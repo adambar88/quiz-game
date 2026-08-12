@@ -76,12 +76,18 @@ export function getSystemPrompt(_provider?: AIProvider): string {
  * Construct User Prompt for Quiz Generation
  */
 export function buildUserPrompt(params: AIQuestionPromptParams): string {
-  const { category, difficulty, count, topicFocus } = params;
+  const { category, difficulty, count, topicFocus, lang } = params;
   
   let prompt = `Generate exactly ${count} ${difficulty.toUpperCase()} difficulty quiz questions for category "${category}".`;
   
   if (topicFocus) {
     prompt += ` Specific focus area: "${topicFocus}".`;
+  }
+
+  if (lang === 'pl') {
+    prompt += ` LANGUAGE INSTRUCTION: All question text, all 4 option strings, and explanation text MUST BE WRITTEN IN POLISH (Język polski). Keep category names as one of the required schema strings ("Computer Science", "Web Dev", "Science", "Mathematics", "History", "Pop Culture").`;
+  } else {
+    prompt += ` LANGUAGE INSTRUCTION: All question text, options, and explanation text MUST BE WRITTEN IN ENGLISH.`;
   }
 
   prompt += ` Ensure all ${count} questions have 4 options and correctIndex ranging from 0 to 3. Output ONLY the JSON array.`;

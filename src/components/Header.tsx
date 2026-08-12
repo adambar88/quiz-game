@@ -2,7 +2,11 @@ import React from 'react';
 import { quizStore, useQuizStore } from '../state/useQuizStore.ts';
 
 export const Header: React.FC = () => {
-  const { soundMuted, aiSettings } = useQuizStore();
+  const { soundMuted, lang } = useQuizStore();
+
+  const toggleLanguage = () => {
+    quizStore.setLanguage(lang === 'pl' ? 'en' : 'pl');
+  };
 
   return (
     <header className="flex items-center justify-between py-4 mb-4 border-b border-[var(--border)]">
@@ -10,12 +14,18 @@ export const Header: React.FC = () => {
         <h1 className="text-xl font-bold tracking-tight">
           Quiz <span className="text-xs font-normal text-[var(--text-dim)]">.barczynski.dev</span>
         </h1>
-        <span className="text-[10px] uppercase font-mono tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-          {aiSettings.activeProvider === 'server' ? 'OpenClaw LLM' : aiSettings.activeProvider}
-        </span>
       </div>
 
       <div className="flex items-center gap-2">
+        {/* Language switch toggle */}
+        <button
+          onClick={toggleLanguage}
+          className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-mono font-bold text-emerald-400 border border-[var(--border)] transition-colors flex items-center gap-1"
+          title={lang === 'pl' ? 'Przełącz na angielski (EN)' : 'Switch to Polish (PL)'}
+        >
+          <span>🌐</span>
+          <span>{lang.toUpperCase()}</span>
+        </button>
         {/* Sound toggle */}
         <button
           onClick={() => quizStore.toggleSound()}

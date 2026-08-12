@@ -12,6 +12,7 @@ export interface QuizConfig {
   customPrompt?: string;
   seedStr?: string;
   aiSettings: AISettings;
+  lang?: 'pl' | 'en';
 }
 
 export class QuestionEngine {
@@ -24,7 +25,7 @@ export class QuestionEngine {
     config: QuizConfig,
     onProgress?: (loadedCount: number, total: number) => void
   ): Promise<Question[]> {
-    const { mode, category, difficulty, questionCount, customPrompt, seedStr, aiSettings } = config;
+    const { mode, category, difficulty, questionCount, customPrompt, seedStr, aiSettings, lang } = config;
 
     // 1. Daily Challenge (Deterministic static pool shuffle)
     if (mode === 'daily') {
@@ -54,6 +55,7 @@ export class QuestionEngine {
           difficulty: targetDifficulty,
           count: questionCount,
           topicFocus: customPrompt || (mode === 'blitz' ? 'Fast trivia' : undefined),
+          lang: lang || 'pl',
         },
         aiSettings
       );

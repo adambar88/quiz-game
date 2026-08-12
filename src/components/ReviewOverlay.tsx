@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { quizStore, useQuizStore } from '../state/useQuizStore.ts';
+import { translations } from '../i18n/translations.ts';
 
 export const ReviewOverlay: React.FC = () => {
-  const { userAnswers, gameState } = useQuizStore();
+  const { userAnswers, gameState, lang } = useQuizStore();
   const [filter, setFilter] = useState<'all' | 'correct' | 'wrong'>('all');
+  const t = translations[lang];
 
   if (gameState !== 'REVIEW') return null;
 
@@ -18,14 +20,13 @@ export const ReviewOverlay: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
         <div>
-          <h2 className="text-lg font-bold">Question Review</h2>
-          <p className="text-xs text-[var(--text-dim)]">Review all questions, selected options & explanations</p>
+          <h2 className="text-lg font-bold">{t.reviewTitle}</h2>
         </div>
         <button
           onClick={() => quizStore.exitToHome()}
           className="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs"
         >
-          Done
+          {t.close}
         </button>
       </div>
 
@@ -61,7 +62,7 @@ export const ReviewOverlay: React.FC = () => {
                       : 'bg-red-500/20 text-red-400'
                   }`}
                 >
-                  {item.isCorrect ? `+${item.pointsEarned} pts` : '0 pts'}
+                  {item.isCorrect ? `+${item.pointsEarned} pkt` : '0 pkt'}
                 </span>
               </div>
 
@@ -89,8 +90,8 @@ export const ReviewOverlay: React.FC = () => {
                       <span>
                         <strong className="mr-2 font-mono">{letter}.</strong> {opt}
                       </span>
-                      {isCorrectAnswer && <span>✓ Correct</span>}
-                      {isUserSelection && !isCorrectAnswer && <span>✗ Your Choice</span>}
+                      {isCorrectAnswer && <span>✓ {t.correctAnswer}</span>}
+                      {isUserSelection && !isCorrectAnswer && <span>✗ {t.yourAnswer}</span>}
                     </div>
                   );
                 })}
@@ -98,7 +99,7 @@ export const ReviewOverlay: React.FC = () => {
 
               {/* Explanation */}
               <div className="p-3 rounded-lg bg-black/30 text-xs text-[var(--text-dim)] leading-relaxed">
-                <strong className="text-[var(--text)] block mb-0.5">Explanation:</strong>
+                <strong className="text-[var(--text)] block mb-0.5">{t.explanation}:</strong>
                 {q.explanation}
               </div>
             </div>

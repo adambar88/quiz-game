@@ -1,8 +1,11 @@
 import React from 'react';
 import { quizStore, useQuizStore } from '../state/useQuizStore.ts';
+import { translations } from '../i18n/translations.ts';
+import type { Category } from '../types/quiz.ts';
 
 export const GeneratingState: React.FC = () => {
-  const { mode, category, customPrompt, aiSettings } = useQuizStore();
+  const { mode, category, customPrompt, aiSettings, lang } = useQuizStore();
+  const t = translations[lang];
 
   const handleCancelAndOffline = () => {
     // Fallback immediately to offline bank and restart quiz
@@ -12,6 +15,9 @@ export const GeneratingState: React.FC = () => {
     });
     quizStore.startQuiz();
   };
+
+  const categoryName = category === 'all' ? t.allCategories : (t.categories[category as Category] || category);
+  const modeTitle = t.modes[mode]?.title || mode;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[350px] p-6 glass-panel text-center max-w-lg mx-auto space-y-6 animate-fadeIn">
@@ -24,27 +30,21 @@ export const GeneratingState: React.FC = () => {
 
       {/* Title & Status */}
       <div className="space-y-2">
-        <h2 className="text-xl font-bold tracking-tight">Generating AI Quiz</h2>
+        <h2 className="text-xl font-bold tracking-tight">{t.generatingTitle}</h2>
         <p className="text-xs text-[var(--text-dim)] max-w-sm mx-auto leading-relaxed">
-          {aiSettings.activeProvider === 'server' ? (
-            <>
-              Contacting <span className="text-emerald-400 font-semibold">OpenClaw LLM (gpt-5-mini)</span> to synthesize targeted questions...
-            </>
-          ) : (
-            'Preparing questions from static database...'
-          )}
+          {t.generatingSubtitle}
         </p>
       </div>
 
       {/* Target Details Badge */}
-      <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] font-mono">
+      <div className="flex flex-wrap items-center justify-center gap-2 text-[11px]">
         <span className="px-2.5 py-1 rounded-full bg-white/5 border border-[var(--border)] text-[var(--text-dim)]">
-          Mode: <strong className="text-[var(--text)] uppercase">{mode}</strong>
+          {t.generatingDetailsMode}: <strong className="text-[var(--text)]">{modeTitle}</strong>
         </span>
         <span className="px-2.5 py-1 rounded-full bg-white/5 border border-[var(--border)] text-[var(--text-dim)]">
-          Topic:{' '}
+          {t.generatingDetailsTopic}:{' '}
           <strong className="text-[var(--text)]">
-            {customPrompt || (category === 'all' ? 'Mixed Trivia' : category)}
+            {customPrompt || categoryName}
           </strong>
         </span>
       </div>
@@ -60,7 +60,7 @@ export const GeneratingState: React.FC = () => {
           onClick={handleCancelAndOffline}
           className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-semibold text-[var(--text-dim)] transition-colors border border-[var(--border)] flex items-center gap-2 mx-auto"
         >
-          ⚡ Switch to Offline Static Bank (Instant)
+          {t.switchToOffline}
         </button>
       </div>
     </div>

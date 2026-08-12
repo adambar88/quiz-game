@@ -1,4 +1,5 @@
 import type { AIProvider, Category, Difficulty } from '../types/quiz.ts';
+import type { Language } from '../i18n/translations.ts';
 
 export interface AISettings {
   activeProvider: 'server' | 'offline';
@@ -70,6 +71,25 @@ export const storageService = {
     try {
       localStorage.setItem('barczynski-theme', theme);
       document.documentElement.setAttribute('data-theme', theme);
+    } catch {
+      // ignore
+    }
+  },
+
+  // Language
+  getLanguage(): Language {
+    try {
+      const stored = localStorage.getItem('barczynski-quiz-lang');
+      if (stored === 'pl' || stored === 'en') return stored;
+    } catch {
+      // ignore
+    }
+    return 'pl';
+  },
+
+  setLanguage(lang: Language): void {
+    try {
+      localStorage.setItem('barczynski-quiz-lang', lang);
     } catch {
       // ignore
     }

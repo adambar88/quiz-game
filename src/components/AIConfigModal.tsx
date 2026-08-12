@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import type { AIProvider } from '../types/quiz.ts';
 import { testProviderHealth } from '../services/aiProvider.ts';
 import { quizStore, useQuizStore } from '../state/useQuizStore.ts';
 import type { AISettings } from '../services/storageService.ts';
+import { translations } from '../i18n/translations.ts';
 
 export const AIConfigModal: React.FC = () => {
-  const { aiSettings, showAIModal } = useQuizStore();
+  const { aiSettings, showAIModal, lang } = useQuizStore();
   const [formData, setFormData] = useState<AISettings>(aiSettings);
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<{ ok: boolean; message: string } | null>(null);
+  const t = translations[lang];
 
   if (!showAIModal) return null;
 
@@ -22,7 +23,10 @@ export const AIConfigModal: React.FC = () => {
     setTestResult(null);
     const res = await testProviderHealth(formData);
     setTesting(false);
-    setTestResult(res);
+    setTestResult({
+      ok: res.ok,
+      message: res.ok ? t.connectionSuccess : res.message,
+    });
   };
 
   const handleSave = () => {
@@ -37,7 +41,7 @@ export const AIConfigModal: React.FC = () => {
         <div className="flex items-center justify-between pb-4 mb-4 border-b border-[var(--border)]">
           <div className="flex items-center gap-2">
             <span className="text-xl">⚙️</span>
-            <h2 className="text-lg font-bold">AI Provider Engine Settings</h2>
+            <h2 className="text-lg font-bold">{t.aiSettingsTitle}</h2>
           </div>
           <button
             onClick={() => quizStore.setShowAIModal(false)}
@@ -52,13 +56,13 @@ export const AIConfigModal: React.FC = () => {
           {/* Provider Selection Tabs */}
           <div>
             <label className="block text-xs font-semibold uppercase text-[var(--text-dim)] mb-2">
-              Active Question Engine
+              {t.engineLabel}
             </label>
             <div className="grid grid-cols-2 gap-2">
               {(
                 [
-                  ['server', 'OpenClaw Server LLM'],
-                  ['offline', 'Offline Static Bank'],
+                  ['server', t.serverAiEngine],
+                  ['offline', t.offlineBankEngine],
                 ] as const
               ).map(([id, label]) => (
                 <button
@@ -80,13 +84,12 @@ export const AIConfigModal: React.FC = () => {
           {formData.activeProvider === 'server' && (
             <div className="space-y-3 p-3.5 rounded-lg bg-emerald-500/5 border border-emerald-500/20">
               <div className="flex items-center justify-between text-xs text-emerald-400 font-semibold mb-1">
-                <span>🤖 OpenClaw Server LLM Endpoint</span>
-                <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 font-bold">Active</span>
+                <span>🤖 {t.serverAiEngine}</span>
               </div>
 
               <div>
                 <label className="block text-[11px] font-semibold text-[var(--text-dim)] mb-1">
-                  Server Base URL
+                  {t.serverUrlLabel}
                 </label>
                 <input
                   type="text"
@@ -99,20 +102,20 @@ export const AIConfigModal: React.FC = () => {
 
               <div>
                 <label className="block text-[11px] font-semibold text-[var(--text-dim)] mb-1">
-                  API Key (Optional / Pre-configured)
+                  {t.serverKeyLabel}
                 </label>
                 <input
                   type="password"
                   value={formData.serverApiKey}
                   onChange={(e) => setFormData({ ...formData, serverApiKey: e.target.value })}
-                  placeholder="Leave empty to use server default"
+                  placeholder={t.serverKeyPlaceholder}
                   className="w-full px-3 py-1.5 rounded-lg bg-black/40 border border-[var(--border)] text-xs font-mono"
                 />
               </div>
 
               <div>
                 <label className="block text-[11px] font-semibold text-[var(--text-dim)] mb-1">
-                  Model Deployment ID
+                  {t.modelLabel}
                 </label>
                 <input
                   type="text"
@@ -128,9 +131,9 @@ export const AIConfigModal: React.FC = () => {
           {/* Fallback to Offline Toggle */}
           <div className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-[var(--border)]">
             <div>
-              <span className="text-sm font-semibold block">Fallback to Offline Bank</span>
+              <span className="text-sm font-semibold block">{t.fallbackOfflineLabel}</span>
               <span className="text-xs text-[var(--text-dim)]">
-                Seamlessly use 36 static questions if AI call fails or key invalid.
+                {t.fallbackOfflineDesc}
               </span>
             </div>
             <input
@@ -148,7 +151,7 @@ export const AIConfigModal: React.FC = () => {
               disabled={testing}
               className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-semibold transition-colors flex items-center gap-2"
             >
-              {testing ? 'Pinging Provider...' : '🏥 Test Provider Connection'}
+              {testing ? t.testing : t.testConnection}
             </button>
 
             {testResult && (
@@ -171,13 +174,13 @@ export const AIConfigModal: React.FC = () => {
             onClick={() => quizStore.setShowAIModal(false)}
             className="px-4 py-2 rounded-lg text-xs font-semibold text-[var(--text-dim)] hover:bg-white/5"
           >
-            Cancel
+            {t.cancel}
           </button>
           <button
             onClick={handleSave}
             className="px-5 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs"
           >
-            Save Settings
+            {t.save}
           </button>
         </div>
       </div>

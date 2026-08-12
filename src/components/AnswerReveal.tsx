@@ -1,13 +1,15 @@
 import React from 'react';
 import { quizStore, useQuizStore } from '../state/useQuizStore.ts';
+import { translations } from '../i18n/translations.ts';
 
 export const AnswerReveal: React.FC = () => {
-  const { isCorrect, pointsEarned, questions, currentIndex, streak } = useQuizStore();
+  const { isCorrect, pointsEarned, questions, currentIndex, streak, lang } = useQuizStore();
   const currentQ = questions[currentIndex];
+  const t = translations[lang];
 
   if (!currentQ) return null;
 
-  const streakMultiplierStr = streak > 1 ? ` (${(1 + Math.min(2, streak * 0.25)).toFixed(2)}x Streak)` : '';
+  const streakMultiplierStr = streak > 1 ? ` (${(1 + Math.min(2, streak * 0.25)).toFixed(2)}x)` : '';
 
   return (
     <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
@@ -22,9 +24,9 @@ export const AnswerReveal: React.FC = () => {
         <div className="flex items-center gap-3">
           <span className="text-2xl">{isCorrect ? '✅' : '❌'}</span>
           <div>
-            <h3 className="font-bold text-base">{isCorrect ? 'Correct Answer!' : 'Incorrect'}</h3>
+            <h3 className="font-bold text-base">{isCorrect ? t.correct : t.wrong}</h3>
             <p className="text-xs opacity-90">
-              {isCorrect ? `+${pointsEarned} points${streakMultiplierStr}` : `Correct answer was option ${String.fromCharCode(65 + currentQ.correctIndex)}`}
+              {isCorrect ? `+${pointsEarned} pkt${streakMultiplierStr}` : `${t.correctAnswer}: ${String.fromCharCode(65 + currentQ.correctIndex)}`}
             </p>
           </div>
         </div>
@@ -33,7 +35,7 @@ export const AnswerReveal: React.FC = () => {
       {/* Explanation Box */}
       <div className="p-4 rounded-xl glass-panel space-y-2">
         <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-dim)]">
-          Explanation
+          {t.explanation}
         </h4>
         <p className="text-sm leading-relaxed text-[var(--text)]">{currentQ.explanation}</p>
       </div>
@@ -43,10 +45,7 @@ export const AnswerReveal: React.FC = () => {
         onClick={() => quizStore.nextQuestion()}
         className="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm tracking-wide shadow-md transition-all active:scale-[0.99] flex items-center justify-center gap-2"
       >
-        <span>CONTINUE</span>
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-        </svg>
+        <span>{t.next}</span>
       </button>
     </div>
   );

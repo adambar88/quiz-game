@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { quizStore, useQuizStore } from '../state/useQuizStore.ts';
 import { TimerRing } from './TimerRing.tsx';
 import { AnswerReveal } from './AnswerReveal.tsx';
+import { translations } from '../i18n/translations.ts';
+import type { Category, Difficulty } from '../types/quiz.ts';
 
 export const QuizArena: React.FC = () => {
   const {
@@ -14,8 +16,10 @@ export const QuizArena: React.FC = () => {
     lives,
     mode,
     eloState,
+    lang,
   } = useQuizStore();
 
+  const t = translations[lang];
   const currentQ = questions[currentIndex];
 
   useEffect(() => {
@@ -35,6 +39,9 @@ export const QuizArena: React.FC = () => {
 
   if (!currentQ) return null;
 
+  const categoryTranslated = t.categories[currentQ.category as Category] || currentQ.category;
+  const difficultyTranslated = t.difficulties[currentQ.difficulty as Difficulty] || currentQ.difficulty;
+
   return (
     <div className="flex flex-col gap-5">
       {/* Top Info Bar */}
@@ -42,16 +49,16 @@ export const QuizArena: React.FC = () => {
         {/* Question Counter & Category */}
         <div className="flex items-center gap-2">
           <span className="font-mono font-bold text-emerald-400">
-            Q{currentIndex + 1}/{questions.length}
+            {t.questionCount} {currentIndex + 1} {t.of} {questions.length}
           </span>
           <span className="text-[var(--text-dim)]">•</span>
-          <span className="px-2 py-0.5 rounded bg-white/5 font-medium">{currentQ.category}</span>
+          <span className="px-2 py-0.5 rounded bg-white/5 font-medium">{categoryTranslated}</span>
         </div>
 
         {/* Mode Specific Stats (Lives for survival / ELO rating) */}
         <div className="flex items-center gap-4">
           {mode === 'survival' && (
-            <div className="flex items-center gap-1 text-red-400 font-bold" title="Lives Remaining">
+            <div className="flex items-center gap-1 text-red-400 font-bold" title={t.lives}>
               {Array.from({ length: 3 }).map((_, i) => (
                 <span key={i} className={i < lives ? 'opacity-100 scale-100' : 'opacity-20 scale-90'}>
                   ❤️
@@ -61,11 +68,11 @@ export const QuizArena: React.FC = () => {
           )}
 
           {/* Streak Flame Counter */}
-          <div className="flex items-center gap-1 font-mono font-bold" title="Current Streak">
+          <div className="flex items-center gap-1 font-mono font-bold" title={t.streak}>
             <span className={streak > 0 ? 'flame-anim text-amber-400' : 'opacity-40'}>🔥</span>
             <span>{streak}</span>
             {streak > 1 && (
-              <span className="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded">
+              <span className="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded font-mono">
                 {(1 + Math.min(2, streak * 0.25)).toFixed(2)}x
               </span>
             )}
@@ -84,7 +91,7 @@ export const QuizArena: React.FC = () => {
       {/* Question Card */}
       <div className="p-6 glass-panel flex flex-col gap-3 relative overflow-hidden">
         <div className="flex items-center justify-between text-xs text-[var(--text-dim)] uppercase font-mono">
-          <span>Difficulty: <strong className="text-emerald-400">{currentQ.difficulty}</strong></span>
+          <span>{t.difficultyLabel}: <strong className="text-emerald-400">{difficultyTranslated}</strong></span>
           {mode === 'survival' && <span>Tier: <strong className="text-amber-400">{eloState.tier}</strong></span>}
         </div>
         <h2 className="text-lg sm:text-xl font-bold leading-snug text-[var(--text)]">
@@ -139,7 +146,7 @@ export const QuizArena: React.FC = () => {
           onClick={() => quizStore.submitAnswer()}
           className="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm tracking-wide shadow-md transition-all active:scale-[0.99] animate-in fade-in duration-150"
         >
-          CONFIRM ANSWER ↵
+          {t.submit} ↵
         </button>
       )}
 

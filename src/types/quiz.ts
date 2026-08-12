@@ -95,6 +95,7 @@ export interface AIQuestionPromptParams {
   difficulty: Difficulty;
   count: number;
   topicFocus?: string;
+  lang?: 'pl' | 'en';
 }
 
 export interface AIValidationResult {
