@@ -223,7 +223,10 @@ describe('QuestionEngine & Offline Fallback', () => {
       questionCount: 5,
       seedStr: '2026-08-12',
       aiSettings: {
-        activeProvider: 'offline',
+        activeProvider: 'server',
+        serverEndpoint: 'https://adam-barczynski-resource.openai.azure.com/openai/v1',
+        serverApiKey: '',
+        serverModel: 'gpt-5-mini',
         groqApiKey: '',
         openaiApiKey: '',
         geminiApiKey: '',
@@ -239,7 +242,7 @@ describe('QuestionEngine & Offline Fallback', () => {
 describe('Storage & Theme Management', () => {
   it('should return default AI settings and stats safely', () => {
     const aiSettings = storageService.getAISettings();
-    expect(aiSettings.activeProvider).toBe('offline');
+    expect(aiSettings.activeProvider).toBe('server');
 
     const stats = storageService.getStats();
     expect(stats.highestEloRating).toBe(1200);

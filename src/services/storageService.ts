@@ -2,6 +2,9 @@ import type { AIProvider, Category, Difficulty } from '../types/quiz.ts';
 
 export interface AISettings {
   activeProvider: AIProvider | 'ollama' | 'offline';
+  serverEndpoint: string;
+  serverApiKey: string;
+  serverModel: string;
   groqApiKey: string;
   openaiApiKey: string;
   geminiApiKey: string;
@@ -37,7 +40,10 @@ export interface QuizStats {
 }
 
 const DEFAULT_AI_SETTINGS: AISettings = {
-  activeProvider: 'offline',
+  activeProvider: 'server',
+  serverEndpoint: 'https://adam-barczynski-resource.openai.azure.com/openai/v1',
+  serverApiKey: (import.meta as any).env?.VITE_OPENCLAW_API_KEY || '',
+  serverModel: 'gpt-5-mini',
   groqApiKey: '',
   openaiApiKey: '',
   geminiApiKey: '',

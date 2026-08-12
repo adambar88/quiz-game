@@ -11,7 +11,7 @@ export const Header: React.FC = () => {
           Quiz <span className="text-xs font-normal text-[var(--text-dim)]">.barczynski.dev</span>
         </h1>
         <span className="text-[10px] uppercase font-mono tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-          {aiSettings.activeProvider}
+          {aiSettings.activeProvider === 'server' ? 'OpenClaw LLM' : aiSettings.activeProvider}
         </span>
       </div>
 

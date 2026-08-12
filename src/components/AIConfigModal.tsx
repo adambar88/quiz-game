@@ -54,10 +54,11 @@ export const AIConfigModal: React.FC = () => {
             <label className="block text-xs font-semibold uppercase text-[var(--text-dim)] mb-2">
               Active Question Provider
             </label>
-            <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               {(
                 [
-                  ['offline', 'Offline Static'],
+                  ['server', 'OpenClaw Server'],
+                  ['offline', 'Offline Static Bank'],
                   ['groq', 'Groq Llama3'],
                   ['openai', 'GPT-4o mini'],
                   ['gemini', 'Gemini 1.5'],
@@ -80,6 +81,51 @@ export const AIConfigModal: React.FC = () => {
           </div>
 
           {/* Provider API Credentials */}
+          {formData.activeProvider === 'server' && (
+            <div className="space-y-3 p-3 rounded-lg bg-emerald-500/5 border border-emerald-500/20">
+              <div className="flex items-center justify-between text-xs text-emerald-400 font-semibold mb-1">
+                <span>🤖 OpenClaw Server LLM (Pre-configured)</span>
+                <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20">Active</span>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-[var(--text-dim)] mb-1">
+                  Azure OpenAI / OpenClaw Endpoint URL
+                </label>
+                <input
+                  type="text"
+                  value={formData.serverEndpoint}
+                  onChange={(e) => setFormData({ ...formData, serverEndpoint: e.target.value })}
+                  className="w-full px-3 py-1.5 rounded-lg bg-black/40 border border-[var(--border)] text-xs font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-[var(--text-dim)] mb-1">
+                  API Key
+                </label>
+                <input
+                  type="password"
+                  value={formData.serverApiKey}
+                  onChange={(e) => setFormData({ ...formData, serverApiKey: e.target.value })}
+                  className="w-full px-3 py-1.5 rounded-lg bg-black/40 border border-[var(--border)] text-xs font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-[var(--text-dim)] mb-1">
+                  Model Deployment ID
+                </label>
+                <input
+                  type="text"
+                  value={formData.serverModel}
+                  onChange={(e) => setFormData({ ...formData, serverModel: e.target.value })}
+                  placeholder="gpt-5-mini"
+                  className="w-full px-3 py-1.5 rounded-lg bg-black/40 border border-[var(--border)] text-xs font-mono"
+                />
+              </div>
+            </div>
+          )}
           {formData.activeProvider === 'groq' && (
             <div>
               <label className="block text-xs font-semibold uppercase text-[var(--text-dim)] mb-1">

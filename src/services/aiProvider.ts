@@ -98,6 +98,42 @@ async function fetchQuestionsFromProvider(
   const provider = settings.activeProvider;
 
   switch (provider) {
+    case 'server': {
+      const endpoint = (settings.serverEndpoint || 'https://adam-barczynski-resource.openai.azure.com/openai/v1').replace(/\/+$/, '');
+      const apiKey = settings.serverApiKey || (import.meta as any).env?.VITE_OPENCLAW_API_KEY || '';
+      const model = settings.serverModel || 'gpt-5-mini';
+
+      const res = await fetch(`${endpoint}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'api-key': apiKey,
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: model,
+          messages: [
+            { role: 'system', content: getSystemPrompt('openai') },
+            { role: 'user', content: buildUserPrompt(params) },
+          ],
+          temperature: 0.7,
+        }),
+      });
+
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(`OpenClaw Server LLM HTTP ${res.status}: ${errText}`);
+      }
+
+      const data = await res.json();
+      const content = data.choices?.[0]?.message?.content || '';
+      const validated = validateAndParseAIResponse(content);
+      if (!validated.valid) {
+        throw new Error(`OpenClaw Server LLM response invalid: ${validated.errors.join('; ')}`);
+      }
+      return validated.questions;
+    }
+
     case 'groq': {
       if (!settings.groqApiKey) throw new Error('Groq API Key is required.');
       const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {

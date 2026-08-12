@@ -70,12 +70,15 @@ ${QUESTION_FORMAT_INSTRUCTIONS}
  */
 export function getSystemPrompt(provider: AIProvider): string {
   switch (provider) {
-    case 'groq':
-      return GROQ_LLAMA3_SYSTEM_PROMPT;
+    case 'server':
     case 'openai':
       return OPENAI_GPT4O_MINI_SYSTEM_PROMPT;
+    case 'groq':
+      return GROQ_LLAMA3_SYSTEM_PROMPT;
     case 'gemini':
       return GEMINI_FLASH_SYSTEM_PROMPT;
+    default:
+      return OPENAI_GPT4O_MINI_SYSTEM_PROMPT;
   }
 }
 
