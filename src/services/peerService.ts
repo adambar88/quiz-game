@@ -17,12 +17,16 @@ export type PeerMessageType =
   | 'HANDSHAKE'
   | 'START_GAME'
   | 'PROGRESS_UPDATE'
+  | 'CATEGORY_PICK'
+  | 'ROUND_QUESTIONS'
   | 'PLAYER_FINISHED';
 
 export interface PeerMessage {
   type: PeerMessageType;
   senderName?: string;
   questions?: Question[];
+  roundIndex?: number;
+  chosenCategory?: string;
   mode?: QuizMode;
   category?: string;
   playerState?: PlayerState;

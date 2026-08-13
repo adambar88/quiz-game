@@ -56,6 +56,8 @@ export interface QuizStoreState {
   showAIModal: boolean;
   showStatsModal: boolean;
   showVersusLobby: boolean;
+  versusRound: number;
+  versusShowCategoryPicker: boolean;
   versusOpponentState: PlayerState | null;
   generationError: string | null;
 }
@@ -101,6 +103,8 @@ let storeState: QuizStoreState = {
   showAIModal: false,
   showStatsModal: false,
   showVersusLobby: false,
+  versusRound: 1,
+  versusShowCategoryPicker: false,
   versusOpponentState: null,
   generationError: null,
 };
@@ -185,6 +189,96 @@ export const quizStore = {
 
   setShowVersusLobby(show: boolean) {
     updateState({ showVersusLobby: show });
+  },
+
+  startVersusDuel() {
+    updateState({
+      mode: 'versus',
+      versusRound: 1,
+      versusShowCategoryPicker: true,
+      showVersusLobby: false,
+      questions: [],
+      currentIndex: 0,
+      selectedOptionIndex: null,
+      isCorrect: null,
+      pointsEarned: 0,
+      score: 0,
+      streak: 0,
+      highestStreak: 0,
+      lives: 3,
+      userAnswers: [],
+    });
+
+    // Register PeerJS listener for versus messages
+    peerService.setCallbacks(undefined, (msg) => {
+      if (msg.type === 'PROGRESS_UPDATE' && msg.playerState) {
+        updateState({ versusOpponentState: msg.playerState });
+      } else if (msg.type === 'ROUND_QUESTIONS' && msg.questions) {
+        const updated = [...storeState.questions, ...msg.questions];
+        const firstQ = updated[storeState.currentIndex];
+        const timeLimit = getTimeLimitForQuestion(firstQ, 'versus');
+
+        updateState({
+          questions: updated,
+          timeLimitMs: timeLimit,
+          timeRemainingMs: timeLimit,
+          questionStartTime: Date.now(),
+          versusShowCategoryPicker: false,
+          gameState: 'ACTIVE',
+        });
+      }
+    });
+  },
+
+  async handleVersusCategoryChoice(chosenCategory: Category) {
+    const { versusRound, difficulty, seedStr, aiSettings, lang, questions } = storeState;
+
+    updateState({
+      gameState: 'GENERATING',
+      generationError: null,
+    });
+
+    peerService.sendMessage({
+      type: 'CATEGORY_PICK',
+      roundIndex: versusRound,
+      chosenCategory,
+    });
+
+    try {
+      const new3Questions = await QuestionEngine.prepareQuestions({
+        mode: 'versus',
+        category: chosenCategory,
+        difficulty,
+        questionCount: 3,
+        seedStr: `${seedStr}_r${versusRound}`,
+        aiSettings,
+        lang,
+      });
+
+      peerService.sendMessage({
+        type: 'ROUND_QUESTIONS',
+        roundIndex: versusRound,
+        questions: new3Questions,
+      });
+
+      const updated = [...questions, ...new3Questions];
+      const firstQ = updated[storeState.currentIndex];
+      const timeLimit = getTimeLimitForQuestion(firstQ, 'versus');
+
+      updateState({
+        questions: updated,
+        timeLimitMs: timeLimit,
+        timeRemainingMs: timeLimit,
+        questionStartTime: Date.now(),
+        versusShowCategoryPicker: false,
+        gameState: 'ACTIVE',
+      });
+    } catch (err) {
+      updateState({
+        gameState: 'IDLE',
+        generationError: 'Nie udało się pobrać pytań dla wybranej kategorii.',
+      });
+    }
   },
 
   startQuizWithQuestions(questions: Question[]) {
@@ -411,6 +505,25 @@ export const quizStore = {
     haptics.vibrateClick();
 
     const { questions, currentIndex, mode, lives, userAnswers, score, highestStreak, category, difficulty } = storeState;
+
+    if (mode === 'versus') {
+      const answeredCount = userAnswers.length;
+      if (answeredCount >= 12) {
+        soundEngine.playVictoryFanfare();
+        updateState({ gameState: 'GAME_OVER' });
+        return;
+      }
+
+      // Check if we need to draft category for next round (every 3 questions)
+      if (answeredCount % 3 === 0 && questions.length < answeredCount + 3) {
+        const nextRound = Math.floor(answeredCount / 3) + 1;
+        updateState({
+          versusRound: nextRound,
+          versusShowCategoryPicker: true,
+        });
+        return;
+      }
+    }
 
     // Check game over condition
     const isLastQuestion = currentIndex >= questions.length - 1;

@@ -39,8 +39,8 @@ export const translations = {
       },
       versus: {
         title: 'Pojedynek 1v1',
-        badge: 'Gra we Dwoje',
-        description: 'Graj z żoną lub partnerem na 2 telefonach! Te same pytania, wynik na żywo i podsumowanie.',
+        badge: '12 Pytania • 4 Rundy',
+        description: 'Gra dla 2 osób: 12 pytań w 4 rundach. Gracze na przemian wybierają kogoś kategorię co 3 pytania!',
       },
     },
 

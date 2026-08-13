@@ -92,7 +92,7 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
   };
 
   const handleStartDuelClick = () => {
-    onStartDuel();
+    quizStore.startVersusDuel();
   };
 
   return (

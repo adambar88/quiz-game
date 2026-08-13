@@ -11,9 +11,11 @@ import { AIConfigModal } from './components/AIConfigModal.tsx';
 import { StatsModal } from './components/StatsModal.tsx';
 import { VersusLobbyModal } from './components/VersusLobbyModal.tsx';
 import { VersusSummary } from './components/VersusSummary.tsx';
+import { VersusCategoryPickerModal } from './components/VersusCategoryPickerModal.tsx';
+import { peerService } from './services/peerService.ts';
 
 export function App() {
-  const { gameState, mode, showVersusLobby } = useQuizStore();
+  const { gameState, mode, showVersusLobby, versusRound, versusShowCategoryPicker } = useQuizStore();
 
   // Sync theme with system / barczynski-theme
   useEffect(() => {
@@ -34,6 +36,8 @@ export function App() {
     window.addEventListener('pageshow', onPageShow);
     return () => window.removeEventListener('pageshow', onPageShow);
   }, []);
+
+  const isMyTurnToPick = versusRound % 2 === 1 ? peerService.getIsHost() : !peerService.getIsHost();
 
   return (
     <div className="min-h-screen py-12 px-4 flex flex-col justify-between">
@@ -60,8 +64,15 @@ export function App() {
       <StatsModal />
       {showVersusLobby && (
         <VersusLobbyModal
-          onStartDuel={() => quizStore.startQuiz()}
+          onStartDuel={() => quizStore.startVersusDuel()}
           onClose={() => quizStore.setShowVersusLobby(false)}
+        />
+      )}
+      {versusShowCategoryPicker && (
+        <VersusCategoryPickerModal
+          currentRound={versusRound}
+          isMyTurn={isMyTurnToPick}
+          onCategoryChosen={(cat) => quizStore.handleVersusCategoryChoice(cat)}
         />
       )}
     </div>
