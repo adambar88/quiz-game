@@ -28,9 +28,6 @@ export const GeneratingState: React.FC = () => {
   const categoryName = category === 'all' ? t.allCategories : ((t.categories as Record<string, string>)[category] || category);
   const modeTitle = t.modes[mode]?.title || mode;
 
-  // Calculate elapsed time in seconds formatted to 1 decimal place
-  const elapsedSec = (elapsedMs / 1000).toFixed(1);
-
   // Smoothly fill progress bar up to 95% over ~5 seconds (or cap at 98% if longer)
   const progressPercent = Math.min(98, Math.round((elapsedMs / 5200) * 100));
 
@@ -74,7 +71,7 @@ export const GeneratingState: React.FC = () => {
         </span>
       </div>
 
-      {/* Real-time Progress Bar & Stats Container */}
+      {/* Real-time Progress Bar Container */}
       <div className="w-full space-y-2 pt-1">
         <div className="flex items-center justify-between text-xs font-mono font-semibold px-1">
           <span className="text-emerald-400 flex items-center gap-1.5">
@@ -90,14 +87,6 @@ export const GeneratingState: React.FC = () => {
             className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-150 ease-out shadow-[0_0_12px_rgba(16,185,129,0.5)]"
             style={{ width: `${progressPercent}%` }}
           />
-        </div>
-
-        {/* Live Elapsed Time Pill & Estimate */}
-        <div className="flex items-center justify-between text-[11px] text-[var(--text-dim)] px-1">
-          <span className="flex items-center gap-1 font-mono bg-white/5 px-2 py-0.5 rounded border border-[var(--border)]">
-            ⏱️ {t.elapsedTime}: <strong className="text-emerald-400">{elapsedSec}s</strong>
-          </span>
-          <span className="font-mono">{t.estimatedTime}</span>
         </div>
       </div>
 
