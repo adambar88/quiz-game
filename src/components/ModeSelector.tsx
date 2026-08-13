@@ -81,17 +81,17 @@ export const ModeSelector: React.FC = () => {
                 {category === 'all' ? t.allCategories : ((t.categories as Record<string, string>)[category] || category)}
               </span>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[280px] overflow-y-auto pr-1">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2 max-h-[200px] overflow-y-auto pr-1 py-0.5 scrollbar-thin">
               <button
                 onClick={() => quizStore.setCategory('all')}
-                className={`p-2.5 rounded-xl border text-xs font-semibold transition-all flex items-center gap-2.5 ${
+                className={`px-3 py-1.5 rounded-full border text-xs font-semibold transition-all flex items-center gap-1.5 active:scale-95 ${
                   category === 'all'
-                    ? 'bg-emerald-500 text-black font-bold border-emerald-400 ring-2 ring-emerald-400/30'
-                    : 'bg-white/5 hover:bg-white/10 text-[var(--text-dim)] border-[var(--border)]'
+                    ? 'bg-emerald-500 text-black font-extrabold border-emerald-400 shadow-md shadow-emerald-500/20 scale-[1.02]'
+                    : 'bg-white/5 hover:bg-white/10 text-[var(--text-dim)] hover:text-white border-[var(--border)]'
                 }`}
               >
-                <span className="text-lg">🎲</span>
-                <span className="truncate">{t.allCategories}</span>
+                <span className="text-sm">🎲</span>
+                <span>{t.allCategories}</span>
               </button>
               {VALID_CATEGORIES.map((cat) => {
                 const meta = CATEGORY_METADATA[cat as Category];
@@ -102,16 +102,16 @@ export const ModeSelector: React.FC = () => {
                   <button
                     key={cat}
                     onClick={() => quizStore.setCategory(cat as Category)}
-                    className={`p-2.5 rounded-xl border text-xs font-medium transition-all flex items-center gap-2.5 text-left group ${
+                    className={`px-3 py-1.5 rounded-full border text-xs font-semibold transition-all flex items-center gap-1.5 active:scale-95 group ${
                       isSelected
-                        ? 'bg-emerald-500 text-black font-bold border-emerald-400 ring-2 ring-emerald-400/30'
+                        ? 'bg-emerald-500 text-black font-extrabold border-emerald-400 shadow-md shadow-emerald-500/20 scale-[1.02]'
                         : 'bg-white/5 hover:bg-white/10 text-[var(--text)] border-[var(--border)]'
                     }`}
                   >
-                    <span className="text-lg transition-transform group-hover:scale-110 flex-shrink-0">
+                    <span className="text-sm transition-transform group-hover:scale-110 flex-shrink-0">
                       {meta?.icon || '💡'}
                     </span>
-                    <span className="truncate">{catName}</span>
+                    <span>{catName}</span>
                   </button>
                 );
               })}
