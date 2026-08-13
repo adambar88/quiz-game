@@ -53,14 +53,19 @@ export class QuestionEngine {
           category: category,
           difficulty: targetDifficulty,
           count: questionCount,
-          topicFocus: customPrompt || (mode === 'blitz' ? 'Fast trivia' : undefined),
+          topicFocus: customPrompt,
           lang: currentLang,
         },
         aiSettings
       );
 
-      if (onProgress) onProgress(aiQuestions.length, questionCount);
-      return aiQuestions;
+      const ensuredAi = aiQuestions.map((q) => ({
+        ...q,
+        category: category !== 'all' ? category : q.category,
+      }));
+
+      if (onProgress) onProgress(ensuredAi.length, questionCount);
+      return ensuredAi;
     } catch (err) {
       console.warn('[QuestionEngine] Question generation failed, falling back to curated static pool.', err);
       const fallbackQuestions = QuestionEngine.selectFromStaticBank(category, difficulty, questionCount, currentLang);
@@ -102,6 +107,7 @@ export class QuestionEngine {
       selected.push({
         ...item,
         id: `static-${item.id}-${i}-${Math.floor(Math.random() * 1000)}`,
+        category: category !== 'all' ? category : item.category,
       });
     }
 

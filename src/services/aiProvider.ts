@@ -59,16 +59,16 @@ function getOfflineQuestions(params: AIQuestionPromptParams): Question[] {
   let pool = [...STATIC_QUESTION_BANK];
 
   // Filter by category if specified and not 'all'
-  if (params.category) {
+  if (params.category && params.category !== 'all') {
     const matched = pool.filter((q) => q.category === params.category);
-    if (matched.length >= params.count) {
+    if (matched.length > 0) {
       pool = matched;
     }
   }
 
   // Filter by difficulty if matches available
   const diffMatched = pool.filter((q) => q.difficulty === params.difficulty);
-  if (diffMatched.length >= params.count) {
+  if (diffMatched.length > 0) {
     pool = diffMatched;
   }
 
@@ -85,6 +85,7 @@ function getOfflineQuestions(params: AIQuestionPromptParams): Question[] {
     result.push({
       ...base,
       id: `${base.id}-off-${i}-${Date.now()}`,
+      category: params.category && params.category !== 'all' ? params.category : base.category,
     });
   }
 
