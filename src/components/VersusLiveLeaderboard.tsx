@@ -1,5 +1,5 @@
 import React from 'react';
-import { useQuizStore } from '../state/useQuizStore.ts';
+import { useQuizStore, getQuestionsPerPick } from '../state/useQuizStore.ts';
 import { peerService } from '../services/peerService.ts';
 
 export const VersusLiveLeaderboard: React.FC = () => {
@@ -11,6 +11,9 @@ export const VersusLiveLeaderboard: React.FC = () => {
   const totalQ = userAnswers.length;
   const correctCount = userAnswers.filter((a) => a.isCorrect).length;
 
+  const playerCount = Math.max(2, peerService.getConnectedCount());
+  const questionsPerPick = getQuestionsPerPick(playerCount);
+
   const myPlayerState = {
     id: myId,
     name: myName,
@@ -18,7 +21,7 @@ export const VersusLiveLeaderboard: React.FC = () => {
     streak: 0,
     lives: 3,
     currentIndex: totalQ,
-    isFinished: false,
+    isFinished: totalQ >= 12,
     accuracy: totalQ > 0 ? Math.round((correctCount / totalQ) * 100) : 0,
     answers: userAnswers.map((a) => ({ isCorrect: a.isCorrect, timeMs: a.timeSpentMs })),
   };
@@ -35,7 +38,7 @@ export const VersusLiveLeaderboard: React.FC = () => {
         streak: p.streak || 0,
         lives: p.lives || 3,
         currentIndex: p.currentIndex || 0,
-        isFinished: p.isFinished || false,
+        isFinished: p.isFinished || (p.currentIndex ? p.currentIndex >= 12 : false),
         accuracy: p.accuracy || 0,
         answers: p.answers || [],
       });
@@ -49,6 +52,24 @@ export const VersusLiveLeaderboard: React.FC = () => {
     if (idx === 1) return '🥈';
     if (idx === 2) return '🥉';
     return `${idx + 1}.`;
+  };
+
+  const getPlayerProgressPill = (player: typeof myPlayerState) => {
+    if (player.isFinished || player.currentIndex >= 12) {
+      return <span className="text-[10px] text-emerald-400 font-bold font-mono">Koniec 🏁</span>;
+    }
+    const currentQ = Math.min(12, player.currentIndex + 1);
+    const isWaitingForCategory = player.currentIndex > 0 && player.currentIndex % questionsPerPick === 0;
+
+    if (isWaitingForCategory) {
+      return <span className="text-[10px] text-amber-400 font-bold font-mono animate-pulse">Czeka ⏳</span>;
+    }
+
+    return (
+      <span className="text-[10px] text-[var(--text-dim)] font-mono">
+        Pyt. <strong className="text-[var(--text)]">{currentQ}</strong>/12
+      </span>
+    );
   };
 
   return (
@@ -67,20 +88,25 @@ export const VersusLiveLeaderboard: React.FC = () => {
           return (
             <div
               key={player.id || idx}
-              className={`p-2 rounded-lg border text-xs font-mono transition-all flex items-center justify-between ${
+              className={`p-2.5 rounded-xl border text-xs font-mono transition-all flex items-center justify-between ${
                 isMe
-                  ? 'bg-emerald-500/15 border-emerald-500 text-emerald-300 font-extrabold ring-1 ring-emerald-500/50'
+                  ? 'bg-emerald-500/15 border-emerald-500 text-emerald-300 font-extrabold ring-1 ring-emerald-500/50 shadow-md'
                   : 'bg-white/5 border-[var(--border)] text-[var(--text)]'
               }`}
             >
-              <div className="flex items-center gap-1.5 truncate">
-                <span className="text-sm">{getRankBadge(idx)}</span>
-                <span className="truncate max-w-[80px]" title={player.name}>
-                  {player.name}
-                </span>
+              <div className="flex flex-col truncate pr-1">
+                <div className="flex items-center gap-1.5 truncate">
+                  <span className="text-sm">{getRankBadge(idx)}</span>
+                  <span className="truncate max-w-[70px]" title={player.name}>
+                    {player.name}
+                  </span>
+                </div>
+                <div className="pl-5 text-[10px]">
+                  {getPlayerProgressPill(player)}
+                </div>
               </div>
-              <div className="font-mono font-bold text-right ml-1">
-                <span>{player.score}</span>
+              <div className="font-mono font-extrabold text-right text-emerald-400">
+                <span className="text-sm">{player.score}</span>
               </div>
             </div>
           );

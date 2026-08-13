@@ -589,10 +589,10 @@ export const quizStore = {
       }
 
       const playerCount = Math.max(2, peerService.getConnectedCount());
-      const questionsPerPick = Math.max(1, Math.floor(12 / playerCount));
+      const questionsPerPick = getQuestionsPerPick(playerCount);
 
       // Check if we need to draft category for next pick
-      if (answeredCount % questionsPerPick === 0 && questions.length < answeredCount + questionsPerPick) {
+      if (answeredCount % questionsPerPick === 0 && questions.length < 12) {
         const nextPick = Math.floor(answeredCount / questionsPerPick);
         updateState({
           versusPickIndex: nextPick,
@@ -604,7 +604,7 @@ export const quizStore = {
     }
 
     // Check game over condition
-    const isLastQuestion = currentIndex >= questions.length - 1;
+    const isLastQuestion = mode !== 'versus' && currentIndex >= questions.length - 1;
     const isOutofLives = mode === 'survival' && lives <= 0;
 
     if (isLastQuestion || isOutofLives) {

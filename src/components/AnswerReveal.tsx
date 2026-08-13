@@ -1,15 +1,29 @@
 import React from 'react';
-import { quizStore, useQuizStore } from '../state/useQuizStore.ts';
+import { quizStore, useQuizStore, getQuestionsPerPick } from '../state/useQuizStore.ts';
 import { translations } from '../i18n/translations.ts';
+import { peerService } from '../services/peerService.ts';
 
 export const AnswerReveal: React.FC = () => {
-  const { isCorrect, pointsEarned, questions, currentIndex, streak, lang } = useQuizStore();
+  const { isCorrect, pointsEarned, questions, currentIndex, streak, userAnswers, mode, lang } = useQuizStore();
   const currentQ = questions[currentIndex];
   const t = translations[lang];
 
   if (!currentQ) return null;
 
   const streakMultiplierStr = streak > 1 ? ` (${(1 + Math.min(2, streak * 0.25)).toFixed(2)}x)` : '';
+
+  const playerCount = Math.max(2, peerService.getConnectedCount());
+  const questionsPerPick = getQuestionsPerPick(playerCount);
+  const totalAnswered = userAnswers.length;
+
+  let nextButtonLabel = t.next;
+  if (mode === 'versus') {
+    if (totalAnswered >= 12) {
+      nextButtonLabel = 'Zobacz Podsumowanie Wyników 🏁';
+    } else if (totalAnswered % questionsPerPick === 0) {
+      nextButtonLabel = 'Przejdź do Wyboru Kolejnej Kategorii ➔';
+    }
+  }
 
   return (
     <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
@@ -45,7 +59,7 @@ export const AnswerReveal: React.FC = () => {
         onClick={() => quizStore.nextQuestion()}
         className="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm tracking-wide shadow-md transition-all active:scale-[0.99] flex items-center justify-center gap-2"
       >
-        <span>{t.next}</span>
+        <span>{nextButtonLabel}</span>
       </button>
     </div>
   );
