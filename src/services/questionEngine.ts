@@ -45,15 +45,12 @@ export class QuestionEngine {
     }
 
     // 3. AI Provider: Bootstrap Q1 instantly from static bank as placeholder while pre-fetching AI batch
-    if (onProgress) onProgress(1, questionCount);
-
-    const targetCategory: Category = category === 'all' ? 'Computer Science' : category;
     const targetDifficulty: Difficulty = difficulty === 'dynamic' ? 'medium' : difficulty;
 
     try {
       const aiQuestions = await generateQuestions(
         {
-          category: targetCategory,
+          category: category,
           difficulty: targetDifficulty,
           count: questionCount,
           topicFocus: customPrompt || (mode === 'blitz' ? 'Fast trivia' : undefined),

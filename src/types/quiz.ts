@@ -109,7 +109,7 @@ export interface DailyChallengeSession {
 export type AIProvider = 'server';
 
 export interface AIQuestionPromptParams {
-  category: Category;
+  category: Category | 'all';
   difficulty: Difficulty;
   count: number;
   topicFocus?: string;

@@ -266,26 +266,37 @@ const SUBTOPIC_POOLS: Record<string, string[]> = {
  */
 export function buildUserPrompt(params: AIQuestionPromptParams): string {
   const { category, difficulty, count, topicFocus, lang } = params;
-
-  // Pick random subtopics for entropy
-  const categoryPool = SUBTOPIC_POOLS[category] || [];
-  const selectedSubtopics = categoryPool.length > 0
-    ? [...categoryPool].sort(() => Math.random() - 0.5).slice(0, 3).join('; ')
-    : '';
-
   const randomSeed = Math.floor(Math.random() * 1000000);
 
-  let prompt = `Generate exactly ${count} ${difficulty.toUpperCase()} difficulty quiz questions for category "${category}".`;
+  let prompt = '';
 
-  if (topicFocus) {
-    prompt += ` Specific focus area: "${topicFocus}".`;
-  } else if (selectedSubtopics) {
-    prompt += ` Draw inspiration from diverse subtopic angles such as: [${selectedSubtopics}].`;
+  if (category === 'all') {
+    // Pick 4 random categories from SUBTOPIC_POOLS to combine subtopics for 'all'
+    const keys = Object.keys(SUBTOPIC_POOLS);
+    const shuffledKeys = [...keys].sort(() => Math.random() - 0.5).slice(0, 4);
+    const mixedSubtopics = shuffledKeys
+      .map((k) => SUBTOPIC_POOLS[k][Math.floor(Math.random() * SUBTOPIC_POOLS[k].length)])
+      .join('; ');
+
+    prompt = `Generate exactly ${count} ${difficulty.toUpperCase()} difficulty quiz questions covering ALL CATEGORIES (MIXED TRIVIA). You MUST provide a diverse mix across different domains (such as Science, History, Tech & Future, Cinema, Geography, Pop Culture, Sports, Music, Literature, Medicine, Mathematics, Culinary). Draw inspiration from diverse angles such as: [${mixedSubtopics}]. For EACH question in the JSON array, set its "category" property to the exact matching category string from the schema.`;
+  } else {
+    const categoryPool = SUBTOPIC_POOLS[category] || [];
+    const selectedSubtopics = categoryPool.length > 0
+      ? [...categoryPool].sort(() => Math.random() - 0.5).slice(0, 3).join('; ')
+      : '';
+
+    prompt = `Generate exactly ${count} ${difficulty.toUpperCase()} difficulty quiz questions for category "${category}".`;
+
+    if (topicFocus) {
+      prompt += ` Specific focus area: "${topicFocus}".`;
+    } else if (selectedSubtopics) {
+      prompt += ` Draw inspiration from diverse subtopic angles such as: [${selectedSubtopics}].`;
+    }
   }
 
   prompt += ` Randomization entropy seed: ${randomSeed}_${Date.now()}.`;
 
-  prompt += ` NOVELTY MANDATE: Avoid cliché, overused, or generic textbook 101 questions. Provide fresh, unique, engaging, and precise trivia that tests genuine knowledge. Each of the ${count} questions MUST cover a completely different angle.`;
+  prompt += ` NOVELTY MANDATE: Avoid cliché, overused, or generic textbook 101 questions. Provide fresh, unique, engaging, and precise trivia that tests genuine knowledge. Each of the ${count} questions MUST cover a completely different topic or domain.`;
 
   if (lang === 'pl') {
     prompt += ` LANGUAGE INSTRUCTION: All question text, all 4 option strings, and explanation text MUST BE WRITTEN IN POLISH (Język polski). Keep category names as one of the required schema strings.`;
