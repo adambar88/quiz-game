@@ -392,19 +392,23 @@ export const quizStore = {
         lang,
       });
 
+      const safeNew = newQuestions.map((q, idx) => ({
+        ...q,
+        id: `vq-${versusPickIndex}-${chosenCategory}-${idx}-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+        category: chosenCategory,
+      }));
+
       peerService.sendMessage({
         type: 'ROUND_QUESTIONS',
         roundIndex: versusRound,
         pickIndex: versusPickIndex,
-        questions: newQuestions,
+        questions: safeNew,
       });
 
-      const existingIds = new Set(currentQuestions.map((q) => q.id || q.question));
-      const uniqueNew = newQuestions.filter((q) => !existingIds.has(q.id || q.question));
-      const updated = uniqueNew.length > 0 ? [...currentQuestions, ...uniqueNew] : currentQuestions;
+      const updated = [...currentQuestions, ...safeNew];
 
       const nextIdx = storeState.userAnswers.length;
-      const firstQ = updated[nextIdx] || newQuestions[0];
+      const firstQ = updated[nextIdx] || safeNew[0];
       const timeLimit = getTimeLimitForQuestion(firstQ, 'versus');
 
       updateState({
@@ -450,12 +454,14 @@ export const quizStore = {
         });
       } else if (msg.type === 'ROUND_QUESTIONS' && msg.questions) {
         const safeQuestions = storeState.questions || [];
-        const existingIds = new Set(safeQuestions.filter((q) => q && (q.id || q.question)).map((q) => q.id || q.question));
-        const uniqueNew = (msg.questions || []).filter((q) => q && !existingIds.has(q.id || q.question));
+        const safeIncoming = (msg.questions || []).map((q, idx) => ({
+          ...q,
+          id: `vq-rx-${msg.pickIndex || 0}-${q.category}-${idx}-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+        }));
 
-        const newAll = uniqueNew.length > 0 ? [...safeQuestions, ...uniqueNew] : safeQuestions;
+        const newAll = [...safeQuestions, ...safeIncoming];
         const nextIdx = storeState.userAnswers.length;
-        const curQ = newAll[nextIdx] || safeQuestions[storeState.currentIndex] || msg.questions[0];
+        const curQ = newAll[nextIdx] || safeIncoming[0];
         const tLimit = getTimeLimitForQuestion(curQ, 'versus');
 
         const isWaitingForNewRound =
