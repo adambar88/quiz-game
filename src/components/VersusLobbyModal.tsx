@@ -37,9 +37,11 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
   const handleCreateRoom = async () => {
     setErrorMsg(null);
     setIsConnecting(true);
+    const code = peerService.generateRoomCode();
+    setRoomCode(code);
     try {
-      const code = await peerService.createRoom(
-        undefined,
+      await peerService.createRoom(
+        code,
         (count) => setConnectedCount(count),
         (msg) => {
           if (msg.type === 'START_GAME' && msg.questions) {
@@ -47,9 +49,8 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
           }
         }
       );
-      setRoomCode(code);
     } catch (err: any) {
-      setErrorMsg('Nie udało się utworzyć pokoju. Spróbuj ponownie.');
+      console.warn('[VersusLobby] Create room warning:', err);
     } finally {
       setIsConnecting(false);
     }
@@ -78,7 +79,7 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
       setRoomCode(targetCode);
       setConnectedCount(2);
     } catch (err: any) {
-      setErrorMsg('Nie odnaleziono pokoju o podanym kodzie. Upewnij się, że Host stworzył pokój i odczekaj chwilę.');
+      setErrorMsg('Nie odnaleziono pokoju o podanym kodzie. Upewnij się, że Host stworzył pokój i spróbuj ponownie.');
     } finally {
       setIsConnecting(false);
     }
@@ -179,13 +180,9 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
                 {t.roomCodeLabel}
               </span>
               <div className="text-3xl font-mono font-extrabold tracking-widest text-emerald-400 flex items-center justify-center gap-2">
-                {isConnecting ? (
-                  <div className="flex items-center gap-2 text-sm text-[var(--text-dim)] font-mono">
-                    <span className="w-4 h-4 rounded-full border-2 border-emerald-400 border-t-transparent animate-spin" />
-                    Rejestrowanie pokoju...
-                  </div>
-                ) : (
-                  roomCode || '....'
+                <span>{roomCode || '....'}</span>
+                {isConnecting && (
+                  <span className="w-3.5 h-3.5 rounded-full border-2 border-emerald-400 border-t-transparent animate-spin" />
                 )}
               </div>
             </div>
@@ -193,7 +190,7 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
             {/* Share Link Button */}
             <button
               onClick={handleCopyLink}
-              disabled={!roomCode || isConnecting}
+              disabled={!roomCode}
               className="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-[var(--border)] text-xs font-semibold text-[var(--text)] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {copied ? '✅ ' + t.linkCopied : t.shareLink}

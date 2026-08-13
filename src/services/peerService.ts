@@ -83,7 +83,7 @@ class PeerService {
   }
 
   public createRoom(roomCode?: string, onConnect?: ConnectionCallback, onMessage?: MessageCallback): Promise<string> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.destroy();
       this.isHost = true;
       this.myId = 'host';
@@ -91,43 +91,56 @@ class PeerService {
       this.onConnectCb = onConnect || null;
       this.onMessageCb = onMessage || null;
 
+      let hasResolved = false;
+      const safeResolve = () => {
+        if (!hasResolved) {
+          hasResolved = true;
+          resolve(this.roomCode);
+        }
+      };
+
+      // 600ms safety timer so UI never gets stuck
+      const timer = setTimeout(safeResolve, 600);
+
       const peerId = `barczynski-quiz-room-${this.roomCode.toLowerCase()}`;
-      this.peer = new Peer(peerId, {
-        debug: 1,
-        config: {
-          iceServers: [
-            { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'stun:stun1.l.google.com:19302' },
-            { urls: 'stun:stun2.l.google.com:19302' },
-          ],
-        },
-      });
+      try {
+        this.peer = new Peer(peerId, {
+          debug: 1,
+          config: {
+            iceServers: [
+              { urls: 'stun:stun.l.google.com:19302' },
+              { urls: 'stun:stun1.l.google.com:19302' },
+              { urls: 'stun:stun2.l.google.com:19302' },
+            ],
+          },
+        });
 
-      this.peer.on('open', () => {
-        console.log('[PeerService] Host room registered on PeerJS server:', peerId);
-        resolve(this.roomCode);
-      });
+        this.peer.on('open', () => {
+          console.log('[PeerService] Host room registered on PeerJS server:', peerId);
+          clearTimeout(timer);
+          safeResolve();
+        });
 
-      this.peer.on('connection', (conn) => {
-        if (this.connections.length >= 3) {
-          // Room full (max 4 players)
-          conn.close();
-          return;
-        }
-        this.connections.push(conn);
-        this.setupConnectionHandlers(conn);
-        if (this.onConnectCb) this.onConnectCb(this.connections.length + 1);
-      });
+        this.peer.on('connection', (conn) => {
+          if (this.connections.length >= 3) {
+            conn.close();
+            return;
+          }
+          this.connections.push(conn);
+          this.setupConnectionHandlers(conn);
+          if (this.onConnectCb) this.onConnectCb(this.connections.length + 1);
+        });
 
-      this.peer.on('error', (err) => {
-        console.warn('[PeerService] Host peer error:', err);
-        if (err.type === 'unavailable-id') {
-          this.roomCode = this.generateRoomCode();
-          this.createRoom(this.roomCode, onConnect, onMessage).then(resolve).catch(reject);
-        } else {
-          reject(err);
-        }
-      });
+        this.peer.on('error', (err) => {
+          console.warn('[PeerService] Host peer error:', err);
+          clearTimeout(timer);
+          safeResolve();
+        });
+      } catch (err) {
+        console.warn('[PeerService] Peer init exception:', err);
+        clearTimeout(timer);
+        safeResolve();
+      }
     });
   }
 
@@ -144,47 +157,55 @@ class PeerService {
         this.onConnectCb = onConnect || null;
         this.onMessageCb = onMessage || null;
 
-        this.peer = new Peer({
-          debug: 1,
-          config: {
-            iceServers: [
-              { urls: 'stun:stun.l.google.com:19302' },
-              { urls: 'stun:stun1.l.google.com:19302' },
-              { urls: 'stun:stun2.l.google.com:19302' },
-            ],
-          },
-        });
-
-        this.peer.on('open', () => {
-          const targetId = `barczynski-quiz-room-${this.roomCode.toLowerCase()}`;
-          const conn = this.peer!.connect(targetId, { reliable: true });
-          this.connections = [conn];
-
-          conn.on('open', () => {
-            this.setupConnectionHandlers(conn);
-            if (this.onConnectCb) this.onConnectCb(2);
-            this.sendMessage({ type: 'HANDSHAKE', senderId: this.myId, senderName: this.myName });
-            resolve(true);
+        try {
+          this.peer = new Peer({
+            debug: 1,
+            config: {
+              iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' },
+                { urls: 'stun:stun2.l.google.com:19302' },
+              ],
+            },
           });
 
-          conn.on('error', (err) => {
-            console.warn(`[PeerService] Guest connection attempt ${attempts} failed:`, err);
+          this.peer.on('open', () => {
+            const targetId = `barczynski-quiz-room-${this.roomCode.toLowerCase()}`;
+            const conn = this.peer!.connect(targetId, { reliable: true });
+            this.connections = [conn];
+
+            conn.on('open', () => {
+              this.setupConnectionHandlers(conn);
+              if (this.onConnectCb) this.onConnectCb(2);
+              this.sendMessage({ type: 'HANDSHAKE', senderId: this.myId, senderName: this.myName });
+              resolve(true);
+            });
+
+            conn.on('error', (err) => {
+              console.warn(`[PeerService] Guest connection attempt ${attempts} failed:`, err);
+              if (attempts < maxRetries) {
+                setTimeout(tryConnect, 1000);
+              } else {
+                reject(err);
+              }
+            });
+          });
+
+          this.peer.on('error', (err) => {
+            console.warn(`[PeerService] Guest peer attempt ${attempts} error:`, err);
             if (attempts < maxRetries) {
-              setTimeout(tryConnect, 1200);
+              setTimeout(tryConnect, 1000);
             } else {
               reject(err);
             }
           });
-        });
-
-        this.peer.on('error', (err) => {
-          console.warn(`[PeerService] Guest peer attempt ${attempts} error:`, err);
+        } catch (err) {
           if (attempts < maxRetries) {
-            setTimeout(tryConnect, 1200);
+            setTimeout(tryConnect, 1000);
           } else {
             reject(err);
           }
-        });
+        }
       };
 
       tryConnect();
