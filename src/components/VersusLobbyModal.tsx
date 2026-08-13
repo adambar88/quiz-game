@@ -264,28 +264,35 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
         {/* TAB 2: JOIN ROOM (GUEST) */}
         {activeTab === 'join' && (
           <div className="space-y-4 text-center">
-            <div className="space-y-2">
-              <label className="block text-[11px] uppercase font-semibold text-[var(--text-dim)]">
-                {t.enterRoomCode}
-              </label>
-              
-              <div className="flex gap-2">
+            <div className="space-y-3">
+              {/* Camera Scanner Button - Full Width */}
+              <button
+                type="button"
+                onClick={() => setShowScanner(true)}
+                className="w-full py-3 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-400 text-xs font-extrabold transition-all flex items-center justify-center gap-2 active:scale-[0.98] shadow-md"
+              >
+                <span className="text-base">📷</span>
+                <span>Skanuj Kod QR Aparatem</span>
+              </button>
+
+              <div className="relative flex items-center justify-center">
+                <div className="border-t border-white/10 w-full"></div>
+                <span className="bg-[#121214] px-2 text-[10px] uppercase font-mono text-[var(--text-dim)] absolute">lub wpisz kod</span>
+              </div>
+
+              {/* Code Input Box */}
+              <div>
+                <label className="block text-[11px] uppercase font-semibold text-[var(--text-dim)] mb-1">
+                  {t.enterRoomCode}
+                </label>
                 <input
                   type="text"
                   maxLength={5}
                   value={inputCode}
                   onChange={(e) => setInputCode(e.target.value.toUpperCase())}
                   placeholder="np. K9X2"
-                  className="flex-1 text-center text-xl font-mono tracking-widest py-2.5 rounded-xl bg-black/40 border border-[var(--border)] text-emerald-400 uppercase font-bold focus:outline-none focus:border-emerald-500"
+                  className="w-full text-center text-xl font-mono tracking-widest py-3 rounded-xl bg-black/40 border border-[var(--border)] text-emerald-400 uppercase font-bold focus:outline-none focus:border-emerald-500"
                 />
-
-                <button
-                  type="button"
-                  onClick={() => setShowScanner(true)}
-                  className="px-3.5 py-2.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-400 text-xs font-bold transition-all flex items-center gap-1.5 flex-shrink-0"
-                >
-                  📷 Skanuj QR
-                </button>
               </div>
             </div>
 

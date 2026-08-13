@@ -150,7 +150,7 @@ export const QRCodeScannerModal: React.FC<QRCodeScannerModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/95 backdrop-blur-md animate-fadeIn">
       <div className="w-full max-w-md bg-black rounded-3xl border border-white/20 shadow-2xl overflow-hidden flex flex-col relative h-[85vh] max-h-[640px]">
         {/* Top Camera App Bar */}
-        <div className="p-4 bg-gradient-to-b from-black/80 to-transparent flex items-center justify-between z-20 absolute top-0 left-0 right-0">
+        <div className="p-4 pt-[max(1rem,env(safe-area-inset-top))] bg-gradient-to-b from-black/80 to-transparent flex items-center justify-between z-20 absolute top-0 left-0 right-0">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
             <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
@@ -226,7 +226,7 @@ export const QRCodeScannerModal: React.FC<QRCodeScannerModalProps> = ({
         </div>
 
         {/* Bottom Instruction Bar */}
-        <div className="p-4 bg-gradient-to-t from-black/90 via-black/60 to-transparent text-center space-y-2 z-20">
+        <div className="p-4 pb-[max(1rem,env(safe-area-inset-bottom))] bg-gradient-to-t from-black/90 via-black/60 to-transparent text-center space-y-2 z-20">
           <p className="text-xs text-white/90 font-medium">
             Nakieruj obiektyw aparatu na kod QR pokoju drugiego gracza
           </p>
