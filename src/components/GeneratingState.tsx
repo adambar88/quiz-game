@@ -1,14 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { quizStore, useQuizStore } from '../state/useQuizStore.ts';
 import { translations } from '../i18n/translations.ts';
-import type { Category } from '../types/quiz.ts';
 
 export const GeneratingState: React.FC = () => {
   const { mode, category, customPrompt, aiSettings, lang } = useQuizStore();
   const t = translations[lang];
 
+  const [elapsedMs, setElapsedMs] = useState<number>(0);
+
+  useEffect(() => {
+    const startTime = Date.now();
+    const timer = setInterval(() => {
+      setElapsedMs(Date.now() - startTime);
+    }, 50);
+
+    return () => clearInterval(timer);
+  }, []);
+
   const handleCancelAndOffline = () => {
-    // Fallback immediately to offline bank and restart quiz
     quizStore.updateAISettings({
       ...aiSettings,
       activeProvider: 'offline',
@@ -19,9 +28,25 @@ export const GeneratingState: React.FC = () => {
   const categoryName = category === 'all' ? t.allCategories : ((t.categories as Record<string, string>)[category] || category);
   const modeTitle = t.modes[mode]?.title || mode;
 
+  // Calculate elapsed time in seconds formatted to 1 decimal place
+  const elapsedSec = (elapsedMs / 1000).toFixed(1);
+
+  // Smoothly fill progress bar up to 95% over ~5 seconds (or cap at 98% if longer)
+  const progressPercent = Math.min(98, Math.round((elapsedMs / 5200) * 100));
+
+  // Determine current stage description
+  let currentStageText = t.generatingStage1;
+  if (elapsedMs > 4500) {
+    currentStageText = t.generatingStage4;
+  } else if (elapsedMs > 3000) {
+    currentStageText = t.generatingStage3;
+  } else if (elapsedMs > 1200) {
+    currentStageText = t.generatingStage2;
+  }
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-[350px] p-6 glass-panel text-center max-w-lg mx-auto space-y-6 animate-fadeIn">
-      {/* Animated Glowing AI Spinner */}
+    <div className="flex flex-col items-center justify-center min-h-[380px] p-6 glass-panel text-center max-w-lg mx-auto space-y-6 animate-fadeIn">
+      {/* Animated Glowing Spinner & Target Icon */}
       <div className="relative flex items-center justify-center w-20 h-20">
         <div className="absolute inset-0 rounded-full border-4 border-emerald-500/20 animate-ping opacity-75" />
         <div className="absolute inset-0 rounded-full border-4 border-t-emerald-500 border-r-emerald-500 border-b-transparent border-l-transparent animate-spin" />
@@ -29,7 +54,7 @@ export const GeneratingState: React.FC = () => {
       </div>
 
       {/* Title & Status */}
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <h2 className="text-xl font-bold tracking-tight">{t.generatingTitle}</h2>
         <p className="text-xs text-[var(--text-dim)] max-w-sm mx-auto leading-relaxed">
           {t.generatingSubtitle}
@@ -49,16 +74,38 @@ export const GeneratingState: React.FC = () => {
         </span>
       </div>
 
-      {/* Progress Bar / Shimmer Bar */}
-      <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden border border-[var(--border)] relative">
-        <div className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full w-full animate-pulse" />
+      {/* Real-time Progress Bar & Stats Container */}
+      <div className="w-full space-y-2 pt-1">
+        <div className="flex items-center justify-between text-xs font-mono font-semibold px-1">
+          <span className="text-emerald-400 flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            {currentStageText}
+          </span>
+          <span className="text-[var(--text-dim)] font-bold">{progressPercent}%</span>
+        </div>
+
+        {/* Progress Bar Container */}
+        <div className="w-full bg-white/5 h-3 rounded-full overflow-hidden border border-[var(--border)] relative p-0.5">
+          <div
+            className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-150 ease-out shadow-[0_0_12px_rgba(16,185,129,0.5)]"
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
+
+        {/* Live Elapsed Time Pill & Estimate */}
+        <div className="flex items-center justify-between text-[11px] text-[var(--text-dim)] px-1">
+          <span className="flex items-center gap-1 font-mono bg-white/5 px-2 py-0.5 rounded border border-[var(--border)]">
+            ⏱️ {t.elapsedTime}: <strong className="text-emerald-400">{elapsedSec}s</strong>
+          </span>
+          <span className="font-mono">{t.estimatedTime}</span>
+        </div>
       </div>
 
       {/* Cancel / Immediate Offline Fallback Option */}
-      <div className="pt-2">
+      <div className="pt-1">
         <button
           onClick={handleCancelAndOffline}
-          className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-semibold text-[var(--text-dim)] transition-colors border border-[var(--border)] flex items-center gap-2 mx-auto"
+          className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-semibold text-[var(--text-dim)] hover:text-white transition-all border border-[var(--border)] flex items-center gap-2 mx-auto"
         >
           {t.switchToOffline}
         </button>

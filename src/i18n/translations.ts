@@ -92,6 +92,12 @@ export const translations = {
     generatingSubtitle: 'Tworzenie unikalnego zestawu pytań po polsku...',
     generatingDetailsMode: 'Tryb',
     generatingDetailsTopic: 'Temat',
+    generatingStage1: '🔌 Łączenie z serwerem...',
+    generatingStage2: '🧠 Model tworzy pytania i warianty odpowiedzi...',
+    generatingStage3: '🔍 Walidacja schematu JSON i poprawności...',
+    generatingStage4: '⚡ Finalizowanie zestawu pytań...',
+    elapsedTime: 'Czas',
+    estimatedTime: 'Szacowano ~5.0s',
     switchToOffline: '⚡ Przełącz na szybką bazę offline',
 
     // Quiz Arena
@@ -242,6 +248,12 @@ export const translations = {
     generatingSubtitle: 'Crafting custom trivia questions in English...',
     generatingDetailsMode: 'Mode',
     generatingDetailsTopic: 'Topic',
+    generatingStage1: '🔌 Connecting to server...',
+    generatingStage2: '🧠 Model is crafting questions & options...',
+    generatingStage3: '🔍 Validating JSON schema & accuracy...',
+    generatingStage4: '⚡ Finalizing question set...',
+    elapsedTime: 'Elapsed',
+    estimatedTime: 'Est. ~5.0s',
     switchToOffline: '⚡ Switch to Fast Offline Bank',
 
     // Quiz Arena
