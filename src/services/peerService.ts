@@ -83,7 +83,7 @@ class PeerService {
   }
 
   public createRoom(roomCode?: string, onConnect?: ConnectionCallback, onMessage?: MessageCallback): Promise<string> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.destroy();
       this.isHost = true;
       this.myId = 'host';
@@ -91,18 +91,7 @@ class PeerService {
       this.onConnectCb = onConnect || null;
       this.onMessageCb = onMessage || null;
 
-      let hasResolved = false;
-      const safeResolve = () => {
-        if (!hasResolved) {
-          hasResolved = true;
-          resolve(this.roomCode);
-        }
-      };
-
-      // 600ms safety timer so UI never gets stuck
-      const timer = setTimeout(safeResolve, 600);
-
-      const peerId = `barczynski-quiz-room-${this.roomCode.toLowerCase()}`;
+      const peerId = `bq-${this.roomCode.toLowerCase()}`;
       try {
         this.peer = new Peer(peerId, {
           debug: 1,
@@ -116,9 +105,8 @@ class PeerService {
         });
 
         this.peer.on('open', () => {
-          console.log('[PeerService] Host room registered on PeerJS server:', peerId);
-          clearTimeout(timer);
-          safeResolve();
+          console.log('[PeerService] Host room successfully registered on PeerJS network:', peerId);
+          resolve(this.roomCode);
         });
 
         this.peer.on('connection', (conn) => {
@@ -133,18 +121,21 @@ class PeerService {
 
         this.peer.on('error', (err) => {
           console.warn('[PeerService] Host peer error:', err);
-          clearTimeout(timer);
-          safeResolve();
+          if (err.type === 'unavailable-id') {
+            this.roomCode = this.generateRoomCode();
+            this.createRoom(this.roomCode, onConnect, onMessage).then(resolve).catch(reject);
+          } else {
+            reject(err);
+          }
         });
       } catch (err) {
         console.warn('[PeerService] Peer init exception:', err);
-        clearTimeout(timer);
-        safeResolve();
+        reject(err);
       }
     });
   }
 
-  public joinRoom(roomCode: string, onConnect?: ConnectionCallback, onMessage?: MessageCallback, maxRetries = 3): Promise<boolean> {
+  public joinRoom(roomCode: string, onConnect?: ConnectionCallback, onMessage?: MessageCallback, maxRetries = 5): Promise<boolean> {
     return new Promise((resolve, reject) => {
       let attempts = 0;
 
@@ -170,7 +161,7 @@ class PeerService {
           });
 
           this.peer.on('open', () => {
-            const targetId = `barczynski-quiz-room-${this.roomCode.toLowerCase()}`;
+            const targetId = `bq-${this.roomCode.toLowerCase()}`;
             const conn = this.peer!.connect(targetId, { reliable: true });
             this.connections = [conn];
 
@@ -182,9 +173,9 @@ class PeerService {
             });
 
             conn.on('error', (err) => {
-              console.warn(`[PeerService] Guest connection attempt ${attempts} failed:`, err);
+              console.warn(`[PeerService] Guest connection attempt ${attempts}/${maxRetries} error:`, err);
               if (attempts < maxRetries) {
-                setTimeout(tryConnect, 1000);
+                setTimeout(tryConnect, 1200);
               } else {
                 reject(err);
               }
@@ -192,16 +183,16 @@ class PeerService {
           });
 
           this.peer.on('error', (err) => {
-            console.warn(`[PeerService] Guest peer attempt ${attempts} error:`, err);
+            console.warn(`[PeerService] Guest peer attempt ${attempts}/${maxRetries} error:`, err);
             if (attempts < maxRetries) {
-              setTimeout(tryConnect, 1000);
+              setTimeout(tryConnect, 1200);
             } else {
               reject(err);
             }
           });
         } catch (err) {
           if (attempts < maxRetries) {
-            setTimeout(tryConnect, 1000);
+            setTimeout(tryConnect, 1200);
           } else {
             reject(err);
           }
