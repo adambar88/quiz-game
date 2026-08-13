@@ -37,6 +37,11 @@ export const translations = {
         badge: 'Dzisiejszy Zestaw',
         description: 'Unikalne wyzwanie odnawiane codziennie. Sprawdź się dzisiaj.',
       },
+      versus: {
+        title: 'Pojedynek 1v1',
+        badge: 'Gra we Dwoje',
+        description: 'Graj z żoną lub partnerem na 2 telefonach! Te same pytania, wynik na żywo i podsumowanie.',
+      },
     },
 
     // Selectors
@@ -153,6 +158,25 @@ export const translations = {
     highestElo: 'Najwyższy ELO',
     close: 'Zamknij',
 
+    // Versus Duel Mode
+    versusLobbyTitle: 'Pojedynek 1v1 na 2 Telefonach',
+    createRoom: 'Stwórz Pokój (Host)',
+    joinRoom: 'Dołącz do Pokoju',
+    roomCodeLabel: 'Kod Pokoju',
+    enterRoomCode: 'Wpisz Kod Pokoju (4 znaki)',
+    shareLink: '📋 Kopiuj Link dla Partnera',
+    linkCopied: 'Skopiowano link do gry!',
+    waitingForPartner: 'Oczekiwanie na drugiego gracza...',
+    partnerConnected: '🟢 Partner Połączony!',
+    startDuel: 'ROZPOCZNIJ POJEDYNEK ⚔️',
+    joiningRoom: 'Łączenie z pokojem...',
+    versusWinner: '🏆 PODSUMOWANIE POJEDYNKU',
+    youWon: 'Wygrałeś Pojedynek! 🎉',
+    opponentWon: 'Partner Wygrał Pojedynek! 👑',
+    draw: 'Remis w Pojedynku! 🤝',
+    yourScore: 'Twój Wynik',
+    opponentScore: 'Wynik Partnera',
+
     // Footer
     footerText: '© 2026 Adam Barczynski • Quiz Engine',
   },
@@ -192,6 +216,11 @@ export const translations = {
         title: 'Daily Challenge',
         badge: 'Today’s Set',
         description: 'A unique question set updated daily. Test your skills today.',
+      },
+      versus: {
+        title: '1v1 Duel',
+        badge: '2 Players',
+        description: 'Play with your partner on 2 separate devices! Same questions, live score, and duel summary.',
       },
     },
 
@@ -308,6 +337,25 @@ export const translations = {
     totalScore: 'Total Score',
     highestElo: 'Highest ELO',
     close: 'Close',
+
+    // Versus Duel Mode
+    versusLobbyTitle: '1v1 Duel on 2 Devices',
+    createRoom: 'Create Room (Host)',
+    joinRoom: 'Join Room',
+    roomCodeLabel: 'Room Code',
+    enterRoomCode: 'Enter Room Code (4 chars)',
+    shareLink: '📋 Copy Partner Game Link',
+    linkCopied: 'Game link copied!',
+    waitingForPartner: 'Waiting for partner to connect...',
+    partnerConnected: '🟢 Partner Connected!',
+    startDuel: 'START DUEL ⚔️',
+    joiningRoom: 'Connecting to room...',
+    versusWinner: '🏆 DUEL SUMMARY',
+    youWon: 'You Won the Duel! 🎉',
+    opponentWon: 'Partner Won the Duel! 👑',
+    draw: 'Duel Draw! 🤝',
+    yourScore: 'Your Score',
+    opponentScore: 'Partner Score',
 
     // Footer
     footerText: '© 2026 Adam Barczynski • Quiz Engine',

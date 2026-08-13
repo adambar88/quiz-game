@@ -5,7 +5,7 @@ import { generateQuestions } from './aiProvider.ts';
 import type { AISettings } from './storageService.ts';
 
 export interface QuizConfig {
-  mode: 'classic' | 'survival' | 'blitz' | 'custom' | 'daily';
+  mode: 'classic' | 'survival' | 'blitz' | 'custom' | 'daily' | 'versus';
   category: Category | 'all';
   difficulty: Difficulty | 'dynamic';
   questionCount: number;

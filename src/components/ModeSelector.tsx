@@ -14,13 +14,14 @@ export const ModeSelector: React.FC = () => {
     alert(`${t.seedCopied} ${seedStr}`);
   };
 
-  const modeKeys: QuizMode[] = ['classic', 'survival', 'blitz', 'custom', 'daily'];
+  const modeKeys: QuizMode[] = ['classic', 'survival', 'blitz', 'custom', 'daily', 'versus'];
   const modeIcons: Record<QuizMode, string> = {
     classic: '⚡',
     survival: '🛡️',
     blitz: '🔥',
     custom: '🧠',
     daily: '📅',
+    versus: '⚔️',
   };
 
   return (
@@ -187,7 +188,13 @@ export const ModeSelector: React.FC = () => {
 
       {/* Start Quiz Button */}
       <button
-        onClick={() => quizStore.startQuiz()}
+        onClick={() => {
+          if (mode === 'versus') {
+            quizStore.setShowVersusLobby(true);
+          } else {
+            quizStore.startQuiz();
+          }
+        }}
         disabled={gameState === 'GENERATING'}
         className="w-full py-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-base tracking-wide shadow-lg shadow-emerald-500/20 active:scale-[0.99] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
       >

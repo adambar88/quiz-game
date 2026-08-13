@@ -18,6 +18,7 @@ export const QuizArena: React.FC = () => {
     lives,
     mode,
     eloState,
+    versusOpponentState,
     lang,
   } = useQuizStore();
 
@@ -83,6 +84,13 @@ export const QuizArena: React.FC = () => {
               </span>
             )}
           </div>
+
+          {/* Versus Opponent Score Badge */}
+          {mode === 'versus' && (
+            <div className="flex items-center gap-1.5 font-mono font-bold bg-purple-500/10 border border-purple-500/30 px-2.5 py-1 rounded-lg text-purple-400">
+              <span>⚔️ Partner: {versusOpponentState?.score || 0}</span>
+            </div>
+          )}
 
           {/* Score */}
           <div className="flex items-center gap-1 font-mono font-bold text-emerald-400">

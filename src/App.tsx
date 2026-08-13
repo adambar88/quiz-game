@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useQuizStore } from './state/useQuizStore.ts';
+import { quizStore, useQuizStore } from './state/useQuizStore.ts';
 import { storageService } from './services/storageService.ts';
 import { Header } from './components/Header.tsx';
 import { ModeSelector } from './components/ModeSelector.tsx';
@@ -9,9 +9,11 @@ import { ReviewOverlay } from './components/ReviewOverlay.tsx';
 import { GeneratingState } from './components/GeneratingState.tsx';
 import { AIConfigModal } from './components/AIConfigModal.tsx';
 import { StatsModal } from './components/StatsModal.tsx';
+import { VersusLobbyModal } from './components/VersusLobbyModal.tsx';
+import { VersusSummary } from './components/VersusSummary.tsx';
 
 export function App() {
-  const { gameState } = useQuizStore();
+  const { gameState, mode, showVersusLobby } = useQuizStore();
 
   // Sync theme with system / barczynski-theme
   useEffect(() => {
@@ -42,7 +44,9 @@ export function App() {
           {gameState === 'IDLE' && <ModeSelector />}
           {gameState === 'GENERATING' && <GeneratingState />}
           {(gameState === 'ACTIVE' || gameState === 'REVEAL') && <QuizArena />}
-          {gameState === 'GAME_OVER' && <GameOverSummary />}
+          {gameState === 'GAME_OVER' && (
+            mode === 'versus' ? <VersusSummary /> : <GameOverSummary />
+          )}
           {gameState === 'REVIEW' && <ReviewOverlay />}
         </main>
 
@@ -54,6 +58,12 @@ export function App() {
       {/* Modals */}
       <AIConfigModal />
       <StatsModal />
+      {showVersusLobby && (
+        <VersusLobbyModal
+          onStartDuel={() => quizStore.startQuiz()}
+          onClose={() => quizStore.setShowVersusLobby(false)}
+        />
+      )}
     </div>
   );
 }

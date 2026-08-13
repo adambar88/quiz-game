@@ -9,8 +9,10 @@ import { QuestionEngine } from '../services/questionEngine.ts';
 
 import { translations, type Language } from '../i18n/translations.ts';
 
+import { peerService, type PlayerState } from '../services/peerService.ts';
+
 export type GameState = 'IDLE' | 'GENERATING' | 'ACTIVE' | 'REVEAL' | 'GAME_OVER' | 'REVIEW';
-export type QuizMode = 'classic' | 'survival' | 'blitz' | 'custom' | 'daily';
+export type QuizMode = 'classic' | 'survival' | 'blitz' | 'custom' | 'daily' | 'versus';
 
 export interface UserAnswerRecord {
   question: Question;
@@ -53,6 +55,8 @@ export interface QuizStoreState {
   stats: QuizStats;
   showAIModal: boolean;
   showStatsModal: boolean;
+  showVersusLobby: boolean;
+  versusOpponentState: PlayerState | null;
   generationError: string | null;
 }
 
@@ -96,6 +100,8 @@ let storeState: QuizStoreState = {
   stats: storageService.getStats(),
   showAIModal: false,
   showStatsModal: false,
+  showVersusLobby: false,
+  versusOpponentState: null,
   generationError: null,
 };
 
@@ -177,6 +183,59 @@ export const quizStore = {
     updateState({ showStatsModal: show });
   },
 
+  setShowVersusLobby(show: boolean) {
+    updateState({ showVersusLobby: show });
+  },
+
+  startQuizWithQuestions(questions: Question[]) {
+    if (!questions || questions.length === 0) return;
+    const firstQ = questions[0];
+    const timeLimit = getTimeLimitForQuestion(firstQ, storeState.mode);
+
+    // Register PeerJS listener for progress updates
+    peerService.setCallbacks(undefined, (msg) => {
+      if (msg.type === 'PROGRESS_UPDATE' && msg.playerState) {
+        updateState({ versusOpponentState: msg.playerState });
+      }
+    });
+
+    updateState({
+      questions,
+      currentIndex: 0,
+      selectedOptionIndex: null,
+      isCorrect: null,
+      pointsEarned: 0,
+      score: 0,
+      streak: 0,
+      highestStreak: 0,
+      lives: 3,
+      eloState: createInitialEloState(1200, 3),
+      timeLimitMs: timeLimit,
+      timeRemainingMs: timeLimit,
+      questionStartTime: Date.now(),
+      userAnswers: [],
+      gameState: 'ACTIVE',
+      showVersusLobby: false,
+    });
+  },
+
+  sendVersusProgress() {
+    if (storeState.mode !== 'versus') return;
+    const totalQ = storeState.userAnswers.length;
+    const correctCount = storeState.userAnswers.filter((a) => a.isCorrect).length;
+    const myState: PlayerState = {
+      name: peerService.getIsHost() ? 'Host' : 'Guest',
+      score: storeState.score,
+      streak: storeState.streak,
+      lives: storeState.lives,
+      currentIndex: storeState.currentIndex,
+      isFinished: storeState.gameState === 'GAME_OVER',
+      accuracy: totalQ > 0 ? Math.round((correctCount / totalQ) * 100) : 0,
+      answers: storeState.userAnswers.map((a) => ({ isCorrect: a.isCorrect, timeMs: a.timeSpentMs })),
+    };
+    peerService.sendMessage({ type: 'PROGRESS_UPDATE', playerState: myState });
+  },
+
   async startQuiz() {
     soundEngine.playClick();
     haptics.vibrateClick();
@@ -205,26 +264,11 @@ export const quizStore = {
         throw new Error('No questions could be prepared.');
       }
 
-      const firstQ = questions[0];
-      const timeLimit = getTimeLimitForQuestion(firstQ, mode);
+      if (mode === 'versus') {
+        peerService.sendMessage({ type: 'START_GAME', questions });
+      }
 
-      updateState({
-        questions,
-        currentIndex: 0,
-        selectedOptionIndex: null,
-        isCorrect: null,
-        pointsEarned: 0,
-        score: 0,
-        streak: 0,
-        highestStreak: 0,
-        lives: 3,
-        eloState: createInitialEloState(1200, 3),
-        timeLimitMs: timeLimit,
-        timeRemainingMs: timeLimit,
-        questionStartTime: Date.now(),
-        userAnswers: [],
-        gameState: 'ACTIVE',
-      });
+      this.startQuizWithQuestions(questions);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       updateState({
@@ -308,6 +352,8 @@ export const quizStore = {
       userAnswers: [...userAnswers, newRecord],
       gameState: 'REVEAL',
     });
+
+    this.sendVersusProgress();
   },
 
   handleTimeout() {
