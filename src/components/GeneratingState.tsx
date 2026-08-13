@@ -25,7 +25,7 @@ export const GeneratingState: React.FC = () => {
       <div className="relative flex items-center justify-center w-20 h-20">
         <div className="absolute inset-0 rounded-full border-4 border-emerald-500/20 animate-ping opacity-75" />
         <div className="absolute inset-0 rounded-full border-4 border-t-emerald-500 border-r-emerald-500 border-b-transparent border-l-transparent animate-spin" />
-        <span className="text-3xl relative z-10">🤖</span>
+        <span className="text-3xl relative z-10">🎯</span>
       </div>
 
       {/* Title & Status */}

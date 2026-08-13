@@ -23,9 +23,9 @@ export const CATEGORY_METADATA: Record<Category, CategoryMeta> = {
     accentColor: '#10b981',
     bgTint: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
   },
-  'AI & Machine Learning': {
-    id: 'AI & Machine Learning',
-    icon: '🤖',
+  'Tech & Future': {
+    id: 'Tech & Future',
+    icon: '🚀',
     gradient: 'from-purple-500 to-indigo-400',
     accentColor: '#8b5cf6',
     bgTint: 'bg-purple-500/10 border-purple-500/30 text-purple-400',

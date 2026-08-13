@@ -6,7 +6,7 @@ export const translations = {
     title: 'Quiz',
     subtitle: '.barczynski.dev',
     statsTooltip: 'Statystyki',
-    settingsTooltip: 'Ustawienia AI',
+    settingsTooltip: 'Ustawienia Serwera',
     soundOn: 'Włącz dźwięk',
     soundOff: 'Wycisz dźwięk',
 
@@ -20,7 +20,7 @@ export const translations = {
       survival: {
         title: 'Przetrwanie',
         badge: '3 Życia',
-        description: 'Gra bez końca. Poziom trudności rosnie wraz z Twoją serią zwycięstw.',
+        description: 'Gra bez końca. Poziom trudności rośnie wraz z Twoją serią zwycięstw.',
       },
       blitz: {
         title: 'Szybki Blitz',
@@ -29,8 +29,8 @@ export const translations = {
       },
       custom: {
         title: 'Własny Temat',
-        badge: 'Temat AI',
-        description: 'Wpisz dowolne zagadnienie, a sztuczna inteligencja wygeneruje zestaw pytań.',
+        badge: 'Własny',
+        description: 'Wpisz dowolne zagadnienie do wygenerowania dedykowanego zestawu pytań.',
       },
       daily: {
         title: 'Wyzwanie Dnia',
@@ -45,7 +45,7 @@ export const translations = {
     categories: {
       'Computer Science': 'Informatyka',
       'Web Dev': 'Web Development',
-      'AI & Machine Learning': 'Sztuczna Inteligencja',
+      'Tech & Future': 'Technologia Przyszłości',
       'Cybersecurity': 'Cyberbezpieczeństwo',
       'Gaming & Esports': 'Gry & Esports',
       'Science': 'Biologia & Chemia',
@@ -88,8 +88,8 @@ export const translations = {
     generating: 'Generowanie pytań...',
 
     // Generating State
-    generatingTitle: 'Generowanie Pytań przez AI',
-    generatingSubtitle: 'Sztuczna inteligencja tworzy unikalne pytania po polsku...',
+    generatingTitle: 'Generowanie Pytań',
+    generatingSubtitle: 'Tworzenie unikalnego zestawu pytań po polsku...',
     generatingDetailsMode: 'Tryb',
     generatingDetailsTopic: 'Temat',
     switchToOffline: '⚡ Przełącz na szybką bazę offline',
@@ -123,19 +123,19 @@ export const translations = {
     correctAnswer: 'Poprawna odpowiedź',
 
     // Modals
-    aiSettingsTitle: 'Ustawienia AI',
+    aiSettingsTitle: 'Ustawienia Serwera',
     engineLabel: 'Wybór Silnika Pytań',
-    serverAiEngine: 'Generowanie AI',
+    serverAiEngine: 'Serwer Pytań',
     offlineBankEngine: 'Baza Offline',
-    serverUrlLabel: 'Adres Serwera AI',
+    serverUrlLabel: 'Adres Serwera',
     serverKeyLabel: 'Klucz API (Opcjonalny)',
     serverKeyPlaceholder: 'Domyślny klucz serwera',
-    modelLabel: 'Model AI',
+    modelLabel: 'Model Silnika',
     fallbackOfflineLabel: 'Automatyczny powrót do bazy offline',
-    fallbackOfflineDesc: 'W przypadku braku sieci użyj lokalnej bazy 36 pytań.',
+    fallbackOfflineDesc: 'W przypadku braku sieci użyj lokalnej bazy pytań.',
     testConnection: '🏥 Testuj Połączenie',
     testing: 'Testowanie...',
-    connectionSuccess: '🟢 Połączenie z serwerem AI działa poprawnie!',
+    connectionSuccess: '🟢 Połączenie z serwerem działa poprawnie!',
     cancel: 'Anuluj',
     save: 'Zapisz Ustawienia',
 
@@ -156,7 +156,7 @@ export const translations = {
     title: 'Quiz',
     subtitle: '.barczynski.dev',
     statsTooltip: 'Statistics',
-    settingsTooltip: 'AI Settings',
+    settingsTooltip: 'Server Settings',
     soundOn: 'Enable sound',
     soundOff: 'Mute sound',
 
@@ -179,8 +179,8 @@ export const translations = {
       },
       custom: {
         title: 'Custom Topic',
-        badge: 'AI Topic',
-        description: 'Specify any topic and AI will generate custom trivia questions.',
+        badge: 'Custom',
+        description: 'Specify any topic to generate a custom question set.',
       },
       daily: {
         title: 'Daily Challenge',
@@ -195,7 +195,7 @@ export const translations = {
     categories: {
       'Computer Science': 'Computer Science',
       'Web Dev': 'Web Development',
-      'AI & Machine Learning': 'AI & Machine Learning',
+      'Tech & Future': 'Tech & Future',
       'Cybersecurity': 'Cybersecurity',
       'Gaming & Esports': 'Gaming & Esports',
       'Science': 'Biology & Chemistry',
@@ -238,8 +238,8 @@ export const translations = {
     generating: 'Generating questions...',
 
     // Generating State
-    generatingTitle: 'Generating AI Questions',
-    generatingSubtitle: 'Artificial Intelligence is crafting custom questions in English...',
+    generatingTitle: 'Generating Questions',
+    generatingSubtitle: 'Crafting custom trivia questions in English...',
     generatingDetailsMode: 'Mode',
     generatingDetailsTopic: 'Topic',
     switchToOffline: '⚡ Switch to Fast Offline Bank',
@@ -273,19 +273,19 @@ export const translations = {
     correctAnswer: 'Correct answer',
 
     // Modals
-    aiSettingsTitle: 'AI Settings',
+    aiSettingsTitle: 'Server Settings',
     engineLabel: 'Question Engine',
-    serverAiEngine: 'AI Generation',
+    serverAiEngine: 'Question Server',
     offlineBankEngine: 'Offline Bank',
-    serverUrlLabel: 'AI Server URL',
+    serverUrlLabel: 'Server URL',
     serverKeyLabel: 'API Key (Optional)',
     serverKeyPlaceholder: 'Server default key',
-    modelLabel: 'AI Model',
+    modelLabel: 'Engine Model',
     fallbackOfflineLabel: 'Automatic fallback to offline bank',
-    fallbackOfflineDesc: 'Use 36 static questions if network connection fails.',
+    fallbackOfflineDesc: 'Use local static questions if network connection fails.',
     testConnection: '🏥 Test Connection',
     testing: 'Testing...',
-    connectionSuccess: '🟢 Connection to AI server successful!',
+    connectionSuccess: '🟢 Server connection successful!',
     cancel: 'Cancel',
     save: 'Save Settings',
 

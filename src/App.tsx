@@ -47,7 +47,7 @@ export function App() {
         </main>
 
         <footer className="mt-12 py-4 border-t border-[var(--border)] text-center text-xs text-[var(--text-dim)]">
-          <p>&copy; 2026 Adam Barczynski • AI Trivia & Offline Quiz Engine</p>
+          <p>&copy; 2026 Adam Barczynski • Quiz Engine</p>
         </footer>
       </div>
 

@@ -7,7 +7,7 @@ export type Difficulty = 'easy' | 'medium' | 'hard' | 'expert';
 export type Category =
   | 'Computer Science'
   | 'Web Dev'
-  | 'AI & Machine Learning'
+  | 'Tech & Future'
   | 'Cybersecurity'
   | 'Gaming & Esports'
   | 'Science'

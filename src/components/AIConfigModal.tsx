@@ -84,7 +84,7 @@ export const AIConfigModal: React.FC = () => {
           {formData.activeProvider === 'server' && (
             <div className="space-y-3 p-3.5 rounded-lg bg-emerald-500/5 border border-emerald-500/20">
               <div className="flex items-center justify-between text-xs text-emerald-400 font-semibold mb-1">
-                <span>🤖 {t.serverAiEngine}</span>
+                <span>🌐 {t.serverAiEngine}</span>
               </div>
 
               <div>

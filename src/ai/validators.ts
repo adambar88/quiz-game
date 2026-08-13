@@ -17,7 +17,7 @@ export const QUIZ_QUESTION_JSON_SCHEMA = {
         enum: [
           'Computer Science',
           'Web Dev',
-          'AI & Machine Learning',
+          'Tech & Future',
           'Cybersecurity',
           'Gaming & Esports',
           'Science',
@@ -71,7 +71,7 @@ export const QUIZ_QUESTION_JSON_SCHEMA = {
 export const VALID_CATEGORIES: Category[] = [
   'Computer Science',
   'Web Dev',
-  'AI & Machine Learning',
+  'Tech & Future',
   'Cybersecurity',
   'Gaming & Esports',
   'Science',
