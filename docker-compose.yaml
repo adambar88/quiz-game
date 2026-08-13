@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  brainsprint:
+    container_name: brainsprint
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      coolify:
+        aliases:
+          - brainsprint
+
+networks:
+  coolify:
+    external: true
