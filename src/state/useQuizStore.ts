@@ -837,6 +837,7 @@ export const quizStore = {
   exitToHome() {
     soundEngine.playClick();
     haptics.vibrateClick();
+    QuestionEngine.resetSessionHistory();
     updateState({
       gameState: 'IDLE',
       questions: [],

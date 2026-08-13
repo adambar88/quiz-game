@@ -74,6 +74,12 @@ export class QuestionEngine {
     }
   }
 
+  private static seenTexts = new Set<string>();
+
+  public static resetSessionHistory(): void {
+    QuestionEngine.seenTexts.clear();
+  }
+
   /**
    * Helper to select and shuffle questions from static question bank
    */
@@ -85,14 +91,32 @@ export class QuestionEngine {
   ): Question[] {
     let pool = [...getStaticQuestionBank(lang)];
 
+    // Filter out previously seen questions in current match session
+    const unseenPool = pool.filter((q) => !QuestionEngine.seenTexts.has(q.question));
+    if (unseenPool.length >= count) {
+      pool = unseenPool;
+    } else if (unseenPool.length > 0) {
+      pool = unseenPool;
+    }
+
     if (category !== 'all') {
       const catPool = pool.filter((q) => q.category === category);
-      if (catPool.length > 0) pool = catPool;
+      if (catPool.length >= count) {
+        pool = catPool;
+      } else if (catPool.length > 0) {
+        const remainingNeeded = count - catPool.length;
+        const otherPool = pool.filter((q) => q.category !== category);
+        for (let i = otherPool.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [otherPool[i], otherPool[j]] = [otherPool[j], otherPool[i]];
+        }
+        pool = [...catPool, ...otherPool.slice(0, remainingNeeded)];
+      }
     }
 
     if (difficulty !== 'dynamic') {
       const diffPool = pool.filter((q) => q.difficulty === difficulty);
-      if (diffPool.length > 0) pool = diffPool;
+      if (diffPool.length >= count) pool = diffPool;
     }
 
     // Fisher-Yates shuffle
@@ -102,25 +126,26 @@ export class QuestionEngine {
     }
 
     const selected: Question[] = [];
-    const usedIndices = new Set<number>();
+    const usedInBatch = new Set<number>();
 
     for (let i = 0; i < count; i++) {
       let chosenIndex = i % pool.length;
       for (let attempt = 0; attempt < pool.length; attempt++) {
         const candidate = (i + attempt) % pool.length;
-        if (!usedIndices.has(candidate)) {
+        if (!usedInBatch.has(candidate)) {
           chosenIndex = candidate;
-          usedIndices.add(candidate);
+          usedInBatch.add(candidate);
           break;
         }
       }
 
       const item = pool[chosenIndex];
+      QuestionEngine.seenTexts.add(item.question);
 
       let options: [string, string, string, string] = [...item.options];
       let correctIndex = item.correctIndex;
 
-      if (usedIndices.size >= pool.length && i >= pool.length) {
+      if (usedInBatch.size >= pool.length && i >= pool.length) {
         const correctText = options[correctIndex];
         const shuffled = [...options].sort(() => Math.random() - 0.5) as [string, string, string, string];
         correctIndex = shuffled.indexOf(correctText);
@@ -129,7 +154,7 @@ export class QuestionEngine {
 
       selected.push({
         ...item,
-        id: `static-${item.id}-${i}-${Math.floor(Math.random() * 10000)}`,
+        id: `static-${item.id}-${i}-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
         category: category !== 'all' ? category : item.category,
         options,
         correctIndex,
