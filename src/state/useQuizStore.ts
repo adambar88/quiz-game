@@ -115,7 +115,7 @@ let storeState: QuizStoreState = {
   versusRound: 1,
   versusPickIndex: 0,
   versusShowCategoryPicker: false,
-  versusPlayerName: 'Gracz 1',
+  versusPlayerName: storageService.getPlayerName() || '',
   versusPlayers: [],
   versusOpponentState: null,
   generationError: null,
@@ -200,6 +200,7 @@ export const quizStore = {
   },
 
   setVersusPlayerName(name: string) {
+    storageService.setPlayerName(name);
     peerService.setMyName(name);
     updateState({ versusPlayerName: name });
   },

@@ -201,4 +201,27 @@ export const storageService = {
 
     return newEntry;
   },
+
+  // Player Name / Nick
+  getPlayerName(): string {
+    try {
+      const stored = localStorage.getItem('barczynski-quiz-player-name');
+      if (stored && stored.trim().length > 0) return stored.trim();
+    } catch {
+      // ignore
+    }
+    return '';
+  },
+
+  setPlayerName(name: string): void {
+    try {
+      if (name && name.trim().length > 0) {
+        localStorage.setItem('barczynski-quiz-player-name', name.trim());
+      } else {
+        localStorage.removeItem('barczynski-quiz-player-name');
+      }
+    } catch {
+      // ignore
+    }
+  },
 };

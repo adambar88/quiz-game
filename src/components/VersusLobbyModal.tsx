@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { peerService } from '../services/peerService.ts';
 import { quizStore, useQuizStore } from '../state/useQuizStore.ts';
 import { translations } from '../i18n/translations.ts';
+import { storageService } from '../services/storageService.ts';
 
 interface VersusLobbyModalProps {
   onStartDuel: () => void;
@@ -15,7 +16,9 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
   const [activeTab, setActiveTab] = useState<'create' | 'join'>('create');
   const [roomCode, setRoomCode] = useState<string>('');
   const [inputCode, setInputCode] = useState<string>('');
-  const [playerNameInput, setPlayerNameInput] = useState<string>(versusPlayerName || '');
+  const [playerNameInput, setPlayerNameInput] = useState<string>(
+    versusPlayerName || storageService.getPlayerName() || ''
+  );
   const [connectedCount, setConnectedCount] = useState<number>(1);
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
