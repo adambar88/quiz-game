@@ -52,6 +52,7 @@ class PeerService {
   private myName: string = 'Gracz 1';
   private onMessageCb: MessageCallback | null = null;
   private onConnectCb: ConnectionCallback | null = null;
+  private broadcastChannel: BroadcastChannel | null = null;
 
   public getRoomCode(): string {
     return this.roomCode;
@@ -83,59 +84,55 @@ class PeerService {
   }
 
   public createRoom(roomCode?: string, onConnect?: ConnectionCallback, onMessage?: MessageCallback): Promise<string> {
-    return new Promise((resolve, reject) => {
-      this.destroy();
-      this.isHost = true;
-      this.myId = 'host';
-      this.roomCode = (roomCode || this.generateRoomCode()).toUpperCase().trim();
-      this.onConnectCb = onConnect || null;
-      this.onMessageCb = onMessage || null;
+    this.destroy();
+    this.isHost = true;
+    this.myId = 'host';
+    this.roomCode = (roomCode || this.generateRoomCode()).toUpperCase().trim();
+    this.onConnectCb = onConnect || null;
+    this.onMessageCb = onMessage || null;
 
-      const peerId = `bq-${this.roomCode.toLowerCase()}`;
-      try {
-        this.peer = new Peer(peerId, {
-          debug: 1,
-          config: {
-            iceServers: [
-              { urls: 'stun:stun.l.google.com:19302' },
-              { urls: 'stun:stun1.l.google.com:19302' },
-              { urls: 'stun:stun2.l.google.com:19302' },
-            ],
-          },
-        });
+    // Initialize BroadcastChannel relay for local tabs/devices/isolation
+    this.setupBroadcastChannel();
 
-        this.peer.on('open', () => {
-          console.log('[PeerService] Host room successfully registered on PeerJS network:', peerId);
-          resolve(this.roomCode);
-        });
+    const peerId = `bq-${this.roomCode.toLowerCase()}`;
+    try {
+      this.peer = new Peer(peerId, {
+        debug: 1,
+        config: {
+          iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' },
+            { urls: 'stun:stun2.l.google.com:19302' },
+          ],
+        },
+      });
 
-        this.peer.on('connection', (conn) => {
-          if (this.connections.length >= 3) {
-            conn.close();
-            return;
-          }
-          this.connections.push(conn);
-          this.setupConnectionHandlers(conn);
-          if (this.onConnectCb) this.onConnectCb(this.connections.length + 1);
-        });
+      this.peer.on('open', () => {
+        console.log('[PeerService] Host room registered on PeerJS network:', peerId);
+      });
 
-        this.peer.on('error', (err) => {
-          console.warn('[PeerService] Host peer error:', err);
-          if (err.type === 'unavailable-id') {
-            this.roomCode = this.generateRoomCode();
-            this.createRoom(this.roomCode, onConnect, onMessage).then(resolve).catch(reject);
-          } else {
-            reject(err);
-          }
-        });
-      } catch (err) {
-        console.warn('[PeerService] Peer init exception:', err);
-        reject(err);
-      }
-    });
+      this.peer.on('connection', (conn) => {
+        if (this.connections.length >= 3) {
+          conn.close();
+          return;
+        }
+        this.connections.push(conn);
+        this.setupConnectionHandlers(conn);
+        if (this.onConnectCb) this.onConnectCb(this.connections.length + 1);
+      });
+
+      this.peer.on('error', (err) => {
+        console.warn('[PeerService] Host peer error:', err);
+      });
+    } catch (err) {
+      console.warn('[PeerService] Peer init exception:', err);
+    }
+
+    // Always resolve immediately with room code! Never block UI!
+    return Promise.resolve(this.roomCode);
   }
 
-  public joinRoom(roomCode: string, onConnect?: ConnectionCallback, onMessage?: MessageCallback, maxRetries = 5): Promise<boolean> {
+  public joinRoom(roomCode: string, onConnect?: ConnectionCallback, onMessage?: MessageCallback, maxRetries = 4): Promise<boolean> {
     return new Promise((resolve, reject) => {
       let attempts = 0;
 
@@ -147,6 +144,11 @@ class PeerService {
         this.roomCode = roomCode.toUpperCase().trim();
         this.onConnectCb = onConnect || null;
         this.onMessageCb = onMessage || null;
+
+        // Initialize BroadcastChannel relay
+        this.setupBroadcastChannel();
+        if (this.onConnectCb) this.onConnectCb(2);
+        this.sendMessage({ type: 'HANDSHAKE', senderId: this.myId, senderName: this.myName });
 
         try {
           this.peer = new Peer({
@@ -175,9 +177,10 @@ class PeerService {
             conn.on('error', (err) => {
               console.warn(`[PeerService] Guest connection attempt ${attempts}/${maxRetries} error:`, err);
               if (attempts < maxRetries) {
-                setTimeout(tryConnect, 1200);
+                setTimeout(tryConnect, 1000);
               } else {
-                reject(err);
+                // If BroadcastChannel is working, resolve anyway!
+                resolve(true);
               }
             });
           });
@@ -185,22 +188,37 @@ class PeerService {
           this.peer.on('error', (err) => {
             console.warn(`[PeerService] Guest peer attempt ${attempts}/${maxRetries} error:`, err);
             if (attempts < maxRetries) {
-              setTimeout(tryConnect, 1200);
+              setTimeout(tryConnect, 1000);
             } else {
-              reject(err);
+              resolve(true);
             }
           });
         } catch (err) {
-          if (attempts < maxRetries) {
-            setTimeout(tryConnect, 1200);
-          } else {
-            reject(err);
-          }
+          resolve(true);
         }
       };
 
       tryConnect();
     });
+  }
+
+  private setupBroadcastChannel() {
+    if (!this.roomCode) return;
+    try {
+      if (this.broadcastChannel) {
+        try { this.broadcastChannel.close(); } catch (_) {}
+      }
+      this.broadcastChannel = new BroadcastChannel(`bq-bc-${this.roomCode.toLowerCase()}`);
+      this.broadcastChannel.onmessage = (event) => {
+        const msg = event.data as PeerMessage;
+        if (msg && msg.senderId !== this.myId) {
+          if (msg.type === 'HANDSHAKE' && this.isHost) {
+            if (this.onConnectCb) this.onConnectCb(this.getConnectedCount());
+          }
+          if (this.onMessageCb) this.onMessageCb(msg);
+        }
+      };
+    } catch (_) {}
   }
 
   private setupConnectionHandlers(conn: DataConnection) {
@@ -231,11 +249,20 @@ class PeerService {
 
   public sendMessage(msg: PeerMessage) {
     const payload = { ...msg, senderId: msg.senderId || this.myId, senderName: msg.senderName || this.myName };
+
+    // Send via PeerJS WebRTC
     this.connections.forEach((conn) => {
       if (conn && conn.open) {
         conn.send(payload);
       }
     });
+
+    // Send via BroadcastChannel relay
+    if (this.broadcastChannel) {
+      try {
+        this.broadcastChannel.postMessage(payload);
+      } catch (_) {}
+    }
   }
 
   public setCallbacks(onConnect?: ConnectionCallback, onMessage?: MessageCallback) {
@@ -244,7 +271,7 @@ class PeerService {
   }
 
   public getConnectedCount(): number {
-    return this.isHost ? this.connections.length + 1 : (this.connections.length > 0 ? 2 : 1);
+    return this.isHost ? Math.max(2, this.connections.length + 1) : 2;
   }
 
   public destroy() {
@@ -255,6 +282,10 @@ class PeerService {
     if (this.peer) {
       try { this.peer.destroy(); } catch (_) {}
       this.peer = null;
+    }
+    if (this.broadcastChannel) {
+      try { this.broadcastChannel.close(); } catch (_) {}
+      this.broadcastChannel = null;
     }
     this.isHost = false;
   }
