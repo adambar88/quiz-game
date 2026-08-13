@@ -1,3 +1,4 @@
+import React from 'react';
 import { useQuizStore, getQuestionsPerPick } from '../state/useQuizStore.ts';
 import { CATEGORY_METADATA } from '../data/categories.ts';
 import { translations } from '../i18n/translations.ts';
@@ -15,7 +16,7 @@ export const VersusCategoryPickerModal: React.FC<VersusCategoryPickerModalProps>
   isMyTurn,
   onCategoryChosen,
 }) => {
-  const { lang, versusPickIndex } = useQuizStore();
+  const { lang, versusPickIndex, versusOpponentState, versusPlayerName } = useQuizStore();
   const t = translations[lang];
 
   const playerCount = Math.max(2, peerService.getConnectedCount());
@@ -23,21 +24,24 @@ export const VersusCategoryPickerModal: React.FC<VersusCategoryPickerModalProps>
 
   const categoriesList = Object.keys(CATEGORY_METADATA) as Category[];
 
+  const myName = versusPlayerName || (peerService.getIsHost() ? 'Gracz 1' : 'Gracz 2');
+  const opponentName = versusOpponentState?.name || (peerService.getIsHost() ? 'Gracz 2' : 'Gracz 1');
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
       <div className="w-full max-w-xl p-6 glass-panel rounded-2xl border border-[var(--border)] shadow-2xl space-y-5 max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="text-center space-y-1.5 flex-shrink-0">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold">
-            🏁 Wybór {versusPickIndex + 1} ({questionsPerPick} {questionsPerPick === 1 ? 'pytanie' : 'pytania'} z tej kategorii)
+            🏁 Wybór {versusPickIndex + 1} ({questionsPerPick} {questionsPerPick === 1 ? 'pytanie' : 'pytania'} z wybranej kategorii)
           </div>
           <h2 className="text-xl font-extrabold tracking-tight">
-            {isMyTurn ? '🎯 Twoja Kolej na Wybór Kategorii!' : '⏳ Oczekiwanie na Wybór Kategorii...'}
+            {isMyTurn ? `🎯 Twoja Kolej na Wybór (${myName})!` : `⏳ ${opponentName} Wybiera Kategorię...`}
           </h2>
           <p className="text-xs text-[var(--text-dim)] max-w-md mx-auto">
             {isMyTurn
-              ? `Wybierz kategorię dla WSZYSTKICH ${playerCount} uczestników na kolejne pytania.`
-              : `Kolejny gracz wybiera kategorię dla całej grupy.`}
+              ? `Wybierz kategorię pytań dla Waszego pojedynku.`
+              : `Gracz ${opponentName} wybiera w tym momencie kategorię dla całej grupy.`}
           </p>
         </div>
 
@@ -68,15 +72,20 @@ export const VersusCategoryPickerModal: React.FC<VersusCategoryPickerModalProps>
             })}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-12 space-y-4">
-            <div className="relative flex items-center justify-center w-16 h-16">
+          <div className="flex flex-col items-center justify-center py-10 space-y-4 text-center">
+            <div className="relative flex items-center justify-center w-20 h-20">
               <div className="absolute inset-0 rounded-full border-4 border-emerald-500/20 animate-ping opacity-75" />
               <div className="absolute inset-0 rounded-full border-4 border-t-emerald-500 border-r-emerald-500 border-b-transparent border-l-transparent animate-spin" />
-              <span className="text-2xl">⏳</span>
+              <span className="text-3xl">🏎️</span>
             </div>
-            <p className="text-xs text-[var(--text-dim)] font-mono animate-pulse">
-              Gracz dokonuje wyboru kategorii dla całej grupy...
-            </p>
+            <div className="space-y-1">
+              <p className="text-sm font-bold text-emerald-400 font-mono animate-pulse">
+                {opponentName} właśnie wybiera kategorię...
+              </p>
+              <p className="text-xs text-[var(--text-dim)]">
+                Gdy kategoria zostanie wybrana, od razu rozpocznie się generowanie pytań!
+              </p>
+            </div>
           </div>
         )}
       </div>
