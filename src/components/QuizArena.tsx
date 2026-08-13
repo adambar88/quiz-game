@@ -91,6 +91,20 @@ export const QuizArena: React.FC = () => {
           <div className="flex items-center gap-1 font-mono font-bold text-emerald-400">
             <span>🏆 {score}</span>
           </div>
+
+          {/* Exit Button */}
+          <button
+            onClick={() => {
+              if (window.confirm(lang === 'pl' ? 'Czy na pewno chcesz opuścić rozgrywkę?' : 'Are you sure you want to leave the game?')) {
+                quizStore.exitToHome();
+              }
+            }}
+            className="px-2 py-0.5 rounded bg-red-500/10 hover:bg-red-500/20 text-red-400 text-[10px] sm:text-xs font-bold transition-all border border-red-500/30 flex items-center gap-1 active:scale-95"
+            title={lang === 'pl' ? 'Wyjdź do głównego menu' : 'Exit to main menu'}
+          >
+            <span>🚪</span>
+            <span className="hidden sm:inline">{lang === 'pl' ? 'Wyjdź' : 'Exit'}</span>
+          </button>
         </div>
       </div>
 

@@ -2,18 +2,35 @@ import React from 'react';
 import { quizStore, useQuizStore } from '../state/useQuizStore.ts';
 
 export const Header: React.FC = () => {
-  const { soundMuted, lang } = useQuizStore();
+  const { soundMuted, lang, gameState } = useQuizStore();
 
   const toggleLanguage = () => {
     quizStore.setLanguage(lang === 'pl' ? 'en' : 'pl');
   };
 
+  const handleExitClick = () => {
+    if (window.confirm(lang === 'pl' ? 'Czy na pewno chcesz przerwać grę i wrócić do głównego menu?' : 'Are you sure you want to exit to the main menu?')) {
+      quizStore.exitToHome();
+    }
+  };
+
   return (
     <header className="flex items-center justify-between py-1.5 sm:py-3 mb-1.5 sm:mb-3 border-b border-[var(--border)]">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2.5">
         <h1 className="text-xl font-bold tracking-tight">
           BrainSprint
         </h1>
+
+        {gameState !== 'IDLE' && (
+          <button
+            onClick={handleExitClick}
+            className="px-2.5 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-bold transition-all border border-red-500/30 flex items-center gap-1.5 active:scale-95"
+            title={lang === 'pl' ? 'Wyjdź z gry i wróć do menu głównego' : 'Exit game to main menu'}
+          >
+            <span>🏠</span>
+            <span className="hidden sm:inline">{lang === 'pl' ? 'Wyjdź do menu' : 'Exit to Menu'}</span>
+          </button>
+        )}
       </div>
 
       <div className="flex items-center gap-2">
