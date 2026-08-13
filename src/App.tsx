@@ -49,7 +49,7 @@ export function App() {
   }, []);
 
   return (
-    <div className="min-h-screen py-2 sm:py-8 px-2.5 sm:px-4 flex flex-col justify-between">
+    <div className="min-h-screen pt-10 pb-4 sm:py-8 px-2.5 sm:px-4 flex flex-col justify-between">
       <div className="app-container flex flex-col flex-1">
         <Header />
 

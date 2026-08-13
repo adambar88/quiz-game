@@ -42,7 +42,14 @@ export const QuizArena: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [gameState, selectedOptionIndex]);
 
-  if (!currentQ) return null;
+  if (!currentQ) {
+    return (
+      <div className="p-8 glass-panel text-center flex flex-col items-center justify-center gap-3 my-4">
+        <div className="w-8 h-8 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-sm font-medium text-[var(--text-dim)]">Wczytywanie pytań...</p>
+      </div>
+    );
+  }
 
   const categoryTranslated = (t.categories as Record<string, string>)[currentQ.category] || currentQ.category;
   const difficultyTranslated = t.difficulties[currentQ.difficulty as Difficulty] || currentQ.difficulty;

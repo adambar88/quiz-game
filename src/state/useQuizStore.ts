@@ -314,10 +314,11 @@ export const quizStore = {
         });
       } else if (msg.type === 'ROUND_QUESTIONS' && msg.questions) {
         // Deduplicate incoming questions by ID or text to prevent double-appends (e.g. WebRTC + BroadcastChannel)
-        const existingIds = new Set(storeState.questions.map((q) => q.id || q.question));
-        const uniqueNew = msg.questions.filter((q) => !existingIds.has(q.id || q.question));
+        const safeQuestions = storeState.questions || [];
+        const existingIds = new Set(safeQuestions.filter((q) => q && (q.id || q.question)).map((q) => q.id || q.question));
+        const uniqueNew = (msg.questions || []).filter((q) => q && !existingIds.has(q.id || q.question));
 
-        const newAll = uniqueNew.length > 0 ? [...storeState.questions, ...uniqueNew] : storeState.questions;
+        const newAll = uniqueNew.length > 0 ? [...safeQuestions, ...uniqueNew] : safeQuestions;
         const nextIdx = storeState.userAnswers.length;
         const curQ = newAll[nextIdx] || storeState.questions[storeState.currentIndex] || msg.questions[0];
         const tLimit = getTimeLimitForQuestion(curQ, 'versus');
