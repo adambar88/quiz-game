@@ -810,6 +810,16 @@ export const quizStore = {
     updateState({ gameState: 'REVIEW' });
   },
 
+  playAgain() {
+    soundEngine.playClick();
+    haptics.vibrateClick();
+    if (storeState.mode === 'versus') {
+      this.startVersusDuel();
+    } else {
+      this.startQuiz();
+    }
+  },
+
   exitToHome() {
     soundEngine.playClick();
     haptics.vibrateClick();

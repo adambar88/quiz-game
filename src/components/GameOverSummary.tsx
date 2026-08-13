@@ -78,10 +78,17 @@ export const GameOverSummary: React.FC = () => {
         </button>
 
         <button
-          onClick={() => quizStore.exitToHome()}
-          className="w-full py-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm tracking-wide shadow-lg shadow-emerald-500/20 active:scale-[0.99] transition-all"
+          onClick={() => quizStore.playAgain()}
+          className="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm tracking-wide shadow-lg shadow-emerald-500/20 active:scale-[0.99] transition-all"
         >
           {t.playAgain} 🔄
+        </button>
+
+        <button
+          onClick={() => quizStore.exitToHome()}
+          className="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-[var(--text-dim)] hover:text-white transition-colors"
+        >
+          🏠 Powrót do Menu
         </button>
       </div>
     </div>

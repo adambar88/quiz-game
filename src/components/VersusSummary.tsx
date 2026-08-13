@@ -103,19 +103,29 @@ export const VersusSummary: React.FC = () => {
       </div>
 
       {/* Actions */}
-      <div className="flex flex-wrap items-center justify-center gap-3 w-full pt-2">
+      <div className="flex flex-col gap-2.5 w-full pt-2">
         <button
-          onClick={() => quizStore.exitToHome()}
-          className="flex-1 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-bold transition-all shadow-md"
+          onClick={() => quizStore.playAgain()}
+          className="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-bold transition-all shadow-md active:scale-[0.99]"
         >
           Zagraj Ponownie 🔄
         </button>
-        <button
-          onClick={() => quizStore.goToReview()}
-          className="px-5 py-3.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-[var(--text)] transition-all border border-[var(--border)]"
-        >
-          {t.reviewAnswers}
-        </button>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => quizStore.goToReview()}
+            className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-[var(--text)] transition-all border border-[var(--border)]"
+          >
+            🔍 {t.reviewAnswers}
+          </button>
+
+          <button
+            onClick={() => quizStore.exitToHome()}
+            className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-[var(--text-dim)] hover:text-white transition-all border border-[var(--border)]"
+          >
+            🏠 Powrót do Menu
+          </button>
+        </div>
       </div>
     </div>
   );
