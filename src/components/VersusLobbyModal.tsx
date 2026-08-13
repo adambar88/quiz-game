@@ -37,11 +37,9 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
   const handleCreateRoom = async () => {
     setErrorMsg(null);
     setIsConnecting(true);
-    const code = peerService.generateRoomCode();
-    setRoomCode(code);
     try {
-      await peerService.createRoom(
-        code,
+      const code = await peerService.createRoom(
+        undefined,
         (count) => setConnectedCount(count),
         (msg) => {
           if (msg.type === 'START_GAME' && msg.questions) {
@@ -49,8 +47,9 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
           }
         }
       );
+      setRoomCode(code);
     } catch (err: any) {
-      console.warn('[VersusLobby] Room creation warning:', err);
+      setErrorMsg('Nie udało się utworzyć pokoju. Spróbuj ponownie.');
     } finally {
       setIsConnecting(false);
     }
@@ -79,7 +78,7 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
       setRoomCode(targetCode);
       setConnectedCount(2);
     } catch (err: any) {
-      setErrorMsg('Nie odnaleziono pokoju o podanym kodzie. Upewnij się, że Host stworzył pokój.');
+      setErrorMsg('Nie odnaleziono pokoju o podanym kodzie. Upewnij się, że Host stworzył pokój i odczekaj chwilę.');
     } finally {
       setIsConnecting(false);
     }
@@ -175,19 +174,27 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
         {/* TAB 1: CREATE ROOM (HOST) */}
         {activeTab === 'create' && (
           <div className="space-y-5 text-center">
-            <div className="p-4 rounded-xl bg-black/40 border border-[var(--border)] space-y-2">
+            <div className="p-4 rounded-xl bg-black/40 border border-[var(--border)] space-y-2 relative">
               <span className="text-xs uppercase font-semibold text-[var(--text-dim)]">
                 {t.roomCodeLabel}
               </span>
-              <div className="text-3xl font-mono font-extrabold tracking-widest text-emerald-400">
-                {roomCode || '....'}
+              <div className="text-3xl font-mono font-extrabold tracking-widest text-emerald-400 flex items-center justify-center gap-2">
+                {isConnecting ? (
+                  <div className="flex items-center gap-2 text-sm text-[var(--text-dim)] font-mono">
+                    <span className="w-4 h-4 rounded-full border-2 border-emerald-400 border-t-transparent animate-spin" />
+                    Rejestrowanie pokoju...
+                  </div>
+                ) : (
+                  roomCode || '....'
+                )}
               </div>
             </div>
 
             {/* Share Link Button */}
             <button
               onClick={handleCopyLink}
-              className="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-[var(--border)] text-xs font-semibold text-[var(--text)] transition-all flex items-center justify-center gap-2"
+              disabled={!roomCode || isConnecting}
+              className="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-[var(--border)] text-xs font-semibold text-[var(--text)] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {copied ? '✅ ' + t.linkCopied : t.shareLink}
             </button>
@@ -236,12 +243,13 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
             <button
               onClick={() => handleJoinRoom()}
               disabled={isConnecting || inputCode.length < 4}
-              className={`w-full py-3.5 rounded-xl text-sm font-extrabold transition-all shadow-lg ${
+              className={`w-full py-3.5 rounded-xl text-sm font-extrabold transition-all shadow-lg flex items-center justify-center gap-2 ${
                 inputCode.length >= 4 && !isConnecting
                   ? 'bg-emerald-500 hover:bg-emerald-400 text-black'
                   : 'bg-white/10 text-[var(--text-dim)] cursor-not-allowed'
               }`}
             >
+              {isConnecting && <span className="w-4 h-4 rounded-full border-2 border-black border-t-transparent animate-spin" />}
               {isConnecting ? t.joiningRoom : t.joinRoom}
             </button>
 
