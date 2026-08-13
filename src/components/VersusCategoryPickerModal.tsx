@@ -1,12 +1,12 @@
 import React from 'react';
-import { useQuizStore, quizStore } from '../state/useQuizStore.ts';
+import { useQuizStore } from '../state/useQuizStore.ts';
 import { CATEGORY_METADATA } from '../data/categories.ts';
 import { translations } from '../i18n/translations.ts';
 import type { Category } from '../types/quiz.ts';
 import { peerService } from '../services/peerService.ts';
 
 interface VersusCategoryPickerModalProps {
-  currentRound: number; // 1, 2, 3, or 4
+  currentRound: number;
   isMyTurn: boolean;
   onCategoryChosen: (category: Category) => void;
 }
@@ -16,14 +16,13 @@ export const VersusCategoryPickerModal: React.FC<VersusCategoryPickerModalProps>
   isMyTurn,
   onCategoryChosen,
 }) => {
-  const { lang } = useQuizStore();
+  const { lang, versusPickIndex } = useQuizStore();
   const t = translations[lang];
 
-  const categoriesList = Object.keys(CATEGORY_METADATA) as Category[];
+  const playerCount = Math.max(2, peerService.getConnectedCount());
+  const questionsPerPick = Math.max(1, Math.floor(12 / playerCount));
 
-  const handleSelectCategory = (cat: Category) => {
-    onCategoryChosen(cat);
-  };
+  const categoriesList = Object.keys(CATEGORY_METADATA) as Category[];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
@@ -31,15 +30,15 @@ export const VersusCategoryPickerModal: React.FC<VersusCategoryPickerModalProps>
         {/* Header */}
         <div className="text-center space-y-1.5 flex-shrink-0">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold">
-            ⚔️ Runda {currentRound} z 4 (Pytania {(currentRound - 1) * 3 + 1}-{(currentRound) * 3})
+            🏁 Wybór {versusPickIndex + 1} ({questionsPerPick} {questionsPerPick === 1 ? 'pytanie' : 'pytania'} z tej kategorii)
           </div>
           <h2 className="text-xl font-extrabold tracking-tight">
-            {isMyTurn ? '🎯 Wybierz Kategorię dla OBU Graczy' : '⏳ Partner Wybiera Kategorię...'}
+            {isMyTurn ? '🎯 Twoja Kolej na Wybór Kategorii!' : '⏳ Oczekiwanie na Wybór Kategorii...'}
           </h2>
           <p className="text-xs text-[var(--text-dim)] max-w-md mx-auto">
             {isMyTurn
-              ? 'Twoja kolej! Wybrana kategoria zdeterminuje kolejne 3 pytania w pojedynku.'
-              : 'Drugi gracz dokonuje wyboru kategorii na tę rundę.'}
+              ? `Wybierz kategorię dla WSZYSTKICH ${playerCount} uczestników na kolejne pytania.`
+              : `Kolejny gracz wybiera kategorię dla całej grupy.`}
           </p>
         </div>
 
@@ -52,7 +51,7 @@ export const VersusCategoryPickerModal: React.FC<VersusCategoryPickerModalProps>
               return (
                 <button
                   key={cat}
-                  onClick={() => handleSelectCategory(cat)}
+                  onClick={() => onCategoryChosen(cat)}
                   className="p-3 rounded-xl text-left glass-panel border border-[var(--border)] hover:border-emerald-500 hover:scale-[1.02] active:scale-[0.98] transition-all flex flex-col justify-between group h-24 relative overflow-hidden"
                 >
                   <div className={`absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl ${meta.gradient} opacity-10 rounded-bl-full group-hover:opacity-25 transition-opacity`} />
@@ -77,7 +76,7 @@ export const VersusCategoryPickerModal: React.FC<VersusCategoryPickerModalProps>
               <span className="text-2xl">⏳</span>
             </div>
             <p className="text-xs text-[var(--text-dim)] font-mono animate-pulse">
-              Oczekiwanie na przesłanie wyboru przez partnera...
+              Gracz dokonuje wyboru kategorii dla całej grupy...
             </p>
           </div>
         )}

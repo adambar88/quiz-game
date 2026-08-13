@@ -7,6 +7,8 @@ import type { Category, Difficulty } from '../types/quiz.ts';
 
 import { CATEGORY_METADATA } from '../data/categories.ts';
 
+import { VersusLiveLeaderboard } from './VersusLiveLeaderboard.tsx';
+
 export const QuizArena: React.FC = () => {
   const {
     questions,
@@ -48,6 +50,9 @@ export const QuizArena: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-5">
+      {/* Versus Live Race Leaderboard */}
+      {mode === 'versus' && <VersusLiveLeaderboard />}
+
       {/* Top Info Bar */}
       <div className="flex items-center justify-between p-3.5 glass-panel text-xs">
         {/* Question Counter & Category */}

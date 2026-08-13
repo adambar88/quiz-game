@@ -38,9 +38,9 @@ export const translations = {
         description: 'Unikalne wyzwanie odnawiane codziennie. Sprawdź się dzisiaj.',
       },
       versus: {
-        title: 'Pojedynek 1v1',
-        badge: '12 Pytania • 4 Rundy',
-        description: 'Gra dla 2 osób: 12 pytań w 4 rundach. Gracze na przemian wybierają kogoś kategorię co 3 pytania!',
+        title: 'Wyścig 2-4 Graczy',
+        badge: '12 Pytania • Tryb Wyścigu',
+        description: 'Gra dla 2-4 uczestników. 12 pytań z naprzemiennym wyborem kategorii i tablicą wyników na żywo!',
       },
     },
 
@@ -159,7 +159,7 @@ export const translations = {
     close: 'Zamknij',
 
     // Versus Duel Mode
-    versusLobbyTitle: 'Pojedynek 1v1 na 2 Telefonach',
+    versusLobbyTitle: 'Wyścig 2-4 Graczy',
     createRoom: 'Stwórz Pokój (Host)',
     joinRoom: 'Dołącz do Pokoju',
     roomCodeLabel: 'Kod Pokoju',

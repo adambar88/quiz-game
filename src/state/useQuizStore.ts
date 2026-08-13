@@ -57,7 +57,10 @@ export interface QuizStoreState {
   showStatsModal: boolean;
   showVersusLobby: boolean;
   versusRound: number;
+  versusPickIndex: number;
   versusShowCategoryPicker: boolean;
+  versusPlayerName: string;
+  versusPlayers: PlayerState[];
   versusOpponentState: PlayerState | null;
   generationError: string | null;
 }
@@ -104,7 +107,10 @@ let storeState: QuizStoreState = {
   showStatsModal: false,
   showVersusLobby: false,
   versusRound: 1,
+  versusPickIndex: 0,
   versusShowCategoryPicker: false,
+  versusPlayerName: 'Gracz 1',
+  versusPlayers: [],
   versusOpponentState: null,
   generationError: null,
 };
@@ -187,6 +193,11 @@ export const quizStore = {
     updateState({ showStatsModal: show });
   },
 
+  setVersusPlayerName(name: string) {
+    peerService.setMyName(name);
+    updateState({ versusPlayerName: name });
+  },
+
   setShowVersusLobby(show: boolean) {
     updateState({ showVersusLobby: show });
   },
@@ -195,6 +206,7 @@ export const quizStore = {
     updateState({
       mode: 'versus',
       versusRound: 1,
+      versusPickIndex: 0,
       versusShowCategoryPicker: true,
       showVersusLobby: false,
       questions: [],
@@ -212,7 +224,11 @@ export const quizStore = {
     // Register PeerJS listener for versus messages
     peerService.setCallbacks(undefined, (msg) => {
       if (msg.type === 'PROGRESS_UPDATE' && msg.playerState) {
-        updateState({ versusOpponentState: msg.playerState });
+        const existing = storeState.versusPlayers.filter((p) => p.id !== msg.playerState!.id);
+        updateState({
+          versusPlayers: [...existing, msg.playerState!],
+          versusOpponentState: msg.playerState,
+        });
       } else if (msg.type === 'ROUND_QUESTIONS' && msg.questions) {
         const updated = [...storeState.questions, ...msg.questions];
         const firstQ = updated[storeState.currentIndex];
@@ -231,7 +247,9 @@ export const quizStore = {
   },
 
   async handleVersusCategoryChoice(chosenCategory: Category) {
-    const { versusRound, difficulty, seedStr, aiSettings, lang, questions } = storeState;
+    const { versusRound, versusPickIndex, difficulty, seedStr, aiSettings, lang, questions } = storeState;
+    const playerCount = Math.max(2, peerService.getConnectedCount());
+    const qCount = Math.max(1, Math.floor(12 / playerCount));
 
     updateState({
       gameState: 'GENERATING',
@@ -241,16 +259,19 @@ export const quizStore = {
     peerService.sendMessage({
       type: 'CATEGORY_PICK',
       roundIndex: versusRound,
+      pickIndex: versusPickIndex,
       chosenCategory,
+      pickerId: peerService.getMyId(),
+      pickerName: storeState.versusPlayerName,
     });
 
     try {
-      const new3Questions = await QuestionEngine.prepareQuestions({
+      const newQuestions = await QuestionEngine.prepareQuestions({
         mode: 'versus',
         category: chosenCategory,
         difficulty,
-        questionCount: 3,
-        seedStr: `${seedStr}_r${versusRound}`,
+        questionCount: qCount,
+        seedStr: `${seedStr}_p${versusPickIndex}`,
         aiSettings,
         lang,
       });
@@ -258,15 +279,17 @@ export const quizStore = {
       peerService.sendMessage({
         type: 'ROUND_QUESTIONS',
         roundIndex: versusRound,
-        questions: new3Questions,
+        pickIndex: versusPickIndex,
+        questions: newQuestions,
       });
 
-      const updated = [...questions, ...new3Questions];
+      const updated = [...questions, ...newQuestions];
       const firstQ = updated[storeState.currentIndex];
       const timeLimit = getTimeLimitForQuestion(firstQ, 'versus');
 
       updateState({
         questions: updated,
+        versusPickIndex: versusPickIndex + 1,
         timeLimitMs: timeLimit,
         timeRemainingMs: timeLimit,
         questionStartTime: Date.now(),
@@ -318,7 +341,8 @@ export const quizStore = {
     const totalQ = storeState.userAnswers.length;
     const correctCount = storeState.userAnswers.filter((a) => a.isCorrect).length;
     const myState: PlayerState = {
-      name: peerService.getIsHost() ? 'Host' : 'Guest',
+      id: peerService.getMyId(),
+      name: storeState.versusPlayerName || (peerService.getIsHost() ? 'Gracz 1' : 'Gracz 2'),
       score: storeState.score,
       streak: storeState.streak,
       lives: storeState.lives,
@@ -327,6 +351,10 @@ export const quizStore = {
       accuracy: totalQ > 0 ? Math.round((correctCount / totalQ) * 100) : 0,
       answers: storeState.userAnswers.map((a) => ({ isCorrect: a.isCorrect, timeMs: a.timeSpentMs })),
     };
+
+    const existing = storeState.versusPlayers.filter((p) => p.id !== myState.id);
+    updateState({ versusPlayers: [...existing, myState] });
+
     peerService.sendMessage({ type: 'PROGRESS_UPDATE', playerState: myState });
   },
 
@@ -447,7 +475,7 @@ export const quizStore = {
       gameState: 'REVEAL',
     });
 
-    this.sendVersusProgress();
+    quizStore.sendVersusProgress();
   },
 
   handleTimeout() {
@@ -514,11 +542,15 @@ export const quizStore = {
         return;
       }
 
-      // Check if we need to draft category for next round (every 3 questions)
-      if (answeredCount % 3 === 0 && questions.length < answeredCount + 3) {
-        const nextRound = Math.floor(answeredCount / 3) + 1;
+      const playerCount = Math.max(2, peerService.getConnectedCount());
+      const questionsPerPick = Math.max(1, Math.floor(12 / playerCount));
+
+      // Check if we need to draft category for next pick
+      if (answeredCount % questionsPerPick === 0 && questions.length < answeredCount + questionsPerPick) {
+        const nextPick = Math.floor(answeredCount / questionsPerPick);
         updateState({
-          versusRound: nextRound,
+          versusPickIndex: nextPick,
+          versusRound: Math.floor(nextPick / playerCount) + 1,
           versusShowCategoryPicker: true,
         });
         return;

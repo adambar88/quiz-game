@@ -1,86 +1,100 @@
 import React from 'react';
 import { quizStore, useQuizStore } from '../state/useQuizStore.ts';
 import { translations } from '../i18n/translations.ts';
+import { peerService } from '../services/peerService.ts';
 
 export const VersusSummary: React.FC = () => {
-  const { score, userAnswers, versusOpponentState, lang } = useQuizStore();
+  const { score, userAnswers, versusPlayers, versusPlayerName, lang } = useQuizStore();
   const t = translations[lang];
+
+  const myId = peerService.getMyId();
+  const myName = versusPlayerName || (peerService.getIsHost() ? 'Gracz 1' : 'Gracz 2');
 
   const myCorrect = userAnswers.filter((a) => a.isCorrect).length;
   const totalQ = userAnswers.length;
   const myAccuracy = totalQ > 0 ? Math.round((myCorrect / totalQ) * 100) : 0;
 
-  const opponentScore = versusOpponentState?.score || 0;
-  const opponentCorrect = versusOpponentState?.answers?.filter((a) => a.isCorrect).length || 0;
-  const opponentAccuracy = versusOpponentState?.accuracy || 0;
+  const myPlayerState = {
+    id: myId,
+    name: myName,
+    score,
+    accuracy: myAccuracy,
+    answers: userAnswers.map((a) => ({ isCorrect: a.isCorrect, timeMs: a.timeSpentMs })),
+  };
 
-  let winnerText = t.draw;
-  let winnerColor = 'text-amber-400 border-amber-400/30 bg-amber-500/10';
+  const allPlayersMap = new Map<string, typeof myPlayerState>();
+  allPlayersMap.set(myId, myPlayerState);
 
-  if (score > opponentScore) {
-    winnerText = t.youWon;
-    winnerColor = 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10';
-  } else if (opponentScore > score) {
-    winnerText = t.opponentWon;
-    winnerColor = 'text-purple-400 border-purple-500/30 bg-purple-500/10';
-  }
+  versusPlayers.forEach((p) => {
+    if (p && p.id) {
+      allPlayersMap.set(p.id, {
+        id: p.id,
+        name: p.name || 'Gracz',
+        score: p.score || 0,
+        accuracy: p.accuracy || 0,
+        answers: p.answers || [],
+      });
+    }
+  });
+
+  const sortedPlayers = Array.from(allPlayersMap.values()).sort((a, b) => b.score - a.score);
+  const winner = sortedPlayers[0];
+  const isWinnerMe = winner?.id === myId;
+
+  const getRankBadge = (idx: number) => {
+    if (idx === 0) return '🥇 ZWYCIĘZCA';
+    if (idx === 1) return '🥈 2. MIEJSCE';
+    if (idx === 2) return '🥉 3. MIEJSCE';
+    return `${idx + 1}. MIEJSCE`;
+  };
 
   return (
     <div className="flex flex-col items-center justify-center p-6 glass-panel text-center max-w-xl mx-auto space-y-6 animate-fadeIn">
-      {/* Winner Title Badge */}
-      <div className={`w-full p-4 rounded-2xl border ${winnerColor} space-y-1 shadow-lg`}>
+      {/* Winner Banner */}
+      <div className={`w-full p-5 rounded-2xl border space-y-1 shadow-lg ${
+        isWinnerMe
+          ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+          : 'bg-purple-500/10 border-purple-500/30 text-purple-400'
+      }`}>
         <span className="text-xs uppercase font-mono tracking-widest text-[var(--text-dim)]">
-          {t.versusWinner}
+          🏆 PODSUMOWANIE WYŚCIGU
         </span>
-        <h2 className="text-2xl font-extrabold tracking-tight">{winnerText}</h2>
+        <h2 className="text-2xl font-extrabold tracking-tight">
+          {isWinnerMe ? `Wygrałeś Wyścig, ${myName}! 🎉` : `Wygrywa ${winner?.name}! 👑`}
+        </h2>
       </div>
 
-      {/* Side-by-Side Comparison */}
-      <div className="w-full grid grid-cols-2 gap-4">
-        {/* Your Stats */}
-        <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-center space-y-2">
-          <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
-            {t.yourScore}
-          </span>
-          <div className="text-3xl font-black font-mono text-emerald-400">{score}</div>
-          <div className="text-xs text-[var(--text-dim)] font-medium">
-            {t.accuracy}: <strong className="text-[var(--text)]">{myAccuracy}%</strong> ({myCorrect}/{totalQ})
-          </div>
-        </div>
-
-        {/* Partner Stats */}
-        <div className="p-4 rounded-xl bg-purple-500/10 border border-purple-500/30 text-center space-y-2">
-          <span className="text-xs font-bold text-purple-400 uppercase tracking-wider">
-            {t.opponentScore}
-          </span>
-          <div className="text-3xl font-black font-mono text-purple-400">{opponentScore}</div>
-          <div className="text-xs text-[var(--text-dim)] font-medium">
-            {t.accuracy}: <strong className="text-[var(--text)]">{opponentAccuracy}%</strong> ({opponentCorrect}/{totalQ})
-          </div>
-        </div>
-      </div>
-
-      {/* Round-by-Round Breakdown Table */}
+      {/* Leaderboard Table (2-4 players) */}
       <div className="w-full space-y-2">
         <h3 className="text-xs uppercase font-semibold text-[var(--text-dim)] tracking-wider">
-          Przebieg Pojedynku Pytanie po Pytaniu
+          Końcowa Klasyfikacja Graczy
         </h3>
-        <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
-          {userAnswers.map((myAns, idx) => {
-            const oppAns = versusOpponentState?.answers?.[idx];
+        <div className="space-y-2">
+          {sortedPlayers.map((p, idx) => {
+            const isMe = p.id === myId;
             return (
               <div
-                key={idx}
-                className="flex items-center justify-between p-2.5 rounded-lg bg-white/5 text-xs font-mono"
+                key={p.id}
+                className={`p-3.5 rounded-xl border flex items-center justify-between transition-all ${
+                  isMe
+                    ? 'bg-emerald-500/15 border-emerald-500 text-emerald-300 font-extrabold ring-1 ring-emerald-500/40'
+                    : 'bg-white/5 border-[var(--border)] text-[var(--text)]'
+                }`}
               >
-                <span className="text-[var(--text-dim)] font-bold">Pytanie {idx + 1}</span>
-                <div className="flex items-center gap-4">
-                  <span className={myAns.isCorrect ? 'text-emerald-400 font-bold' : 'text-red-400 font-bold'}>
-                    Ty: {myAns.isCorrect ? '✓' : '✗'} (+{myAns.pointsEarned})
+                <div className="flex items-center gap-3 text-left">
+                  <span className="text-xs font-mono font-bold px-2 py-1 rounded bg-white/10">
+                    {getRankBadge(idx)}
                   </span>
-                  <span className={oppAns?.isCorrect ? 'text-purple-400 font-bold' : 'text-red-400 font-bold'}>
-                    Partner: {oppAns?.isCorrect ? '✓' : '✗'}
-                  </span>
+                  <div>
+                    <span className="font-bold text-sm">{p.name} {isMe ? '(Ty)' : ''}</span>
+                    <div className="text-[11px] text-[var(--text-dim)]">
+                      Celność: <strong className="text-[var(--text)]">{p.accuracy}%</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-right font-mono">
+                  <div className="text-xl font-extrabold text-emerald-400">{p.score} pkt</div>
                 </div>
               </div>
             );
@@ -92,13 +106,13 @@ export const VersusSummary: React.FC = () => {
       <div className="flex flex-wrap items-center justify-center gap-3 w-full pt-2">
         <button
           onClick={() => quizStore.exitToHome()}
-          className="flex-1 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-bold transition-all shadow-md"
+          className="flex-1 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-bold transition-all shadow-md"
         >
-          {t.playAgain} 🔄
+          Zagraj Ponownie 🔄
         </button>
         <button
           onClick={() => quizStore.goToReview()}
-          className="px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-[var(--text)] transition-all border border-[var(--border)]"
+          className="px-5 py-3.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-[var(--text)] transition-all border border-[var(--border)]"
         >
           {t.reviewAnswers}
         </button>

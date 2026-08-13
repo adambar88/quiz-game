@@ -9,13 +9,14 @@ interface VersusLobbyModalProps {
 }
 
 export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel, onClose }) => {
-  const { lang, category, difficulty, customPrompt } = useQuizStore();
+  const { lang, versusPlayerName } = useQuizStore();
   const t = translations[lang];
 
   const [activeTab, setActiveTab] = useState<'create' | 'join'>('create');
   const [roomCode, setRoomCode] = useState<string>('');
   const [inputCode, setInputCode] = useState<string>('');
-  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [playerNameInput, setPlayerNameInput] = useState<string>(versusPlayerName || '');
+  const [connectedCount, setConnectedCount] = useState<number>(1);
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -39,7 +40,7 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
     try {
       const code = await peerService.createRoom(
         undefined,
-        (connected) => setIsConnected(connected),
+        (count) => setConnectedCount(count),
         (msg) => {
           if (msg.type === 'START_GAME' && msg.questions) {
             quizStore.startQuizWithQuestions(msg.questions);
@@ -67,7 +68,7 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
     try {
       await peerService.joinRoom(
         targetCode,
-        (connected) => setIsConnected(connected),
+        (count) => setConnectedCount(count),
         (msg) => {
           if (msg.type === 'START_GAME' && msg.questions) {
             quizStore.startQuizWithQuestions(msg.questions);
@@ -75,13 +76,17 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
         }
       );
       setRoomCode(targetCode);
-      setIsConnected(true);
+      setConnectedCount(2);
     } catch (err: any) {
       setErrorMsg('Nie odnaleziono pokoju o podanym kodzie. Upewnij się, że Host stworzył pokój.');
-      setIsConnected(false);
     } finally {
       setIsConnecting(false);
     }
+  };
+
+  const handleNameChange = (name: string) => {
+    setPlayerNameInput(name);
+    quizStore.setVersusPlayerName(name);
   };
 
   const handleCopyLink = () => {
@@ -101,8 +106,8 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-2xl">⚔️</span>
-            <h2 className="text-lg font-bold tracking-tight">{t.versusLobbyTitle}</h2>
+            <span className="text-2xl">🏎️</span>
+            <h2 className="text-lg font-bold tracking-tight">Pojedynek Wieloosobowy (2-4 Graczy)</h2>
           </div>
           <button
             onClick={() => {
@@ -113,6 +118,21 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
           >
             ✕
           </button>
+        </div>
+
+        {/* Player Name Input Field */}
+        <div className="space-y-1.5">
+          <label className="block text-xs uppercase font-semibold text-[var(--text-dim)]">
+            👤 Twoje Imię / Nick
+          </label>
+          <input
+            type="text"
+            maxLength={16}
+            value={playerNameInput}
+            onChange={(e) => handleNameChange(e.target.value)}
+            placeholder="np. Adam, Ania, Kasia..."
+            className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-[var(--border)] text-sm font-bold text-emerald-400 focus:outline-none focus:border-emerald-500"
+          />
         </div>
 
         {/* Tab Selector */}
@@ -171,32 +191,26 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
               {copied ? '✅ ' + t.linkCopied : t.shareLink}
             </button>
 
-            {/* Connection Status */}
-            <div className="p-3 rounded-xl bg-white/5 text-xs font-semibold flex items-center justify-center gap-2">
-              {isConnected ? (
-                <span className="text-emerald-400 font-bold flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                  {t.partnerConnected}
-                </span>
-              ) : (
-                <span className="text-[var(--text-dim)] flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping" />
-                  {t.waitingForPartner}
-                </span>
-              )}
+            {/* Connected Players Status */}
+            <div className="p-3 rounded-xl bg-white/5 text-xs font-semibold flex items-center justify-between">
+              <span className="text-[var(--text-dim)]">Gracze w pokoju:</span>
+              <span className="text-emerald-400 font-bold flex items-center gap-1.5 font-mono">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                {connectedCount} / 4
+              </span>
             </div>
 
             {/* Start Duel Action Button */}
             <button
               onClick={handleStartDuelClick}
-              disabled={!isConnected}
+              disabled={connectedCount < 2}
               className={`w-full py-3.5 rounded-xl text-sm font-extrabold transition-all shadow-lg ${
-                isConnected
+                connectedCount >= 2
                   ? 'bg-emerald-500 hover:bg-emerald-400 text-black hover:scale-[1.02]'
                   : 'bg-white/10 text-[var(--text-dim)] cursor-not-allowed'
               }`}
             >
-              {t.startDuel}
+              {t.startDuel} ({connectedCount} Graczy)
             </button>
           </div>
         )}
@@ -231,9 +245,9 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
             </button>
 
             {/* Connection Status */}
-            {isConnected && (
+            {connectedCount >= 2 && (
               <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
-                🟢 Połączono z pokojem! Oczekiwanie aż Host rozpocznie grę...
+                🟢 Połączono z pokojem! Oczekiwanie na start Hosta...
               </div>
             )}
           </div>
