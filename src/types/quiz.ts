@@ -3,6 +3,7 @@
  */
 
 export type Difficulty = 'easy' | 'medium' | 'hard' | 'expert';
+export type QuizMode = 'classic' | 'versus';
 
 export type Category =
   | 'Computer Science'

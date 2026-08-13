@@ -13,34 +13,14 @@ export const translations = {
     // Modes
     modes: {
       classic: {
-        title: 'Klasyczny 10Q',
-        badge: '10 Pytań',
-        description: '10 pytań z dynamicznym naliczaniem punktów. Szybki trening wiedzy.',
-      },
-      survival: {
-        title: 'Przetrwanie',
-        badge: '3 Życia',
-        description: 'Gra bez końca. Poziom trudności rośnie wraz z Twoją serią zwycięstw.',
-      },
-      blitz: {
-        title: 'Szybki Blitz',
-        badge: '10s Czasu',
-        description: 'Tylko 10 sekund na każde pytanie. Liczy się natychmiastowy refleks!',
-      },
-      custom: {
-        title: 'Własny Temat',
-        badge: 'Własny',
-        description: 'Wpisz dowolne zagadnienie do wygenerowania dedykowanego zestawu pytań.',
-      },
-      daily: {
-        title: 'Wyzwanie Dnia',
-        badge: 'Dzisiejszy Zestaw',
-        description: 'Unikalne wyzwanie odnawiane codziennie. Sprawdź się dzisiaj.',
+        title: 'Solo',
+        badge: 'Gra Jednoosobowa',
+        description: 'Graj w swoim tempie, wybieraj ulubione kategorie i sprawdzaj swoją wiedzę.',
       },
       versus: {
         title: 'Wyścig',
-        badge: '12 Pytań • Tryb Wyścigu',
-        description: 'Rywalizacja w czasie rzeczywistym. 12 pytań z naprzemiennym wyborem kategorii i wynikiem na żywo!',
+        badge: 'Tryb Wieloosobowy',
+        description: 'Szybka rywalizacja w czasie rzeczywistym z drugim graczem z wynikami na żywo!',
       },
     },
 
@@ -196,34 +176,14 @@ export const translations = {
     // Modes
     modes: {
       classic: {
-        title: 'Classic 10Q',
-        badge: '10 Questions',
-        description: '10 trivia questions with dynamic scoring. Great for a quick round.',
-      },
-      survival: {
-        title: 'Survival',
-        badge: '3 Lives',
-        description: 'Endless mode. Difficulty scales dynamically as your streak increases.',
-      },
-      blitz: {
-        title: 'Time Blitz',
-        badge: '10s Timer',
-        description: '10 seconds per question. Fast reaction speed required!',
-      },
-      custom: {
-        title: 'Custom Topic',
-        badge: 'Custom',
-        description: 'Specify any topic to generate a custom question set.',
-      },
-      daily: {
-        title: 'Daily Challenge',
-        badge: 'Today’s Set',
-        description: 'A unique question set updated daily. Test your skills today.',
+        title: 'Solo',
+        badge: 'Single Player',
+        description: 'Play at your own pace, pick favorite topics, and test your knowledge.',
       },
       versus: {
         title: 'Race',
-        badge: '12 Questions • Race Mode',
-        description: 'Real-time multiplayer race. 12 questions with alternating category selection and live leaderboard!',
+        badge: 'Multiplayer Mode',
+        description: 'Real-time competitive race against another player with live scores!',
       },
     },
 

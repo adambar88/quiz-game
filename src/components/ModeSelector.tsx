@@ -1,41 +1,41 @@
 import React from 'react';
-import type { Category, Difficulty } from '../types/quiz.ts';
-import { VALID_CATEGORIES } from '../ai/validators.ts';
-import { quizStore, useQuizStore, type QuizMode } from '../state/useQuizStore.ts';
+import { quizStore, useQuizStore } from '../state/useQuizStore.ts';
 import { translations } from '../i18n/translations.ts';
 import { CATEGORY_METADATA } from '../data/categories.ts';
+import type { QuizMode, Category, Difficulty } from '../types/quiz.ts';
+
+const VALID_CATEGORIES: Category[] = Object.keys(CATEGORY_METADATA) as Category[];
 
 export const ModeSelector: React.FC = () => {
-  const { mode, category, difficulty, customPrompt, seedStr, generationError, gameState, lang } = useQuizStore();
+  const {
+    mode,
+    category,
+    difficulty,
+    gameState,
+    generationError,
+    lang,
+  } = useQuizStore();
+
   const t = translations[lang] || translations.pl;
 
-  const handleShareSeed = () => {
-    navigator.clipboard.writeText(`Quiz Seed: ${seedStr}`);
-    alert(`${t.seedCopied} ${seedStr}`);
-  };
-
-  const modeKeys: QuizMode[] = ['classic', 'survival', 'blitz', 'custom', 'daily', 'versus'];
+  const modeKeys: QuizMode[] = ['classic', 'versus'];
   const modeIcons: Record<QuizMode, string> = {
-    classic: '⚡',
-    survival: '🛡️',
-    blitz: '🔥',
-    custom: '🧠',
-    daily: '📅',
-    versus: '⚔️',
+    classic: '👤',
+    versus: '🏁',
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-5">
       {/* Error banner if generation failed */}
       {generationError && (
         <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
-          <p className="font-semibold mb-1">Error:</p>
+          <p className="font-semibold mb-1">Błąd:</p>
           <p>{generationError}</p>
         </div>
       )}
 
-      {/* Mode Selection Cards (3 columns x 2 rows = 6 ultra-compact cards) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 sm:gap-2.5">
+      {/* Mode Selection Cards (2 mode cards: Solo vs Wyścig) */}
+      <div className="grid grid-cols-2 gap-3">
         {modeKeys.map((modeId) => {
           const m = t.modes[modeId];
           const active = mode === modeId;
@@ -43,16 +43,16 @@ export const ModeSelector: React.FC = () => {
             <button
               key={modeId}
               onClick={() => quizStore.setMode(modeId)}
-              className={`p-2 sm:p-3 rounded-xl text-left transition-all relative glass-panel flex flex-col justify-between h-full ${
+              className={`p-3 sm:p-4 rounded-2xl text-left transition-all relative glass-panel flex flex-col justify-between h-full ${
                 active
-                  ? 'border-emerald-500 bg-emerald-500/10 ring-1 ring-emerald-500'
+                  ? 'border-emerald-500 bg-emerald-500/10 ring-1 ring-emerald-500 shadow-md shadow-emerald-500/10'
                   : 'hover:border-[var(--border-hover)]'
               }`}
             >
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-lg sm:text-2xl">{modeIcons[modeId]}</span>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-2xl sm:text-3xl">{modeIcons[modeId]}</span>
                 <span
-                  className={`text-[8px] sm:text-[10px] font-mono px-1.5 py-0.5 rounded-full ${
+                  className={`text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded-full ${
                     active ? 'bg-emerald-500/20 text-emerald-400 font-bold' : 'bg-white/5 text-[var(--text-dim)]'
                   }`}
                 >
@@ -60,8 +60,8 @@ export const ModeSelector: React.FC = () => {
                 </span>
               </div>
               <div>
-                <h3 className="font-bold text-xs sm:text-sm mb-0.5 truncate">{m.title}</h3>
-                <p className="text-[10px] sm:text-xs text-[var(--text-dim)] leading-tight line-clamp-1 sm:line-clamp-2">{m.description}</p>
+                <h3 className="font-extrabold text-sm sm:text-base mb-1 truncate">{m.title}</h3>
+                <p className="text-[11px] sm:text-xs text-[var(--text-dim)] leading-snug line-clamp-2">{m.description}</p>
               </div>
             </button>
           );
@@ -69,123 +69,80 @@ export const ModeSelector: React.FC = () => {
       </div>
 
       {/* Mode Specific Controls */}
-      <div className="p-3 sm:p-5 glass-panel flex flex-col gap-3 sm:gap-4">
-        {/* Category Selection with Visual Icons */}
-        {mode !== 'daily' && mode !== 'custom' && (
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-[11px] sm:text-xs font-semibold text-[var(--text-dim)] uppercase tracking-wider">
-                {t.categoryLabel}
-              </label>
-              <span className="text-[10px] sm:text-[11px] font-mono text-[var(--text-dim)]">
-                {category === 'all' ? t.allCategories : ((t.categories as Record<string, string>)[category] || category)}
-              </span>
-            </div>
-            <div className="flex flex-wrap gap-1 sm:gap-2 max-h-[160px] sm:max-h-[220px] overflow-y-auto pr-1 py-0.5 scrollbar-thin">
-              <button
-                onClick={() => quizStore.setCategory('all')}
-                className={`px-2.5 py-1 rounded-full border text-[11px] sm:text-xs font-semibold transition-all flex items-center gap-1 active:scale-95 ${
-                  category === 'all'
-                    ? 'bg-emerald-500 text-black font-extrabold border-emerald-400 shadow-md shadow-emerald-500/20 scale-[1.02]'
-                    : 'bg-white/5 hover:bg-white/10 text-[var(--text-dim)] hover:text-white border-[var(--border)]'
-                }`}
-              >
-                <span className="text-xs sm:text-sm">🎲</span>
-                <span>{t.allCategories}</span>
-              </button>
-              {VALID_CATEGORIES.map((cat) => {
-                const meta = CATEGORY_METADATA[cat as Category];
-                const isSelected = category === cat;
-                const catName = (t.categories as Record<string, string>)[cat] || cat;
-
-                return (
-                  <button
-                    key={cat}
-                    onClick={() => quizStore.setCategory(cat as Category)}
-                    className={`px-2.5 py-1 rounded-full border text-[11px] sm:text-xs font-semibold transition-all flex items-center gap-1 active:scale-95 group ${
-                      isSelected
-                        ? 'bg-emerald-500 text-black font-extrabold border-emerald-400 shadow-md shadow-emerald-500/20 scale-[1.02]'
-                        : 'bg-white/5 hover:bg-white/10 text-[var(--text)] border-[var(--border)]'
-                    }`}
-                  >
-                    <span className="text-xs sm:text-sm transition-transform group-hover:scale-110 flex-shrink-0">
-                      {meta?.icon || '💡'}
-                    </span>
-                    <span>{catName}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* Custom Prompt Input */}
-        {mode === 'custom' && (
-          <div>
-            <label className="block text-xs font-semibold text-[var(--text-dim)] uppercase tracking-wider mb-2">
-              {t.customPromptLabel}
+      <div className="p-3.5 sm:p-5 glass-panel flex flex-col gap-3.5 sm:gap-4">
+        {/* Category Selection */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-[11px] sm:text-xs font-semibold text-[var(--text-dim)] uppercase tracking-wider">
+              {t.categoryLabel}
             </label>
-            <input
-              type="text"
-              value={customPrompt}
-              onChange={(e) => quizStore.setCustomPrompt(e.target.value)}
-              placeholder={t.customPromptPlaceholder}
-              className="w-full px-3 py-2 rounded-xl bg-black/40 border border-[var(--border)] text-xs sm:text-sm focus:outline-none focus:border-emerald-500"
-            />
+            <span className="text-[10px] sm:text-[11px] font-mono text-[var(--text-dim)]">
+              {category === 'all' ? t.allCategories : ((t.categories as Record<string, string>)[category] || category)}
+            </span>
           </div>
-        )}
+          <div className="flex flex-wrap gap-1.5 max-h-[180px] sm:max-h-[220px] overflow-y-auto pr-1 py-0.5 scrollbar-thin">
+            <button
+              onClick={() => quizStore.setCategory('all')}
+              className={`px-2.5 py-1 rounded-full border text-[11px] sm:text-xs font-semibold transition-all flex items-center gap-1 active:scale-95 ${
+                category === 'all'
+                  ? 'bg-emerald-500 text-black font-extrabold border-emerald-400 shadow-md shadow-emerald-500/20 scale-[1.02]'
+                  : 'bg-white/5 hover:bg-white/10 text-[var(--text-dim)] hover:text-white border-[var(--border)]'
+              }`}
+            >
+              <span className="text-xs sm:text-sm">🎲</span>
+              <span>{t.allCategories}</span>
+            </button>
+            {VALID_CATEGORIES.map((cat) => {
+              const meta = CATEGORY_METADATA[cat as Category];
+              const isSelected = category === cat;
+              const catName = (t.categories as Record<string, string>)[cat] || cat;
 
-        {/* Difficulty Selection */}
-        {mode !== 'survival' && mode !== 'daily' && (
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="text-[11px] sm:text-xs font-semibold text-[var(--text-dim)] uppercase tracking-wider">
-                {t.difficultyLabel}
-              </label>
-              <span className="text-[10px] sm:text-xs uppercase font-bold text-emerald-400">
-                {difficulty === 'dynamic' ? 'Dynamic' : t.difficulties[difficulty as Difficulty]}
-              </span>
-            </div>
-            <div className="grid grid-cols-4 gap-1.5">
-              {(['easy', 'medium', 'hard', 'expert'] as Difficulty[]).map((d) => (
+              return (
                 <button
-                  key={d}
-                  onClick={() => quizStore.setDifficulty(d)}
-                  className={`py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-colors ${
-                    difficulty === d
-                      ? 'bg-emerald-500 text-black font-bold'
-                      : 'bg-white/5 hover:bg-white/10 text-[var(--text-dim)]'
+                  key={cat}
+                  onClick={() => quizStore.setCategory(cat as Category)}
+                  className={`px-2.5 py-1 rounded-full border text-[11px] sm:text-xs font-semibold transition-all flex items-center gap-1 active:scale-95 group ${
+                    isSelected
+                      ? 'bg-emerald-500 text-black font-extrabold border-emerald-400 shadow-md shadow-emerald-500/20 scale-[1.02]'
+                      : 'bg-white/5 hover:bg-white/10 text-[var(--text)] border-[var(--border)]'
                   }`}
                 >
-                  {t.difficulties[d]}
+                  <span className="text-xs sm:text-sm transition-transform group-hover:scale-110 flex-shrink-0">
+                    {meta?.icon || '💡'}
+                  </span>
+                  <span>{catName}</span>
                 </button>
-              ))}
-            </div>
+              );
+            })}
           </div>
-        )}
+        </div>
 
-        {/* Seed Bar for Daily Challenge */}
-        {mode === 'daily' && (
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-semibold text-[var(--text-dim)] uppercase tracking-wider">
-                {t.dailySeedLabel}
-              </label>
-              <button
-                onClick={handleShareSeed}
-                className="text-xs text-emerald-400 hover:underline flex items-center gap-1"
-              >
-                📋 {t.copySeed}
-              </button>
-            </div>
-            <input
-              type="date"
-              value={seedStr}
-              onChange={(e) => quizStore.setSeedStr(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-[var(--border)] text-sm focus:outline-none focus:border-emerald-500"
-            />
+        {/* Difficulty Selection */}
+        <div>
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="text-[11px] sm:text-xs font-semibold text-[var(--text-dim)] uppercase tracking-wider">
+              {t.difficultyLabel}
+            </label>
+            <span className="text-[10px] sm:text-xs uppercase font-bold text-emerald-400">
+              {difficulty === 'dynamic' ? 'Dynamic' : t.difficulties[difficulty as Difficulty]}
+            </span>
           </div>
-        )}
+          <div className="grid grid-cols-4 gap-1.5">
+            {(['easy', 'medium', 'hard', 'expert'] as Difficulty[]).map((d) => (
+              <button
+                key={d}
+                onClick={() => quizStore.setDifficulty(d)}
+                className={`py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-colors ${
+                  difficulty === d
+                    ? 'bg-emerald-500 text-black font-bold'
+                    : 'bg-white/5 hover:bg-white/10 text-[var(--text-dim)]'
+                }`}
+              >
+                {t.difficulties[d]}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Start Quiz Button */}
@@ -198,7 +155,7 @@ export const ModeSelector: React.FC = () => {
           }
         }}
         disabled={gameState === 'GENERATING'}
-        className="w-full py-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-base tracking-wide shadow-lg shadow-emerald-500/20 active:scale-[0.99] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+        className="w-full py-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-sm sm:text-base tracking-wide shadow-lg shadow-emerald-500/20 active:scale-[0.99] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
       >
         {gameState === 'GENERATING' ? (
           <>
@@ -208,8 +165,10 @@ export const ModeSelector: React.FC = () => {
             </svg>
             {t.generating}
           </>
+        ) : mode === 'versus' ? (
+          '🏁 Otwórz Lobby Wyścigu'
         ) : (
-          t.startQuiz
+          '🎮 Rozpocznij Grać Solo'
         )}
       </button>
     </div>

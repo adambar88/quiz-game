@@ -48,17 +48,10 @@ export const GameOverSummary: React.FC = () => {
           <span className="text-xl font-bold font-mono text-purple-400">+{xpEarned} XP</span>
         </div>
 
-        {mode === 'survival' ? (
-          <div className="p-4 glass-panel flex flex-col items-center">
-            <span className="text-xs text-[var(--text-dim)] uppercase font-mono mb-1">{t.eloRating}</span>
-            <span className="text-xl font-bold font-mono text-blue-400">{eloState.playerRating}</span>
-          </div>
-        ) : (
-          <div className="p-4 glass-panel flex flex-col items-center">
-            <span className="text-xs text-[var(--text-dim)] uppercase font-mono mb-1">Tryb</span>
-            <span className="text-base font-bold uppercase font-mono text-emerald-400">{t.modes[mode]?.title || mode}</span>
-          </div>
-        )}
+        <div className="p-4 glass-panel flex flex-col items-center">
+          <span className="text-xs text-[var(--text-dim)] uppercase font-mono mb-1">Tryb</span>
+          <span className="text-base font-bold uppercase font-mono text-emerald-400">{t.modes[mode]?.title || mode}</span>
+        </div>
       </div>
 
       {/* Action Buttons */}

@@ -74,17 +74,7 @@ export const QuizArena: React.FC = () => {
           </span>
         </div>
 
-        {/* Mode Specific Stats (Lives for survival / ELO rating) */}
         <div className="flex items-center gap-2 sm:gap-4">
-          {mode === 'survival' && (
-            <div className="flex items-center gap-0.5 sm:gap-1 text-red-400 font-bold" title={t.lives}>
-              {Array.from({ length: 3 }).map((_, i) => (
-                <span key={i} className={i < lives ? 'opacity-100 scale-100' : 'opacity-20 scale-90'}>
-                  ❤️
-                </span>
-              ))}
-            </div>
-          )}
 
           {/* Streak Flame Counter */}
           <div className="flex items-center gap-1 font-mono font-bold" title={t.streak}>
@@ -111,7 +101,6 @@ export const QuizArena: React.FC = () => {
       <div className="p-3.5 sm:p-6 glass-panel flex flex-col gap-1.5 sm:gap-3 relative overflow-hidden">
         <div className="flex items-center justify-between text-[11px] sm:text-xs text-[var(--text-dim)] uppercase font-mono">
           <span>{t.difficultyLabel}: <strong className="text-emerald-400">{difficultyTranslated}</strong></span>
-          {mode === 'survival' && <span>Tier: <strong className="text-amber-400">{eloState.tier}</strong></span>}
         </div>
         <h2 className="text-sm sm:text-xl font-bold leading-snug text-[var(--text)]">
           {currentQ.question}

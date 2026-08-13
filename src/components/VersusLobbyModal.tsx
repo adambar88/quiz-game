@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import QRCode from 'qrcode';
 import { peerService } from '../services/peerService.ts';
 import { quizStore, useQuizStore } from '../state/useQuizStore.ts';
 import { translations } from '../i18n/translations.ts';
 import { storageService } from '../services/storageService.ts';
+import { QRCodeScannerModal } from './QRCodeScannerModal.tsx';
 
 interface VersusLobbyModalProps {
   onStartDuel: () => void;
@@ -11,7 +13,7 @@ interface VersusLobbyModalProps {
 
 export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel, onClose }) => {
   const { lang, versusPlayerName } = useQuizStore();
-  const t = translations[lang];
+  const t = translations[lang] || translations.pl;
 
   const [activeTab, setActiveTab] = useState<'create' | 'join'>('create');
   const [roomCode, setRoomCode] = useState<string>('');
@@ -23,6 +25,22 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [qrDataUrl, setQrDataUrl] = useState<string>('');
+  const [showScanner, setShowScanner] = useState<boolean>(false);
+
+  // Generate QR code when roomCode changes
+  useEffect(() => {
+    if (roomCode) {
+      const shareableUrl = `${window.location.origin}${window.location.pathname}?room=${roomCode}`;
+      QRCode.toDataURL(shareableUrl, {
+        width: 220,
+        margin: 1.5,
+        color: { dark: '#000000ff', light: '#ffffff' },
+      })
+        .then((url) => setQrDataUrl(url))
+        .catch(() => {});
+    }
+  }, [roomCode]);
 
   // Auto-detect room code from URL params ?room=CODE
   useEffect(() => {
@@ -106,29 +124,35 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
     quizStore.startVersusDuel();
   };
 
+  const handleScanSuccess = (scannedCode: string) => {
+    setShowScanner(false);
+    setInputCode(scannedCode.toUpperCase());
+    handleJoinRoom(scannedCode.toUpperCase());
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
-      <div className="w-full max-w-md p-6 glass-panel rounded-2xl border border-[var(--border)] shadow-2xl relative space-y-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3.5 sm:p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
+      <div className="w-full max-w-md p-4 sm:p-6 glass-panel rounded-2xl border border-[var(--border)] shadow-2xl relative space-y-4 max-h-[95vh] overflow-y-auto scrollbar-thin">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-2xl">🏎️</span>
-            <h2 className="text-lg font-bold tracking-tight">Pojedynek Wieloosobowy (2-4 Graczy)</h2>
+            <span className="text-2xl">🏁</span>
+            <h2 className="text-lg font-extrabold tracking-tight">Wyścig</h2>
           </div>
           <button
             onClick={() => {
               peerService.destroy();
               onClose();
             }}
-            className="p-1 rounded-lg hover:bg-white/10 text-[var(--text-dim)]"
+            className="p-1 rounded-lg hover:bg-white/10 text-[var(--text-dim)] hover:text-white transition-colors"
           >
             ✕
           </button>
         </div>
 
         {/* Player Name Input Field */}
-        <div className="space-y-1.5">
-          <label className="block text-xs uppercase font-semibold text-[var(--text-dim)]">
+        <div className="space-y-1">
+          <label className="block text-[11px] uppercase font-semibold text-[var(--text-dim)]">
             👤 Twoje Imię / Nick
           </label>
           <input
@@ -136,19 +160,19 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
             maxLength={16}
             value={playerNameInput}
             onChange={(e) => handleNameChange(e.target.value)}
-            placeholder="np. Adam, Ania, Kasia..."
-            className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-[var(--border)] text-sm font-bold text-emerald-400 focus:outline-none focus:border-emerald-500"
+            placeholder="np. Adam, Ania..."
+            className="w-full px-3 py-2 rounded-xl bg-black/40 border border-[var(--border)] text-xs sm:text-sm font-bold text-emerald-400 focus:outline-none focus:border-emerald-500"
           />
         </div>
 
         {/* Tab Selector */}
-        <div className="grid grid-cols-2 gap-2 p-1 bg-white/5 rounded-xl border border-[var(--border)]">
+        <div className="grid grid-cols-2 gap-1.5 p-1 bg-white/5 rounded-xl border border-[var(--border)]">
           <button
             onClick={() => {
               setActiveTab('create');
               handleCreateRoom();
             }}
-            className={`py-2 rounded-lg text-xs font-bold transition-all ${
+            className={`py-1.5 sm:py-2 rounded-lg text-xs font-bold transition-all ${
               activeTab === 'create'
                 ? 'bg-emerald-500 text-black shadow-md'
                 : 'text-[var(--text-dim)] hover:text-white'
@@ -160,7 +184,7 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
             onClick={() => {
               setActiveTab('join');
             }}
-            className={`py-2 rounded-lg text-xs font-bold transition-all ${
+            className={`py-1.5 sm:py-2 rounded-lg text-xs font-bold transition-all ${
               activeTab === 'join'
                 ? 'bg-emerald-500 text-black shadow-md'
                 : 'text-[var(--text-dim)] hover:text-white'
@@ -172,21 +196,36 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
 
         {/* Error Banner */}
         {errorMsg && (
-          <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs">
+          <div className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs">
             {errorMsg}
           </div>
         )}
 
         {/* TAB 1: CREATE ROOM (HOST) */}
         {activeTab === 'create' && (
-          <div className="space-y-5 text-center">
-            <div className="p-4 rounded-xl bg-black/40 border border-[var(--border)] space-y-2 relative">
-              <span className="text-xs uppercase font-semibold text-[var(--text-dim)]">
-                {t.roomCodeLabel}
+          <div className="space-y-3.5 text-center">
+            {/* Room Code & QR Display Container */}
+            <div className="p-3 rounded-2xl bg-black/40 border border-[var(--border)] space-y-2 flex flex-col items-center justify-center">
+              <span className="text-[11px] uppercase font-semibold text-[var(--text-dim)]">
+                Kod Pokoju Wyścigu
               </span>
-              <div className="text-3xl font-mono font-extrabold tracking-widest text-emerald-400 flex items-center justify-center gap-2 min-h-[40px]">
-                <span>{roomCode || '....'}</span>
+              <div className="text-2xl sm:text-3xl font-mono font-extrabold tracking-widest text-emerald-400">
+                {roomCode || '....'}
               </div>
+
+              {/* QR Code Canvas/Image */}
+              {qrDataUrl && (
+                <div className="p-2 bg-white rounded-xl shadow-lg my-1">
+                  <img
+                    src={qrDataUrl}
+                    alt="Kod QR Pokoju"
+                    className="w-32 h-32 sm:w-40 sm:h-40 object-contain rounded"
+                  />
+                  <span className="block text-[9px] font-mono text-black font-bold mt-0.5">
+                    Zeskanuj aparatami
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Share Link Button */}
@@ -195,12 +234,12 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
               disabled={!roomCode}
               className="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-[var(--border)] text-xs font-semibold text-[var(--text)] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
             >
-              {copied ? '✅ ' + t.linkCopied : t.shareLink}
+              {copied ? '✅ ' + t.linkCopied : '📋 Skopiuj Link Pokoju'}
             </button>
 
             {/* Connected Players Status */}
-            <div className="p-3 rounded-xl bg-white/5 text-xs font-semibold flex items-center justify-between">
-              <span className="text-[var(--text-dim)]">Gracze w pokoju:</span>
+            <div className="p-2.5 rounded-xl bg-white/5 text-xs font-semibold flex items-center justify-between">
+              <span className="text-[var(--text-dim)]">Gracze w Wyścigu:</span>
               <span className="text-emerald-400 font-bold flex items-center gap-1.5 font-mono">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 {connectedCount} / 4
@@ -217,26 +256,37 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
                   : 'bg-white/10 text-[var(--text-dim)] cursor-not-allowed'
               }`}
             >
-              {t.startDuel} ({connectedCount} Graczy)
+              🚀 Rozpocznij Wyścig ({connectedCount} Graczy)
             </button>
           </div>
         )}
 
         {/* TAB 2: JOIN ROOM (GUEST) */}
         {activeTab === 'join' && (
-          <div className="space-y-5 text-center">
+          <div className="space-y-4 text-center">
             <div className="space-y-2">
-              <label className="block text-xs uppercase font-semibold text-[var(--text-dim)]">
+              <label className="block text-[11px] uppercase font-semibold text-[var(--text-dim)]">
                 {t.enterRoomCode}
               </label>
-              <input
-                type="text"
-                maxLength={5}
-                value={inputCode}
-                onChange={(e) => setInputCode(e.target.value.toUpperCase())}
-                placeholder="np. K9X2"
-                className="w-full text-center text-2xl font-mono tracking-widest py-3 rounded-xl bg-black/40 border border-[var(--border)] text-emerald-400 uppercase font-bold focus:outline-none focus:border-emerald-500"
-              />
+              
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  maxLength={5}
+                  value={inputCode}
+                  onChange={(e) => setInputCode(e.target.value.toUpperCase())}
+                  placeholder="np. K9X2"
+                  className="flex-1 text-center text-xl font-mono tracking-widest py-2.5 rounded-xl bg-black/40 border border-[var(--border)] text-emerald-400 uppercase font-bold focus:outline-none focus:border-emerald-500"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowScanner(true)}
+                  className="px-3.5 py-2.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-400 text-xs font-bold transition-all flex items-center gap-1.5 flex-shrink-0"
+                >
+                  📷 Skanuj QR
+                </button>
+              </div>
             </div>
 
             <button
@@ -249,18 +299,26 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
               }`}
             >
               {isConnecting && <span className="w-4 h-4 rounded-full border-2 border-black border-t-transparent animate-spin" />}
-              {isConnecting ? t.joiningRoom : t.joinRoom}
+              {isConnecting ? t.joiningRoom : '🏁 Dołącz do Wyścigu'}
             </button>
 
             {/* Connection Status */}
             {connectedCount >= 2 && (
               <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
-                🟢 Połączono z pokojem! Oczekiwanie na rozpoczęcie gry...
+                🟢 Połączono z pokojem Wyścigu! Oczekiwanie na rozpoczęcie...
               </div>
             )}
           </div>
         )}
       </div>
+
+      {/* QR Code Camera Scanner Modal */}
+      {showScanner && (
+        <QRCodeScannerModal
+          onClose={() => setShowScanner(false)}
+          onScanSuccess={handleScanSuccess}
+        />
+      )}
     </div>
   );
 };

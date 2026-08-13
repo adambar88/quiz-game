@@ -12,7 +12,7 @@ import { translations, type Language } from '../i18n/translations.ts';
 import { peerService, type PlayerState } from '../services/peerService.ts';
 
 export type GameState = 'IDLE' | 'GENERATING' | 'ACTIVE' | 'REVEAL' | 'GAME_OVER' | 'REVIEW' | 'VERSUS_WAITING';
-export type QuizMode = 'classic' | 'survival' | 'blitz' | 'custom' | 'daily' | 'versus';
+export type QuizMode = 'classic' | 'versus';
 
 export interface UserAnswerRecord {
   question: Question;
@@ -168,7 +168,6 @@ function updateState(updater: Partial<QuizStoreState> | ((prev: QuizStoreState) 
 }
 
 export function getTimeLimitForQuestion(question: Question, mode: QuizMode): number {
-  if (mode === 'blitz') return 10000; // 10 seconds for blitz mode
   return DEFAULT_TIME_LIMITS[question.difficulty] || 20000;
 }
 
@@ -537,7 +536,7 @@ export const quizStore = {
     });
 
     try {
-      const qCount = mode === 'survival' ? 20 : mode === 'blitz' ? 10 : questionCount;
+      const qCount = questionCount;
       const questions = await QuestionEngine.prepareQuestions({
         mode,
         category,
@@ -604,7 +603,7 @@ export const quizStore = {
     );
 
     let nextElo = eloState;
-    if (mode === 'survival' || currentQ.baseElo) {
+    if (currentQ.baseElo) {
       const qElo = currentQ.baseElo || TIER_BASE_ELO[currentQ.difficulty];
       const { newState } = updateEloState(eloState, qElo, correct);
       nextElo = newState;
@@ -666,7 +665,7 @@ export const quizStore = {
     const scoreRes = calculateQuestionScore(false, currentQ.difficulty, timeSpentMs, timeLimitMs, 0);
 
     let nextElo = eloState;
-    if (mode === 'survival' || currentQ.baseElo) {
+    if (currentQ.baseElo) {
       const qElo = currentQ.baseElo || TIER_BASE_ELO[currentQ.difficulty];
       const { newState } = updateEloState(eloState, qElo, false);
       nextElo = newState;
@@ -701,44 +700,55 @@ export const quizStore = {
     soundEngine.playClick();
     haptics.vibrateClick();
 
-    const { questions, currentIndex, mode, lives, userAnswers, score, highestStreak, category, difficulty } = storeState;
+    const {
+      questions,
+      currentIndex,
+      mode,
+      score,
+      highestStreak,
+      userAnswers,
+      category,
+      difficulty,
+    } = storeState;
 
     if (mode === 'versus') {
-      const answeredCount = userAnswers.length;
-      if (answeredCount >= 12) {
-        quizStore.sendVersusProgress(true);
+      const currentAnsCount = userAnswers.length;
+      const totalAvailableQ = questions.length;
+      const isVersusMatchFinished = currentAnsCount >= 12;
 
-        const allFinished = storeState.versusPlayers.length > 0 && storeState.versusPlayers.every((p) => p.isFinished);
-        if (allFinished) {
-          soundEngine.playVictoryFanfare();
-          updateState({ gameState: 'GAME_OVER' });
-        } else {
-          updateState({ gameState: 'VERSUS_WAITING' });
-        }
+      if (isVersusMatchFinished) {
+        soundEngine.playVictoryFanfare();
+        updateState({ gameState: 'GAME_OVER' });
         return;
       }
 
       const playerCount = Math.max(2, peerService.getConnectedCount());
       const questionsPerPick = getQuestionsPerPick(playerCount);
 
-      // Check if we need to draft category for next pick
-      if (answeredCount % questionsPerPick === 0 && questions.length < 12) {
-        const nextPick = Math.floor(answeredCount / questionsPerPick);
-        updateState({
-          versusPickIndex: nextPick,
-          versusRound: Math.floor(nextPick / playerCount) + 1,
-          versusShowCategoryPicker: true,
-        });
-        quizStore.sendVersusProgress();
+      if (currentAnsCount > 0 && currentAnsCount % questionsPerPick === 0) {
+        if (currentAnsCount < totalAvailableQ) {
+          const tLimit = getTimeLimitForQuestion(questions[currentAnsCount], 'versus');
+          updateState({
+            currentIndex: currentAnsCount,
+            selectedOptionIndex: null,
+            isCorrect: null,
+            timeLimitMs: tLimit,
+            timeRemainingMs: tLimit,
+            questionStartTime: Date.now(),
+            versusShowCategoryPicker: false,
+            gameState: 'ACTIVE',
+          });
+        } else {
+          updateState({ versusShowCategoryPicker: true });
+        }
         return;
       }
     }
 
     // Check game over condition
     const isLastQuestion = mode !== 'versus' && currentIndex >= questions.length - 1;
-    const isOutofLives = mode === 'survival' && lives <= 0;
 
-    if (isLastQuestion || isOutofLives) {
+    if (isLastQuestion) {
       const correctCount = userAnswers.filter((a) => a.isCorrect).length;
       const totalQ = userAnswers.length;
       const accuracy = totalQ > 0 ? Math.round((correctCount / totalQ) * 100) : 0;
@@ -760,7 +770,6 @@ export const quizStore = {
         correctCount,
         highestStreak,
         xpEarned,
-        finalEloRating: mode === 'survival' ? storeState.eloState.playerRating : undefined,
         categoryBreakdown,
       });
 
@@ -774,7 +783,6 @@ export const quizStore = {
         accuracy,
         highestStreak,
         xpEarned,
-        finalEloRating: mode === 'survival' ? storeState.eloState.playerRating : undefined,
       });
 
       updateState({
