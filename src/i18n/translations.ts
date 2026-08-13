@@ -38,9 +38,9 @@ export const translations = {
         description: 'Unikalne wyzwanie odnawiane codziennie. Sprawdź się dzisiaj.',
       },
       versus: {
-        title: 'Wyścig 2-4 Graczy',
+        title: 'Wyścig',
         badge: '12 Pytań • Tryb Wyścigu',
-        description: 'Gra dla 2-4 uczestników. 12 pytań z naprzemiennym wyborem kategorii i tablicą wyników na żywo!',
+        description: 'Rywalizacja w czasie rzeczywistym. 12 pytań z naprzemiennym wyborem kategorii i wynikiem na żywo!',
       },
     },
 
@@ -159,7 +159,7 @@ export const translations = {
     close: 'Zamknij',
 
     // Versus Duel Mode
-    versusLobbyTitle: 'Wyścig 2-4 Graczy',
+    versusLobbyTitle: 'Wyścig',
     createRoom: 'Stwórz Nowy Pokój',
     joinRoom: 'Dołącz do Pokoju',
     roomCodeLabel: 'Kod Dostępu do Gry',
