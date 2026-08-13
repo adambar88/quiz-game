@@ -203,6 +203,9 @@ export const quizStore = {
     storageService.setPlayerName(name);
     peerService.setMyName(name);
     updateState({ versusPlayerName: name });
+    if (storeState.mode === 'versus') {
+      quizStore.sendVersusProgress();
+    }
   },
 
   setShowVersusLobby(show: boolean) {
@@ -239,11 +242,33 @@ export const quizStore = {
     });
 
     if (peerService.getIsHost()) {
-      peerService.sendMessage({ type: 'INIT_VERSUS' });
+      peerService.sendMessage({ type: 'INIT_VERSUS', senderName: storeState.versusPlayerName });
     }
 
     // Register PeerJS listener for versus messages
     peerService.setCallbacks(undefined, (msg) => {
+      // Sync opponent name and info from any incoming message
+      const opName = msg.playerState?.name || msg.pickerName || msg.senderName;
+      const opId = msg.playerState?.id || msg.pickerId || msg.senderId;
+      if (opName && opId && opId !== peerService.getMyId()) {
+        const existing = storeState.versusOpponentState;
+        if (!existing || existing.name !== opName || existing.id !== opId) {
+          updateState({
+            versusOpponentState: {
+              id: opId,
+              name: opName,
+              score: msg.playerState?.score ?? existing?.score ?? 0,
+              streak: msg.playerState?.streak ?? existing?.streak ?? 0,
+              lives: msg.playerState?.lives ?? existing?.lives ?? 3,
+              currentIndex: msg.playerState?.currentIndex ?? existing?.currentIndex ?? 0,
+              isFinished: msg.playerState?.isFinished ?? existing?.isFinished ?? false,
+              accuracy: msg.playerState?.accuracy ?? existing?.accuracy ?? 0,
+              answers: msg.playerState?.answers ?? existing?.answers ?? [],
+            },
+          });
+        }
+      }
+
       if (msg.type === 'PROGRESS_UPDATE' && msg.playerState) {
         const existing = storeState.versusPlayers.filter((p) => p.id !== msg.playerState!.id);
         updateState({
@@ -273,6 +298,9 @@ export const quizStore = {
         });
       }
     });
+
+    // Send initial player progress so opponent gets custom player name immediately
+    quizStore.sendVersusProgress();
   },
 
   async handleVersusCategoryChoice(chosenCategory: Category) {
