@@ -320,22 +320,22 @@ export const quizStore = {
 
         const newAll = uniqueNew.length > 0 ? [...safeQuestions, ...uniqueNew] : safeQuestions;
         const nextIdx = storeState.userAnswers.length;
-        const curQ = newAll[nextIdx] || storeState.questions[storeState.currentIndex] || msg.questions[0];
+        const curQ = newAll[nextIdx] || safeQuestions[storeState.currentIndex] || msg.questions[0];
         const tLimit = getTimeLimitForQuestion(curQ, 'versus');
 
-        const isActiveOrReveal = storeState.gameState === 'ACTIVE' || storeState.gameState === 'REVEAL';
+        const isWaitingForNewRound = storeState.versusShowCategoryPicker || storeState.currentIndex < nextIdx || storeState.gameState === 'GENERATING';
 
         updateState({
           questions: newAll,
-          currentIndex: isActiveOrReveal ? storeState.currentIndex : nextIdx,
-          selectedOptionIndex: storeState.selectedOptionIndex,
-          isCorrect: storeState.isCorrect,
+          currentIndex: isWaitingForNewRound ? nextIdx : storeState.currentIndex,
+          selectedOptionIndex: isWaitingForNewRound ? null : storeState.selectedOptionIndex,
+          isCorrect: isWaitingForNewRound ? null : storeState.isCorrect,
           versusPickIndex: (msg.pickIndex ?? storeState.versusPickIndex) + 1,
           timeLimitMs: tLimit,
-          timeRemainingMs: isActiveOrReveal ? storeState.timeRemainingMs : tLimit,
-          questionStartTime: isActiveOrReveal ? storeState.questionStartTime : Date.now(),
+          timeRemainingMs: isWaitingForNewRound ? tLimit : storeState.timeRemainingMs,
+          questionStartTime: isWaitingForNewRound ? Date.now() : storeState.questionStartTime,
           versusShowCategoryPicker: false,
-          gameState: isActiveOrReveal ? storeState.gameState : 'ACTIVE',
+          gameState: isWaitingForNewRound ? 'ACTIVE' : storeState.gameState,
         });
       }
     });
@@ -433,27 +433,28 @@ export const quizStore = {
           generationError: null,
         });
       } else if (msg.type === 'ROUND_QUESTIONS' && msg.questions) {
-        const existingIds = new Set(storeState.questions.map((q) => q.id || q.question));
-        const uniqueNew = msg.questions.filter((q) => !existingIds.has(q.id || q.question));
+        const safeQuestions = storeState.questions || [];
+        const existingIds = new Set(safeQuestions.filter((q) => q && (q.id || q.question)).map((q) => q.id || q.question));
+        const uniqueNew = (msg.questions || []).filter((q) => q && !existingIds.has(q.id || q.question));
 
-        const newAll = uniqueNew.length > 0 ? [...storeState.questions, ...uniqueNew] : storeState.questions;
+        const newAll = uniqueNew.length > 0 ? [...safeQuestions, ...uniqueNew] : safeQuestions;
         const nextIdx = storeState.userAnswers.length;
-        const curQ = newAll[nextIdx] || storeState.questions[storeState.currentIndex] || msg.questions[0];
+        const curQ = newAll[nextIdx] || safeQuestions[storeState.currentIndex] || msg.questions[0];
         const tLimit = getTimeLimitForQuestion(curQ, 'versus');
 
-        const isActiveOrReveal = storeState.gameState === 'ACTIVE' || storeState.gameState === 'REVEAL';
+        const isWaitingForNewRound = storeState.versusShowCategoryPicker || storeState.currentIndex < nextIdx || storeState.gameState === 'GENERATING';
 
         updateState({
           questions: newAll,
-          currentIndex: isActiveOrReveal ? storeState.currentIndex : nextIdx,
-          selectedOptionIndex: storeState.selectedOptionIndex,
-          isCorrect: storeState.isCorrect,
+          currentIndex: isWaitingForNewRound ? nextIdx : storeState.currentIndex,
+          selectedOptionIndex: isWaitingForNewRound ? null : storeState.selectedOptionIndex,
+          isCorrect: isWaitingForNewRound ? null : storeState.isCorrect,
           versusPickIndex: (msg.pickIndex ?? storeState.versusPickIndex) + 1,
           timeLimitMs: tLimit,
-          timeRemainingMs: isActiveOrReveal ? storeState.timeRemainingMs : tLimit,
-          questionStartTime: isActiveOrReveal ? storeState.questionStartTime : Date.now(),
+          timeRemainingMs: isWaitingForNewRound ? tLimit : storeState.timeRemainingMs,
+          questionStartTime: isWaitingForNewRound ? Date.now() : storeState.questionStartTime,
           versusShowCategoryPicker: false,
-          gameState: isActiveOrReveal ? storeState.gameState : 'ACTIVE',
+          gameState: isWaitingForNewRound ? 'ACTIVE' : storeState.gameState,
         });
       }
     });
