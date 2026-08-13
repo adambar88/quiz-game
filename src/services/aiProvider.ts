@@ -3,6 +3,7 @@ import { getSystemPrompt, buildUserPrompt } from '../ai/prompts.ts';
 import { validateAndParseAIResponse } from '../ai/validators.ts';
 import { STATIC_QUESTION_BANK } from '../data/questions.ts';
 import type { AISettings } from './storageService.ts';
+import { QuestionEngine } from './questionEngine.ts';
 
 export async function testProviderHealth(settings: AISettings): Promise<{ ok: boolean; message: string }> {
   const provider = settings.activeProvider;
@@ -36,7 +37,12 @@ export async function generateQuestions(
   const provider = settings.activeProvider;
 
   if (provider === 'offline') {
-    return getOfflineQuestions(params);
+    return QuestionEngine.selectFromStaticBank(
+      params.category || 'all',
+      params.difficulty || 'medium',
+      params.count,
+      params.lang || 'pl'
+    );
   }
 
   try {
@@ -49,7 +55,12 @@ export async function generateQuestions(
     console.warn(`[AI Provider] ${provider} failed.`, error);
     if (settings.fallbackToOffline) {
       console.log('[AI Provider] Falling back to curated offline static question bank.');
-      return getOfflineQuestions(params);
+      return QuestionEngine.selectFromStaticBank(
+        params.category || 'all',
+        params.difficulty || 'medium',
+        params.count,
+        params.lang || 'pl'
+      );
     }
     throw error;
   }

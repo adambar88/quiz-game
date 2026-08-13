@@ -1095,6 +1095,27 @@ export const STATIC_QUESTION_BANK_PL: Question[] = [
     difficulty: 'medium',
     tags: ['ai', 'transformer', 'machine-learning'],
   },
+  {
+    id: 'tf-002-pl',
+    category: 'Tech & Future',
+    question: 'Jak nazywa się podstawowa jednostka informacji kwantowej stosowana w komputerach kwantowych?',
+    options: ['Bajt', 'Kubit (Qubit)', 'Bit', 'Trit'],
+    correctIndex: 1,
+    explanation: 'Kubit to odpowiednik tradycyjnego bitu w informatyce kwantowej, mogący znajdować się w stanie superpozycji.',
+    difficulty: 'medium',
+    tags: ['quantum', 'qubit', 'future-tech'],
+  },
+  {
+    id: 'tf-003-pl',
+    category: 'Tech & Future',
+    question: 'Które zjawisko astronomiczne opisał Albert Einstein jako zakrzywienie czasoprzestrzeni przez masę?',
+    options: ['Grawitacja', 'Supernowa', 'Promieniowanie reliktowe', 'Wiatr słoneczny'],
+    correctIndex: 0,
+    explanation: 'W Ogólnej Teorii Względności grawitacja nie jest siłą, lecz wynikiem zakrzywienia czasoprzestrzeni przez masę.',
+    difficulty: 'medium',
+    tags: ['physics', 'einstein', 'gravity'],
+  },
+
   // CYBERSECURITY
   {
     id: 'sec-001-pl',
@@ -1106,6 +1127,27 @@ export const STATIC_QUESTION_BANK_PL: Question[] = [
     difficulty: 'easy',
     tags: ['security', 'tls', 'encryption'],
   },
+  {
+    id: 'sec-002-pl',
+    category: 'Cybersecurity',
+    question: 'Jak nazywa się atak polegający na podszywaniu się pod zaufaną instytucję w celu wyłudzenia haseł lub danych kart płatniczych?',
+    options: ['Phishing', 'DDOS', 'Ransomware', 'Man-in-the-Middle'],
+    correctIndex: 0,
+    explanation: 'Phishing polega na wysyłaniu fałszywych wiadomości lub tworzeniu stron oszukańczych podszywających się np. pod banki.',
+    difficulty: 'easy',
+    tags: ['phishing', 'security', 'cybercrime'],
+  },
+  {
+    id: 'sec-003-pl',
+    category: 'Cybersecurity',
+    question: 'Co oznacza skrótowe pojęcie 2FA stosowane do zabezpieczania kont internetowych?',
+    options: ['Dwuskładnikowa Uwierzytelnianie (Two-Factor Auth)', 'Drugi Adres IP', 'Podwójny Szyfr AES', 'System Dwuautoryzacyjny'],
+    correctIndex: 0,
+    explanation: '2FA wymaga podania dwóch niezależnych dowodów tożsamości (np. hasła oraz kodu z SMS/aplikacji).',
+    difficulty: 'easy',
+    tags: ['2fa', 'security', 'authentication'],
+  },
+
   // GAMING & ESPORTS
   {
     id: 'game-001-pl',
@@ -1117,6 +1159,27 @@ export const STATIC_QUESTION_BANK_PL: Question[] = [
     difficulty: 'easy',
     tags: ['gaming', 'unreal-engine', 'epic'],
   },
+  {
+    id: 'game-002-pl',
+    category: 'Gaming & Esports',
+    question: 'Z jakiego polskiego studia deweloperskiego pochodzi światowy hit "Wiedźmin 3: Dziki Gon"?',
+    options: ['Techland', 'CD Projekt RED', 'People Can Fly', '11 bit studios'],
+    correctIndex: 1,
+    explanation: 'CD Projekt RED wyprodukował utytułowaną grę RPG "Wiedźmin 3: Dziki Gon" wydaną w 2015 roku.',
+    difficulty: 'easy',
+    tags: ['witcher', 'cdprojekt', 'gaming'],
+  },
+  {
+    id: 'game-003-pl',
+    category: 'Gaming & Esports',
+    question: 'Która gra typu MOBA stworzona przez Riot Games jest jedną z najważniejszych dyscyplin e-sportowych na świecie?',
+    options: ['Dota 2', 'League of Legends', 'Heroes of the Storm', 'Smite'],
+    correctIndex: 1,
+    explanation: 'League of Legends (LoL) wydany w 2009 roku gromadzi miliony graczy i widzów turniejów e-sportowych.',
+    difficulty: 'easy',
+    tags: ['esports', 'lol', 'riot'],
+  },
+
   // PHYSICS & ASTRONOMY
   {
     id: 'pa-001-pl',
@@ -1128,6 +1191,27 @@ export const STATIC_QUESTION_BANK_PL: Question[] = [
     difficulty: 'easy',
     tags: ['physics', 'light', 'constants'],
   },
+  {
+    id: 'pa-002-pl',
+    category: 'Physics & Astronomy',
+    question: 'Która planeta Układu Słonecznego jest największa pod względem masy i promienia?',
+    options: ['Saturn', 'Jowisz', 'Neptun', 'Uran'],
+    correctIndex: 1,
+    explanation: 'Jowisz jest największą planetą Układu Słonecznego, posiadającą masę ponad dwukrotnie większą niż pozostałe planety razem wzięte.',
+    difficulty: 'easy',
+    tags: ['astronomy', 'jupiter', 'planets'],
+  },
+  {
+    id: 'pa-003-pl',
+    category: 'Physics & Astronomy',
+    question: 'Jak nazywa się granica czarnej dziury, z wnętrza której nawet światło nie może uciec?',
+    options: ['Osobliwość', 'Horyzont zdarzeń', 'Strefa Czysta', 'Promień Schwarzschilda'],
+    correctIndex: 1,
+    explanation: 'Horyzont zdarzeń to sferyczna granica wokół czarnej dziury, wyznaczająca punkt bez powrotu.',
+    difficulty: 'medium',
+    tags: ['black-hole', 'astronomy', 'physics'],
+  },
+
   // GEOGRAPHY & EARTH
   {
     id: 'geo-001-pl',
@@ -1139,6 +1223,27 @@ export const STATIC_QUESTION_BANK_PL: Question[] = [
     difficulty: 'easy',
     tags: ['geography', 'oceans', 'earth'],
   },
+  {
+    id: 'geo-002-pl',
+    category: 'Geography & Earth',
+    question: 'Jaka jest stolica Japonii?',
+    options: ['Kioto', 'Osaka', 'Tokio', 'Jokohama'],
+    correctIndex: 2,
+    explanation: 'Tokio jest stolicą i największym obszarem metropolitalnym Japonii oraz jednym z najważniejszych centrów finansowych świata.',
+    difficulty: 'easy',
+    tags: ['geography', 'capitals', 'japan'],
+  },
+  {
+    id: 'geo-003-pl',
+    category: 'Geography & Earth',
+    question: 'Która rzeka w Ameryce Południowej jest najdłuższa i niesie najwięcej wody na świecie?',
+    options: ['Nil', 'Amazonka', 'Missisipi', 'Kongo'],
+    correctIndex: 1,
+    explanation: 'Amazonka jest najpotężniejszą rzeką świata pod względem przepływu wody oraz dorzecza.',
+    difficulty: 'easy',
+    tags: ['geography', 'rivers', 'amazon'],
+  },
+
   // MEDICINE & HEALTH
   {
     id: 'med-001-pl',
@@ -1150,6 +1255,27 @@ export const STATIC_QUESTION_BANK_PL: Question[] = [
     difficulty: 'easy',
     tags: ['biology', 'blood', 'medicine'],
   },
+  {
+    id: 'med-002-pl',
+    category: 'Medicine & Health',
+    question: 'Jaki jest największy organ ludzkiego ciała pod względem powierzchni i masy?',
+    options: ['Wątroba', 'Skóra', 'Płuca', 'Jelito cienkie'],
+    correctIndex: 1,
+    explanation: 'Skóra u dorosłego człowieka zajmuje powierzchnię około 1.5 - 2 m² i tworzy główną barierę ochronną organizmu.',
+    difficulty: 'easy',
+    tags: ['medicine', 'anatomy', 'skin'],
+  },
+  {
+    id: 'med-003-pl',
+    category: 'Medicine & Health',
+    question: 'Która witamina rozpuszczalna w tłuszczach jest syntezowana w ludzkiej skórze pod wpływem promieniowania słonecznego UV-B?',
+    options: ['Witamina A', 'Witamina C', 'Witamina D', 'Witamina K'],
+    correctIndex: 2,
+    explanation: 'Witamina D3 powstaje w skórze z 7-dehydrocholesterolu pod wpływem światła słonecznego.',
+    difficulty: 'easy',
+    tags: ['medicine', 'vitamins', 'health'],
+  },
+
   // POLISH HISTORY
   {
     id: 'plh-001-pl',
@@ -1161,17 +1287,59 @@ export const STATIC_QUESTION_BANK_PL: Question[] = [
     difficulty: 'medium',
     tags: ['history', 'poland', 'constitution'],
   },
+  {
+    id: 'plh-002-pl',
+    category: 'Polish History',
+    question: 'W którym roku odbyła się słynna Bitwa pod Grunwaldem, w której wojska polsko-litewskie pokonały Zakon Krzyżacki?',
+    options: ['1331', '1410', '1454', '1525'],
+    correctIndex: 1,
+    explanation: '15 lipca 1410 roku król Władysław II Jagiełło i książę Witold pokonali armię krzyżacką dowodzoną przez Ulricha von Jungingena.',
+    difficulty: 'easy',
+    tags: ['history', 'poland', 'grunwald'],
+  },
+  {
+    id: 'plh-003-pl',
+    category: 'Polish History',
+    question: 'Kto był pierwszym historycznym władcą Polski z dynastii Piastów, który przyjął chrzest w 966 roku?',
+    options: ['Bolesław Chrobry', 'Mieszko I', 'Kazimierz Wielki', 'Władysław Łokietek'],
+    correctIndex: 1,
+    explanation: 'Mieszko I przyjął chrzest w 966 roku, co uznaje się za symboliczny początek państwowości polskiej.',
+    difficulty: 'easy',
+    tags: ['history', 'poland', 'mieszko'],
+  },
+
   // MYTHOLOGY & FOLKLORE
   {
     id: 'myth-001-pl',
     category: 'Mythology & Folklore',
     question: 'W mitologii greckiej, kto jest królem bogów olimpijskich oraz władcą nieba i piorunów?',
-    options: ['Posejdon', 'Hades', 'Zbieg / Zeus', 'Apolla'],
+    options: ['Posejdon', 'Hades', 'Zeus', 'Apollo'],
     correctIndex: 2,
     explanation: 'Zeus był najwyższym z bogów w mitologii greckiej, władającym piorunami z szczytu góry Olimp.',
     difficulty: 'easy',
     tags: ['mythology', 'greek', 'zeus'],
   },
+  {
+    id: 'myth-002-pl',
+    category: 'Mythology & Folklore',
+    question: 'W mitologii nordyckiej, jak nazywa się młot władcy piorunów Thora?',
+    options: ['Gungnir', 'Mjolnir', 'Excalibur', 'Gram'],
+    correctIndex: 1,
+    explanation: 'Mjolnir to potężny młot bojowy należący do boga Thora, stanowiący symbol ochrony i siły.',
+    difficulty: 'easy',
+    tags: ['mythology', 'norse', 'thor'],
+  },
+  {
+    id: 'myth-003-pl',
+    category: 'Mythology & Folklore',
+    question: 'W mitologii słowiańskiej, kto był najwyższym bogiem gromu, wojny i nieba?',
+    options: ['Weles', 'Perun', 'Swaróg', 'Dadźbóg'],
+    correctIndex: 1,
+    explanation: 'Perun to władca piorunów i najwyższy bóg w panteonie słowiańskim, czczony przy dębach.',
+    difficulty: 'medium',
+    tags: ['mythology', 'slavic', 'perun'],
+  },
+
   // POLITICS & CIVICS
   {
     id: 'pol-001-pl',
@@ -1183,6 +1351,27 @@ export const STATIC_QUESTION_BANK_PL: Question[] = [
     difficulty: 'easy',
     tags: ['politics', 'eu', 'civics'],
   },
+  {
+    id: 'pol-002-pl',
+    category: 'Politics & Civics',
+    question: 'Jak nazywa się najwyższa izba polskiego parlamentu (zasiada w niej 100 parlamentarzystów)?',
+    options: ['Sejm', 'Senat', 'Trybunał Stanu', 'Rada Ministrów'],
+    correctIndex: 1,
+    explanation: 'Senat Rzeczypospolitej Polskiej składa się ze 100 senatorów wybieranych w okręgach jednomandatowych.',
+    difficulty: 'easy',
+    tags: ['politics', 'poland', 'senate'],
+  },
+  {
+    id: 'pol-003-pl',
+    category: 'Politics & Civics',
+    question: 'Gdzie mieści się główna siedziba Międzynarodowego Trybunału Sprawiedliwości (MTS)?',
+    options: ['Genewa', 'Haga', 'Strasburg', 'Nowy Jork'],
+    correctIndex: 1,
+    explanation: 'Międzynarodowy Trybunał Sprawiedliwości z siedzibą w Hadze (Holandia) jest głównym organem sądowym ONZ.',
+    difficulty: 'medium',
+    tags: ['politics', 'un', 'hague'],
+  },
+
   // PHILOSOPHY & PSYCHOLOGY
   {
     id: 'phil-001-pl',
@@ -1194,6 +1383,27 @@ export const STATIC_QUESTION_BANK_PL: Question[] = [
     difficulty: 'medium',
     tags: ['philosophy', 'plato', 'greece'],
   },
+  {
+    id: 'phil-002-pl',
+    category: 'Philosophy & Psychology',
+    question: 'Kto sformułował słynną sentencję filozoficzną "Cogito ergo sum" (Myślę, więc jestem)?',
+    options: ['Immanuel Kant', 'René Descartes (Kartezjusz)', 'Friedrich Nietzsche', 'John Locke'],
+    correctIndex: 1,
+    explanation: 'Kartezjusz zapisał to fundamentalne stwierdzenie racjonalizmu w dziele "Rozprawa o metodzie" z 1637 r.',
+    difficulty: 'easy',
+    tags: ['philosophy', 'descartes', 'rationalism'],
+  },
+  {
+    id: 'phil-003-pl',
+    category: 'Philosophy & Psychology',
+    question: 'Który austriacki neurolog stworzył psychoanalizę i wprowadził pojęcia Id, Ego i Superego?',
+    options: ['Carl Jung', 'Sigmund Freud', 'B.F. Skinner', 'Ivan Pavlov'],
+    correctIndex: 1,
+    explanation: 'Sigmund Freud jest ojcem psychoanalizy, klasyfikującej strukturę ludzkiej osobowości na Id, Ego i Superego.',
+    difficulty: 'easy',
+    tags: ['psychology', 'freud', 'psychoanalysis'],
+  },
+
   // CINEMA & TELEVISION
   {
     id: 'cin-001-pl',
@@ -1205,6 +1415,27 @@ export const STATIC_QUESTION_BANK_PL: Question[] = [
     difficulty: 'easy',
     tags: ['movies', 'spielberg', 'cinema'],
   },
+  {
+    id: 'cin-002-pl',
+    category: 'Cinema & Television',
+    question: 'Który film zdobył 11 Oscarów w 1998 roku, wyrównując historyczny rekord wszech czasów?',
+    options: ['Gladiator', 'Titanic', 'Władca Pierścieni: Powrót Króla', 'Forrest Gump'],
+    correctIndex: 1,
+    explanation: 'Film "Titanic" Jamesa Camerona z 1997 roku zdobył 11 nagród Akademii Filmowej na 14 nominacji.',
+    difficulty: 'easy',
+    tags: ['cinema', 'oscars', 'titanic'],
+  },
+  {
+    id: 'cin-003-pl',
+    category: 'Cinema & Television',
+    question: 'Który polski reżyser otrzymał honorowego Oscara w 2000 roku za całokształt twórczości filmowej?',
+    options: ['Krzysztof Kieślowski', 'Andrzej Wajda', 'Roman Polański', 'Jerzy Hoffman'],
+    correctIndex: 1,
+    explanation: 'Andrzej Wajda został wyróżniony nagrodą Akademii za wybitne osiągnięcia w reżyserii filmowej.',
+    difficulty: 'easy',
+    tags: ['cinema', 'wajda', 'poland'],
+  },
+
   // MUSIC
   {
     id: 'mus-001-pl',
@@ -1216,6 +1447,27 @@ export const STATIC_QUESTION_BANK_PL: Question[] = [
     difficulty: 'easy',
     tags: ['music', 'classical', 'beethoven'],
   },
+  {
+    id: 'mus-002-pl',
+    category: 'Music',
+    question: 'Jak nazywa się słynny polski kompozytor wirtuoz fortepianu epoki romantyzmu, autor Mazurków i Polonezów?',
+    options: ['Stanisław Moniuszko', 'Fryderyk Chopin', 'Ignacy Jan Paderewski', 'Karol Szymanowski'],
+    correctIndex: 1,
+    explanation: 'Fryderyk Chopin uważany jest za jednego z najwybitniejszych poetów fortepianu w historii muzyki.',
+    difficulty: 'easy',
+    tags: ['music', 'chopin', 'classical'],
+  },
+  {
+    id: 'mus-003-pl',
+    category: 'Music',
+    question: 'Który zespół rockowy wydał kultowy album "The Dark Side of the Moon" w 1973 roku?',
+    options: ['The Beatles', 'Pink Floyd', 'Led Zeppelin', 'The Rolling Stones'],
+    correctIndex: 1,
+    explanation: 'Pink Floyd wydał "The Dark Side of the Moon", stanowiący kamień milowy muzyki rocka progresywnego.',
+    difficulty: 'medium',
+    tags: ['music', 'pinkfloyd', 'rock'],
+  },
+
   // LITERATURE & BOOKS
   {
     id: 'lit-001-pl',
@@ -1227,6 +1479,27 @@ export const STATIC_QUESTION_BANK_PL: Question[] = [
     difficulty: 'easy',
     tags: ['literature', 'orwell', 'dystopia'],
   },
+  {
+    id: 'lit-002-pl',
+    category: 'Literature & Books',
+    question: 'Która polska pisarka otrzymała Literacką Nagrodę Nobla za rok 2018 za wyobraźnię narracyjną?',
+    options: ['Wisława Szymborska', 'Olga Tokarczuk', 'Elżbieta Cherezińska', 'Dorota Masłowska'],
+    correctIndex: 1,
+    explanation: 'Olga Tokarczuk otrzymała Literackiego Nobla za powieści takie jak "Bieguni" i "Księgi Jakubowe".',
+    difficulty: 'easy',
+    tags: ['literature', 'nobel', 'tokarczuk'],
+  },
+  {
+    id: 'lit-003-pl',
+    category: 'Literature & Books',
+    question: 'Kto napisał polską epopeję narodową "Pan Tadeusz"?',
+    options: ['Juliusz Słowacki', 'Adam Mickiewicz', 'Cyprian Kamil Norwid', 'Henryk Sienkiewicz'],
+    correctIndex: 1,
+    explanation: 'Adam Mickiewicz wydał "Pana Tadeusza" w Paryżu w 1834 roku.',
+    difficulty: 'easy',
+    tags: ['literature', 'mickiewicz', 'poland'],
+  },
+
   // ART & ARCHITECTURE
   {
     id: 'art-001-pl',
@@ -1238,6 +1511,27 @@ export const STATIC_QUESTION_BANK_PL: Question[] = [
     difficulty: 'easy',
     tags: ['art', 'da-vinci', 'renaissance'],
   },
+  {
+    id: 'art-002-pl',
+    category: 'Art & Architecture',
+    question: 'W którym mieście znajduje się słynna Wieża Eiffela ukończona w 1889 roku?',
+    options: ['Londyn', 'Paryż', 'Rzym', 'Berlin'],
+    correctIndex: 1,
+    explanation: 'Wieża Eiffela w Paryżu została zbudowana według projektu Gustave\'a Eiffela na Wystawę Światową.',
+    difficulty: 'easy',
+    tags: ['architecture', 'paris', 'eiffel'],
+  },
+  {
+    id: 'art-003-pl',
+    category: 'Art & Architecture',
+    question: 'Kto namalował słynny postimpresjonistyczny obraz "Gwieździsta noc" (The Starry Night)?',
+    options: ['Claude Monet', 'Vincent van Gogh', 'Pablo Picasso', 'Salvador Dalí'],
+    correctIndex: 1,
+    explanation: 'Vincent van Gogh namalował "Gwieździstą noc" w 1889 roku podczas pobytu w Saint-Rémy.',
+    difficulty: 'easy',
+    tags: ['art', 'vangogh', 'painting'],
+  },
+
   // SPORTS
   {
     id: 'spo-001-pl',
@@ -1249,6 +1543,27 @@ export const STATIC_QUESTION_BANK_PL: Question[] = [
     difficulty: 'easy',
     tags: ['sports', 'football', 'soccer'],
   },
+  {
+    id: 'spo-002-pl',
+    category: 'Sports',
+    question: 'Która polska tenisistka zdobyła wielokrotne tytuły wielkoszlemowe w tym Roland Garros oraz US Open?',
+    options: ['Agnieszka Radwańska', 'Iga Świątek', 'Magda Linette', 'Hubert Hurkacz'],
+    correctIndex: 1,
+    explanation: 'Iga Świątek jest wielokrotną mistrzynią turniejów wielkoszlemowych oraz liderką światowego rankingu WTA.',
+    difficulty: 'easy',
+    tags: ['sports', 'tennis', 'swiatek'],
+  },
+  {
+    id: 'spo-003-pl',
+    category: 'Sports',
+    question: 'Co ile lat odbywają się Letnie Igrzyska Olimpijskie?',
+    options: ['2 lata', '4 lata', '5 lat', '6 lat'],
+    correctIndex: 1,
+    explanation: 'Letnie Igrzyska Olimpijskie odbywają się cyklicznie co 4 lata.',
+    difficulty: 'easy',
+    tags: ['sports', 'olympics', 'games'],
+  },
+
   // FOOD & CULINARY
   {
     id: 'food-001-pl',
@@ -1260,6 +1575,27 @@ export const STATIC_QUESTION_BANK_PL: Question[] = [
     difficulty: 'easy',
     tags: ['food', 'culinary', 'italy'],
   },
+  {
+    id: 'food-002-pl',
+    category: 'Food & Culinary',
+    question: 'Jaka przyprawa pozyskiwana z wysuszonych słupków krokusa jest najdroższą przyprawą świata?',
+    options: ['Kardamon', 'Szafran', 'Wanilia', 'Kurkuma'],
+    correctIndex: 1,
+    explanation: 'Szafran jest najdroższą przyprawą ze względu na konieczność ręcznego zbioru małych słupków kwiatów krokusa.',
+    difficulty: 'medium',
+    tags: ['food', 'spices', 'saffron'],
+  },
+  {
+    id: 'food-003-pl',
+    category: 'Food & Culinary',
+    question: 'Który japoński potrawa przygotowywana jest ze specjalnie zaprawionego ryżu oraz surowej ryby lub owoców morza?',
+    options: ['Ramen', 'Sushi', 'Tempura', 'Sashimi'],
+    correctIndex: 1,
+    explanation: 'Sushi bazuje na zakwaszonym ryżu łączonym z rybami, nori i warzywami.',
+    difficulty: 'easy',
+    tags: ['food', 'sushi', 'japan'],
+  },
+
   // BUSINESS & FINANCE
   {
     id: 'bus-001-pl',
@@ -1271,6 +1607,27 @@ export const STATIC_QUESTION_BANK_PL: Question[] = [
     difficulty: 'easy',
     tags: ['business', 'finance', 'stocks'],
   },
+  {
+    id: 'bus-002-pl',
+    category: 'Business & Finance',
+    question: 'Który amerykański bank centralny odpowiada za politykę pieniężną i stopy procentowe w USA?',
+    options: ['EBC', 'Rezerwa Federalna (FED)', 'Bank of America', 'IMF'],
+    correctIndex: 1,
+    explanation: 'Rezerwa Federalna (FED) to bank centralny Stanów Zjednoczonych.',
+    difficulty: 'easy',
+    tags: ['finance', 'fed', 'economy'],
+  },
+  {
+    id: 'bus-003-pl',
+    category: 'Business & Finance',
+    question: 'Jak nazywa się zjawisko ogólnego wzrostu cen towarów i usług w gospodarce?',
+    options: ['Deflacja', 'Inflacja', 'Stagflacja', 'Aprecjacja'],
+    correctIndex: 1,
+    explanation: 'Inflacja to proces wzrostu przeciętnego poziomu cen, prowadzący do spadku siły nabywczej pieniądza.',
+    difficulty: 'easy',
+    tags: ['finance', 'inflation', 'economy'],
+  },
+
   // AUTOMOTIVE & TRANSPORT
   {
     id: 'auto-001-pl',
@@ -1281,6 +1638,26 @@ export const STATIC_QUESTION_BANK_PL: Question[] = [
     explanation: 'Marka Porsche zaprezentowała kultowy sportowy model 911 na targach we Frankfurcie w 1963 roku.',
     difficulty: 'easy',
     tags: ['automotive', 'porsche', 'cars'],
+  },
+  {
+    id: 'auto-002-pl',
+    category: 'Automotive & Transport',
+    question: 'Który producent amerykańskich samochodów elektrycznych spopularyzował modele Model S, Model 3 i Cybertruck?',
+    options: ['Ford', 'Tesla', 'Chevrolet', 'Rivian'],
+    correctIndex: 1,
+    explanation: 'Tesla, Inc. założona w 2003 roku zrewolucjonizowała rynek masowych pojazdów elektrycznych.',
+    difficulty: 'easy',
+    tags: ['automotive', 'tesla', 'ev'],
+  },
+  {
+    id: 'auto-003-pl',
+    category: 'Automotive & Transport',
+    question: 'Jaki rodzaj napędu łączy w jednym pojeździe silnik spalinowy oraz silnik elektryczny?',
+    options: ['Napęd hybrydowy', 'Napęd wodorowy', 'Napęd czysto elektryczny (BEV)', 'Napęd CNG'],
+    correctIndex: 0,
+    explanation: 'Pojazdy hybrydowe wykorzystują współdziałanie silnika spalinowego z silnikiem elektrycznym dla oszczędności paliwa.',
+    difficulty: 'easy',
+    tags: ['automotive', 'hybrid', 'cars'],
   },
 ];
 
