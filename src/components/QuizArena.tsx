@@ -17,30 +17,32 @@ export const QuizArena: React.FC = () => {
     gameState,
     score,
     streak,
-    lives,
     mode,
-    eloState,
-    versusOpponentState,
     lang,
   } = useQuizStore();
 
-  const t = translations[lang];
+  const t = translations[lang] || translations.pl;
   const currentQ = questions[currentIndex];
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (gameState !== 'ACTIVE') return;
 
-      if (['1', 'a', 'A'].includes(e.key)) quizStore.selectOption(0);
-      else if (['2', 'b', 'B'].includes(e.key)) quizStore.selectOption(1);
-      else if (['3', 'c', 'C'].includes(e.key)) quizStore.selectOption(2);
-      else if (['4', 'd', 'D'].includes(e.key)) quizStore.selectOption(3);
-      else if (e.key === 'Enter' && selectedOptionIndex !== null) quizStore.submitAnswer();
+      let idx: number | null = null;
+      if (['1', 'a', 'A'].includes(e.key)) idx = 0;
+      else if (['2', 'b', 'B'].includes(e.key)) idx = 1;
+      else if (['3', 'c', 'C'].includes(e.key)) idx = 2;
+      else if (['4', 'd', 'D'].includes(e.key)) idx = 3;
+
+      if (idx !== null) {
+        quizStore.selectOption(idx);
+        quizStore.submitAnswer();
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [gameState, selectedOptionIndex]);
+  }, [gameState]);
 
   if (!currentQ) {
     return (
@@ -55,13 +57,19 @@ export const QuizArena: React.FC = () => {
   const difficultyTranslated = t.difficulties[currentQ.difficulty as Difficulty] || currentQ.difficulty;
   const catMeta = CATEGORY_METADATA[currentQ.category];
 
+  const handleOptionClick = (idx: number) => {
+    if (gameState !== 'ACTIVE') return;
+    quizStore.selectOption(idx);
+    quizStore.submitAnswer();
+  };
+
   return (
-    <div className="flex flex-col gap-2.5 sm:gap-5">
+    <div className="flex flex-col gap-2 sm:gap-4">
       {/* Versus Live Race Leaderboard */}
       {mode === 'versus' && <VersusLiveLeaderboard />}
 
       {/* Top Info Bar */}
-      <div className="flex items-center justify-between p-2 sm:p-3.5 glass-panel text-xs">
+      <div className="flex items-center justify-between p-2 sm:p-3 glass-panel text-xs">
         {/* Question Counter & Category */}
         <div className="flex items-center gap-1.5 sm:gap-2">
           <span className="font-mono font-bold text-emerald-400">
@@ -70,21 +78,15 @@ export const QuizArena: React.FC = () => {
           <span className="text-[var(--text-dim)]">•</span>
           <span className="px-1.5 py-0.5 rounded bg-white/5 font-medium flex items-center gap-1">
             <span>{catMeta?.icon || '💡'}</span>
-            <span className="truncate max-w-[100px] sm:max-w-none">{categoryTranslated}</span>
+            <span className="truncate max-w-[110px] sm:max-w-none">{categoryTranslated}</span>
           </span>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-4">
-
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* Streak Flame Counter */}
           <div className="flex items-center gap-1 font-mono font-bold" title={t.streak}>
             <span className={streak > 0 ? 'flame-anim text-amber-400' : 'opacity-40'}>🔥</span>
             <span>{streak}</span>
-            {streak > 1 && (
-              <span className="text-[10px] bg-amber-500/20 text-amber-300 px-1 py-0.5 rounded font-mono">
-                {(1 + Math.min(2, streak * 0.25)).toFixed(2)}x
-              </span>
-            )}
           </div>
 
           {/* Score */}
@@ -99,7 +101,7 @@ export const QuizArena: React.FC = () => {
                 quizStore.exitToHome();
               }
             }}
-            className="px-2 py-0.5 rounded bg-red-500/10 hover:bg-red-500/20 text-red-400 text-[10px] sm:text-xs font-bold transition-all border border-red-500/30 flex items-center gap-1 active:scale-95"
+            className="px-2 py-0.5 rounded bg-red-500/10 hover:bg-red-500/20 text-red-400 text-[10px] sm:text-xs font-bold transition-all border border-red-500/30 flex items-center gap-1 active:scale-95 ml-1"
             title={lang === 'pl' ? 'Wyjdź do głównego menu' : 'Exit to main menu'}
           >
             <span>🚪</span>
@@ -112,23 +114,23 @@ export const QuizArena: React.FC = () => {
       {gameState === 'ACTIVE' && <TimerRing />}
 
       {/* Question Card */}
-      <div className="p-3.5 sm:p-6 glass-panel flex flex-col gap-1.5 sm:gap-3 relative overflow-hidden">
-        <div className="flex items-center justify-between text-[11px] sm:text-xs text-[var(--text-dim)] uppercase font-mono">
+      <div className="p-3 sm:p-5 glass-panel flex flex-col gap-1.5 sm:gap-2.5 relative overflow-hidden">
+        <div className="flex items-center justify-between text-[10px] sm:text-xs text-[var(--text-dim)] uppercase font-mono">
           <span>{t.difficultyLabel}: <strong className="text-emerald-400">{difficultyTranslated}</strong></span>
         </div>
-        <h2 className="text-sm sm:text-xl font-bold leading-snug text-[var(--text)]">
+        <h2 className="text-xs sm:text-lg font-bold leading-snug text-[var(--text)]">
           {currentQ.question}
         </h2>
       </div>
 
-      {/* Option Buttons Grid */}
-      <div className="grid grid-cols-1 gap-1.5 sm:gap-2.5">
+      {/* Option Buttons Grid — One-tap answer submission */}
+      <div className="grid grid-cols-1 gap-1.5 sm:gap-2">
         {currentQ.options.map((opt, idx) => {
           const letter = String.fromCharCode(65 + idx);
           const isSelected = selectedOptionIndex === idx;
           const isCorrectIndex = currentQ.correctIndex === idx;
 
-          let btnStyle = 'bg-white/5 border-[var(--border)] hover:border-[var(--border-hover)] hover:bg-white/10';
+          let btnStyle = 'bg-white/5 border-[var(--border)] hover:border-emerald-500 hover:bg-white/10';
 
           if (gameState === 'REVEAL') {
             if (isCorrectIndex) {
@@ -138,41 +140,29 @@ export const QuizArena: React.FC = () => {
             } else {
               btnStyle = 'bg-white/5 border-[var(--border)] opacity-40';
             }
-          } else if (isSelected) {
-            btnStyle = 'bg-emerald-500/10 border-emerald-500 text-emerald-400 font-bold ring-1 ring-emerald-500';
           }
 
           return (
             <button
               key={idx}
               disabled={gameState === 'REVEAL'}
-              onClick={() => quizStore.selectOption(idx)}
-              className={`p-2.5 sm:p-4 rounded-xl text-left border transition-all flex items-center justify-between group active:scale-[0.995] ${btnStyle}`}
+              onClick={() => handleOptionClick(idx)}
+              className={`p-2 sm:p-3 rounded-xl text-left border transition-all flex items-center justify-between group active:scale-[0.99] ${btnStyle}`}
             >
-              <div className="flex items-center gap-2.5 sm:gap-3 pr-2">
-                <span className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-white/10 text-xs font-mono font-bold flex items-center justify-center flex-shrink-0 group-hover:bg-white/20">
+              <div className="flex items-center gap-2 sm:gap-3 pr-2">
+                <span className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-white/10 text-[11px] sm:text-xs font-mono font-bold flex items-center justify-center flex-shrink-0 group-hover:bg-white/20">
                   {letter}
                 </span>
-                <span className="text-xs sm:text-sm font-medium leading-snug">{opt}</span>
+                <span className="text-xs sm:text-sm font-medium leading-tight">{opt}</span>
               </div>
-              {gameState === 'REVEAL' && isCorrectIndex && <span className="text-emerald-400 font-bold text-xs sm:text-base">✓</span>}
-              {gameState === 'REVEAL' && isSelected && !isCorrectIndex && <span className="text-red-400 font-bold text-xs sm:text-base">✗</span>}
+              {gameState === 'REVEAL' && isCorrectIndex && <span className="text-emerald-400 font-bold text-xs sm:text-sm">✓</span>}
+              {gameState === 'REVEAL' && isSelected && !isCorrectIndex && <span className="text-red-400 font-bold text-xs sm:text-sm">✗</span>}
             </button>
           );
         })}
       </div>
 
-      {/* Submit CTA Button when option selected */}
-      {gameState === 'ACTIVE' && selectedOptionIndex !== null && (
-        <button
-          onClick={() => quizStore.submitAnswer()}
-          className="w-full py-2.5 sm:py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs sm:text-sm tracking-wide shadow-md transition-all active:scale-[0.99] animate-in fade-in duration-150"
-        >
-          {t.submit} ↵
-        </button>
-      )}
-
-      {/* Reveal Explanation Overlay when in REVEAL state */}
+      {/* Instant Answer Explanation Box during REVEAL */}
       {gameState === 'REVEAL' && <AnswerReveal />}
     </div>
   );

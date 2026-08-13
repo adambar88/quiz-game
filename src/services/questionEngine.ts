@@ -102,12 +102,37 @@ export class QuestionEngine {
     }
 
     const selected: Question[] = [];
+    const usedIndices = new Set<number>();
+
     for (let i = 0; i < count; i++) {
-      const item = pool[i % pool.length];
+      let chosenIndex = i % pool.length;
+      for (let attempt = 0; attempt < pool.length; attempt++) {
+        const candidate = (i + attempt) % pool.length;
+        if (!usedIndices.has(candidate)) {
+          chosenIndex = candidate;
+          usedIndices.add(candidate);
+          break;
+        }
+      }
+
+      const item = pool[chosenIndex];
+
+      let options: [string, string, string, string] = [...item.options];
+      let correctIndex = item.correctIndex;
+
+      if (usedIndices.size >= pool.length && i >= pool.length) {
+        const correctText = options[correctIndex];
+        const shuffled = [...options].sort(() => Math.random() - 0.5) as [string, string, string, string];
+        correctIndex = shuffled.indexOf(correctText);
+        options = shuffled;
+      }
+
       selected.push({
         ...item,
-        id: `static-${item.id}-${i}-${Math.floor(Math.random() * 1000)}`,
+        id: `static-${item.id}-${i}-${Math.floor(Math.random() * 10000)}`,
         category: category !== 'all' ? category : item.category,
+        options,
+        correctIndex,
       });
     }
 
