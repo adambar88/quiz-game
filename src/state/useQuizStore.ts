@@ -237,6 +237,10 @@ export const quizStore = {
       userAnswers: [],
     });
 
+    if (peerService.getIsHost()) {
+      peerService.sendMessage({ type: 'INIT_VERSUS' });
+    }
+
     // Register PeerJS listener for versus messages
     peerService.setCallbacks(undefined, (msg) => {
       if (msg.type === 'PROGRESS_UPDATE' && msg.playerState) {

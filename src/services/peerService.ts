@@ -17,6 +17,7 @@ export interface PlayerState {
 export type PeerMessageType =
   | 'HANDSHAKE'
   | 'ROOM_STATE'
+  | 'INIT_VERSUS'
   | 'START_GAME'
   | 'PROGRESS_UPDATE'
   | 'CATEGORY_PICK'
@@ -271,7 +272,7 @@ class PeerService {
   }
 
   public getConnectedCount(): number {
-    return this.isHost ? Math.max(2, this.connections.length + 1) : 2;
+    return this.isHost ? (this.connections.length + 1) : 2;
   }
 
   public destroy() {

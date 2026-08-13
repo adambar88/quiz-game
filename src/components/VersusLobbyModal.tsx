@@ -43,8 +43,12 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
       code,
       (count) => setConnectedCount(count),
       (msg) => {
-        if (msg.type === 'START_GAME' && msg.questions) {
+        if (msg.type === 'INIT_VERSUS') {
+          quizStore.startVersusDuel();
+        } else if ((msg.type === 'START_GAME' || msg.type === 'ROUND_QUESTIONS') && msg.questions) {
           quizStore.startQuizWithQuestions(msg.questions);
+        } else if (msg.type === 'CATEGORY_PICK') {
+          quizStore.showVersusGeneratingState(msg.chosenCategory);
         }
       }
     );
@@ -65,8 +69,12 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
         targetCode,
         (count) => setConnectedCount(count),
         (msg) => {
-          if (msg.type === 'START_GAME' && msg.questions) {
+          if (msg.type === 'INIT_VERSUS') {
+            quizStore.startVersusDuel();
+          } else if ((msg.type === 'START_GAME' || msg.type === 'ROUND_QUESTIONS') && msg.questions) {
             quizStore.startQuizWithQuestions(msg.questions);
+          } else if (msg.type === 'CATEGORY_PICK') {
+            quizStore.showVersusGeneratingState(msg.chosenCategory);
           }
         }
       );
