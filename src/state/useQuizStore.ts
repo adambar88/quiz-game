@@ -323,7 +323,13 @@ export const quizStore = {
         const curQ = newAll[nextIdx] || safeQuestions[storeState.currentIndex] || msg.questions[0];
         const tLimit = getTimeLimitForQuestion(curQ, 'versus');
 
-        const isWaitingForNewRound = storeState.versusShowCategoryPicker || storeState.currentIndex < nextIdx || storeState.gameState === 'GENERATING';
+        const isWaitingForNewRound =
+          storeState.mode === 'versus' &&
+          (storeState.gameState === 'IDLE' ||
+            storeState.showVersusLobby ||
+            storeState.versusShowCategoryPicker ||
+            storeState.currentIndex < nextIdx ||
+            storeState.gameState === 'GENERATING');
 
         updateState({
           questions: newAll,
@@ -334,6 +340,7 @@ export const quizStore = {
           timeLimitMs: tLimit,
           timeRemainingMs: isWaitingForNewRound ? tLimit : storeState.timeRemainingMs,
           questionStartTime: isWaitingForNewRound ? Date.now() : storeState.questionStartTime,
+          showVersusLobby: false,
           versusShowCategoryPicker: false,
           gameState: isWaitingForNewRound ? 'ACTIVE' : storeState.gameState,
         });
@@ -401,6 +408,7 @@ export const quizStore = {
         timeLimitMs: timeLimit,
         timeRemainingMs: timeLimit,
         questionStartTime: Date.now(),
+        showVersusLobby: false,
         versusShowCategoryPicker: false,
         gameState: 'ACTIVE',
       });
@@ -442,7 +450,13 @@ export const quizStore = {
         const curQ = newAll[nextIdx] || safeQuestions[storeState.currentIndex] || msg.questions[0];
         const tLimit = getTimeLimitForQuestion(curQ, 'versus');
 
-        const isWaitingForNewRound = storeState.versusShowCategoryPicker || storeState.currentIndex < nextIdx || storeState.gameState === 'GENERATING';
+        const isWaitingForNewRound =
+          storeState.mode === 'versus' &&
+          (storeState.gameState === 'IDLE' ||
+            storeState.showVersusLobby ||
+            storeState.versusShowCategoryPicker ||
+            storeState.currentIndex < nextIdx ||
+            storeState.gameState === 'GENERATING');
 
         updateState({
           questions: newAll,
@@ -453,6 +467,7 @@ export const quizStore = {
           timeLimitMs: tLimit,
           timeRemainingMs: isWaitingForNewRound ? tLimit : storeState.timeRemainingMs,
           questionStartTime: isWaitingForNewRound ? Date.now() : storeState.questionStartTime,
+          showVersusLobby: false,
           versusShowCategoryPicker: false,
           gameState: isWaitingForNewRound ? 'ACTIVE' : storeState.gameState,
         });
