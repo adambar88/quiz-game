@@ -573,6 +573,8 @@ export const quizStore = {
       userAnswers: [...userAnswers, newRecord],
       gameState: 'REVEAL',
     });
+
+    quizStore.sendVersusProgress();
   },
 
   nextQuestion() {
@@ -586,6 +588,7 @@ export const quizStore = {
       if (answeredCount >= 12) {
         soundEngine.playVictoryFanfare();
         updateState({ gameState: 'GAME_OVER' });
+        quizStore.sendVersusProgress();
         return;
       }
 
@@ -600,6 +603,7 @@ export const quizStore = {
           versusRound: Math.floor(nextPick / playerCount) + 1,
           versusShowCategoryPicker: true,
         });
+        quizStore.sendVersusProgress();
         return;
       }
     }
@@ -668,6 +672,10 @@ export const quizStore = {
       questionStartTime: Date.now(),
       gameState: 'ACTIVE',
     });
+
+    if (mode === 'versus') {
+      quizStore.sendVersusProgress();
+    }
   },
 
   goToReview() {
