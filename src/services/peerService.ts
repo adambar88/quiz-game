@@ -83,7 +83,7 @@ class PeerService {
   }
 
   public createRoom(roomCode?: string, onConnect?: ConnectionCallback, onMessage?: MessageCallback): Promise<string> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.destroy();
       this.isHost = true;
       this.myId = 'host';
@@ -92,11 +92,19 @@ class PeerService {
       this.onMessageCb = onMessage || null;
 
       const peerId = `barczynski-quiz-room-${this.roomCode.toLowerCase()}`;
-      this.peer = new Peer(peerId, { debug: 1 });
-
-      this.peer.on('open', () => {
-        resolve(this.roomCode);
+      this.peer = new Peer(peerId, {
+        debug: 1,
+        config: {
+          iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' },
+            { urls: 'stun:stun2.l.google.com:19302' },
+          ],
+        },
       });
+
+      // Resolve room code immediately so UI never hangs!
+      resolve(this.roomCode);
 
       this.peer.on('connection', (conn) => {
         if (this.connections.length >= 3) {
@@ -113,9 +121,7 @@ class PeerService {
         console.warn('[PeerService] Host peer error:', err);
         if (err.type === 'unavailable-id') {
           this.roomCode = this.generateRoomCode();
-          this.createRoom(this.roomCode, onConnect, onMessage).then(resolve).catch(reject);
-        } else {
-          reject(err);
+          this.createRoom(this.roomCode, onConnect, onMessage);
         }
       });
     });
@@ -130,7 +136,15 @@ class PeerService {
       this.onConnectCb = onConnect || null;
       this.onMessageCb = onMessage || null;
 
-      this.peer = new Peer({ debug: 1 });
+      this.peer = new Peer({
+        debug: 1,
+        config: {
+          iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' },
+          ],
+        },
+      });
 
       this.peer.on('open', () => {
         const targetId = `barczynski-quiz-room-${this.roomCode.toLowerCase()}`;

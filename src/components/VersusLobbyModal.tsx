@@ -37,9 +37,11 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
   const handleCreateRoom = async () => {
     setErrorMsg(null);
     setIsConnecting(true);
+    const code = peerService.generateRoomCode();
+    setRoomCode(code);
     try {
-      const code = await peerService.createRoom(
-        undefined,
+      await peerService.createRoom(
+        code,
         (count) => setConnectedCount(count),
         (msg) => {
           if (msg.type === 'START_GAME' && msg.questions) {
@@ -47,9 +49,8 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
           }
         }
       );
-      setRoomCode(code);
     } catch (err: any) {
-      setErrorMsg('Nie udało się utworzyć pokoju. Spróbuj ponownie.');
+      console.warn('[VersusLobby] Room creation warning:', err);
     } finally {
       setIsConnecting(false);
     }
