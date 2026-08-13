@@ -1,9 +1,7 @@
 import type { Question } from '../types/quiz.ts';
 
-export const STATIC_QUESTION_BANK: Question[] = [
-  // ==========================================
-  // COMPUTER SCIENCE (6 Questions)
-  // ==========================================
+export const STATIC_QUESTION_BANK_EN: Question[] = [
+  // COMPUTER SCIENCE
   {
     id: 'cs-001',
     category: 'Computer Science',
@@ -81,9 +79,7 @@ export const STATIC_QUESTION_BANK: Question[] = [
     baseElo: 2250,
   },
 
-  // ==========================================
-  // WEB DEV (6 Questions)
-  // ==========================================
+  // WEB DEV
   {
     id: 'web-001',
     category: 'Web Dev',
@@ -166,9 +162,7 @@ export const STATIC_QUESTION_BANK: Question[] = [
     baseElo: 2150,
   },
 
-  // ==========================================
-  // SCIENCE (6 Questions)
-  // ==========================================
+  // SCIENCE
   {
     id: 'sci-001',
     category: 'Science',
@@ -246,9 +240,7 @@ export const STATIC_QUESTION_BANK: Question[] = [
     baseElo: 2300,
   },
 
-  // ==========================================
-  // MATHEMATICS (6 Questions)
-  // ==========================================
+  // MATHEMATICS
   {
     id: 'math-001',
     category: 'Mathematics',
@@ -326,9 +318,7 @@ export const STATIC_QUESTION_BANK: Question[] = [
     baseElo: 2350,
   },
 
-  // ==========================================
-  // HISTORY (6 Questions)
-  // ==========================================
+  // HISTORY
   {
     id: 'hist-001',
     category: 'History',
@@ -396,9 +386,7 @@ export const STATIC_QUESTION_BANK: Question[] = [
     baseElo: 2200,
   },
 
-  // ==========================================
-  // POP CULTURE (6 Questions)
-  // ==========================================
+  // POP CULTURE
   {
     id: 'pop-001',
     category: 'Pop Culture',
@@ -466,3 +454,464 @@ export const STATIC_QUESTION_BANK: Question[] = [
     baseElo: 2180,
   },
 ];
+
+export const STATIC_QUESTION_BANK_PL: Question[] = [
+  // COMPUTER SCIENCE
+  {
+    id: 'cs-001-pl',
+    category: 'Computer Science',
+    question: 'Jaka jest złożoność obliczeniowa w najgorszym przypadku dla Wyszukiwania Binarnego w posortowanej tablicy o rozmiarze n?',
+    options: ['O(1)', 'O(log n)', 'O(n)', 'O(n log n)'],
+    correctIndex: 1,
+    explanation: 'Wyszukiwanie binarne za każdym krokiem dzieli obszar poszukiwań na pół, co daje logarytmiczną złożoność czasową O(log n).',
+    difficulty: 'easy',
+    tags: ['algorithms', 'binary-search', 'complexity'],
+    baseElo: 1000,
+  },
+  {
+    id: 'cs-002-pl',
+    category: 'Computer Science',
+    question: 'Która struktura danych działa według zasady LIFO (Ostatnie wejdzie, pierwsze wyjdzie)?',
+    options: ['Kolejka (Queue)', 'Stos (Stack)', 'Kopiec (Heap)', 'Lista jednokierunkowa'],
+    correctIndex: 1,
+    explanation: 'Stos przestrzega zasady LIFO – element dodany jako ostatni jest usuwany jako pierwszy.',
+    difficulty: 'easy',
+    tags: ['data-structures', 'stack', 'basics'],
+    baseElo: 1050,
+  },
+  {
+    id: 'cs-003-pl',
+    category: 'Computer Science',
+    question: 'W teorii złożoności obliczeniowej, czym charakteryzuje się klasa złożoności P?',
+    options: [
+      'Problemy rozstrzygalne w czasie wielomianowym przez deterministyczną Maszynę Turinga',
+      'Problemy weryfikowalne w czasie wielomianowym przez niedeterministyczną Maszynę Turinga',
+      'Problemy wymagające wykładniczej pamięci',
+      'Problemy nierozstrzygalne'
+    ],
+    correctIndex: 0,
+    explanation: 'Klasa P zawiera problemy decyzyjne, które można rozwiązać na deterministycznej maszynie Turinga w czasie wielomianowym O(n^k).',
+    difficulty: 'medium',
+    tags: ['complexity-theory', 'p-vs-np', 'theoretical-cs'],
+    baseElo: 1450,
+  },
+  {
+    id: 'cs-004-pl',
+    category: 'Computer Science',
+    question: 'Jaka jest złożoność czasowa algorytmu Dijkstry przy użyciu kopca Fibonacciego?',
+    options: ['O(V^2)', 'O(E + V log V)', 'O(V E)', 'O(E log V)'],
+    correctIndex: 1,
+    explanation: 'Użycie kopca Fibonacciego zmniejsza zamortyzowany czas operacji decrease-key do O(1), co daje złożoność O(E + V log V).',
+    difficulty: 'hard',
+    tags: ['graph-algorithms', 'dijkstra', 'heaps'],
+    baseElo: 1850,
+  },
+  {
+    id: 'cs-005-pl',
+    category: 'Computer Science',
+    question: 'Który algorytm zastępowania stron cierpi na anomalię Belady\'ego (gdzie zwiększenie ramki pamięci zwiększa liczbę błędów strony)?',
+    options: ['LRU (Least Recently Used)', 'OPT (Optimal)', 'FIFO (First-In, First-Out)', 'Second Chance'],
+    correctIndex: 2,
+    explanation: 'Algorytm FIFO wykazuje anomalię Belady\'ego, ponieważ nie posiada właściwości stosowych cechujących algorytmy takie jak LRU.',
+    difficulty: 'hard',
+    tags: ['operating-systems', 'memory-management', 'belady'],
+    baseElo: 1900,
+  },
+  {
+    id: 'cs-006-pl',
+    category: 'Computer Science',
+    question: 'Który dowód wykazał, że Problem Zatrzymania jest nierozstrzygalny dla ogólnych maszyn Turinga?',
+    options: [
+      'Teza Churcha-Turinga',
+      'Dowód Turinga metodą przekątniową (1936)',
+      'Pierwsze Twierdzenie Gödla o Niezupełności',
+      'Twierdzenie Cooka-Levina'
+    ],
+    correctIndex: 1,
+    explanation: 'Alan Turing w 1936 roku użył metody przekątniowej Cantora, aby udowodnić, że żaden algorytm nie jest w stanie ustalić, czy dowolny program się zatrzyma.',
+    difficulty: 'expert',
+    tags: ['computability', 'turing-machine', 'halting-problem'],
+    baseElo: 2250,
+  },
+
+  // WEB DEV
+  {
+    id: 'web-001-pl',
+    category: 'Web Dev',
+    question: 'Który kod stanu odpowiedzi HTTP oznacza "Not Found" (Nie znaleziono)?',
+    options: ['200', '401', '404', '500'],
+    correctIndex: 2,
+    explanation: 'Kod HTTP 404 Not Found oznacza, że serwer nie może odnaleźć zasobu pod wskazanym adresem URL.',
+    difficulty: 'easy',
+    tags: ['http', 'status-codes', 'web-basics'],
+    baseElo: 1000,
+  },
+  {
+    id: 'web-002-pl',
+    category: 'Web Dev',
+    question: 'W układzie CSS Flexbox, która właściwość wyrównuje elementy wzdłuż głównej osi (main axis)?',
+    options: ['align-items', 'justify-content', 'align-content', 'flex-direction'],
+    correctIndex: 1,
+    explanation: '`justify-content` odpowiada za rozkład wolnej przestrzeni wzdłuż głównej osi kontenera flex.',
+    difficulty: 'easy',
+    tags: ['css', 'flexbox', 'frontend'],
+    baseElo: 1080,
+  },
+  {
+    id: 'web-003-pl',
+    category: 'Web Dev',
+    question: 'W pętli zdarzeń JavaScript (Event Loop), która kolejka ma priorytet wykonania zaraz po zakończeniu funkcji synchronicznej?',
+    options: ['Kolejka Makrozadań (setTimeout)', 'Kolejka Mikrozadań (Promise.then / process.nextTick)', 'Kolejka Klatek Animacji (requestAnimationFrame)', 'Kolejka Wejścia/Wyjścia (I/O)'],
+    correctIndex: 1,
+    explanation: 'Event Loop przetwarza WSZYSTKIE mikrozadania z kolejki mikrozadań do końca, zanim pobierze kolejne zadanie z kolejki makrozadań.',
+    difficulty: 'medium',
+    tags: ['javascript', 'event-loop', 'async'],
+    baseElo: 1500,
+  },
+  {
+    id: 'web-004-pl',
+    category: 'Web Dev',
+    question: 'Dlaczego unikalne właściwości "key" są kluczowe podczas renderowania dynamicznych list w React?',
+    options: [
+      'Szyfrują właściwości komponentów dla bezpieczeństwa',
+      'Pozwalają Reactowi identyfikować przeniesione, dodane lub usunięte elementy podczas porównywania drzewa DOM (Reconciliation)',
+      'Wymuszają synchroniczne przeliczenie układu CSS',
+      'Automatycznie buforują wyniki zapytań HTTP'
+    ],
+    correctIndex: 1,
+    explanation: 'React używa kluczy do dopasowania elementów starego i nowego drzewa virtual DOM podczas procesu uzgadniania (reconciliation).',
+    difficulty: 'medium',
+    tags: ['react', 'reconciliation', 'frontend'],
+    baseElo: 1420,
+  },
+  {
+    id: 'web-005-pl',
+    category: 'Web Dev',
+    question: 'Jaka jest dokładna funkcja nagłówka HTTP `Cache-Control: no-cache`?',
+    options: [
+      'Przeglądarka nigdy nie może zapisać odpowiedzi na dysku',
+      'Przeglądarka może zapisać odpowiedź, ale MUSI zwalidować ją z serwerem przed użyciem',
+      'Odpowiedź jest buforowana na zawsze bez walidacji',
+      'Serwer usuwa nagłówki bezpieczeństwa z odpowiedzi'
+    ],
+    correctIndex: 1,
+    explanation: '`no-cache` zezwala na buforowanie, ale wymaga weryfikacji (ETag / If-None-Match) z serwerem przed wydaniem odpowiedzi z pamięci podręcznej.',
+    difficulty: 'hard',
+    tags: ['http', 'caching', 'performance'],
+    baseElo: 1820,
+  },
+  {
+    id: 'web-006-pl',
+    category: 'Web Dev',
+    question: 'Która konfiguracja ciasteczka (cookie) zapewnia najsilniejszą ochronę przed atakiem Cross-Site Request Forgery (CSRF)?',
+    options: [
+      'SameSite=None; Secure',
+      'SameSite=Strict; HttpOnly; Secure',
+      'Path=/; Domain=.example.com',
+      'Expires=Session'
+    ],
+    correctIndex: 1,
+    explanation: '`SameSite=Strict` gwarantuje, że ciasteczko nigdy nie zostanie wysłane w zapytaniach z innych witryn.',
+    difficulty: 'expert',
+    tags: ['security', 'csrf', 'cookies'],
+    baseElo: 2150,
+  },
+
+  // SCIENCE
+  {
+    id: 'sci-001-pl',
+    category: 'Science',
+    question: 'Jaka jest w przybliżeniu prędkość światła w próżni?',
+    options: ['300 000 km/s', '150 000 km/s', '1 000 000 km/s', '30 000 km/s'],
+    correctIndex: 0,
+    explanation: 'Prędkość światła w próżni (c) wynosi dokładnie 299 792 458 m/s, co daje w przybliżeniu 300 000 km/s.',
+    difficulty: 'easy',
+    tags: ['physics', 'constants', 'light'],
+    baseElo: 1000,
+  },
+  {
+    id: 'sci-002-pl',
+    category: 'Science',
+    question: 'Które organellum komórkowe jest powszechnie nazywane "elektrownią" komórki eukariotycznej?',
+    options: ['Jądro komórkowe', 'Mitochondrium', 'Rybosom', 'Aparat Golgiego'],
+    correctIndex: 1,
+    explanation: 'Mitochondria wytwarzają większość energii chemicznej komórki w postaci ATP w procesie oddychania komórkowego.',
+    difficulty: 'easy',
+    tags: ['biology', 'cell-biology', 'basics'],
+    baseElo: 1020,
+  },
+  {
+    id: 'sci-003-pl',
+    category: 'Science',
+    question: 'Za wyjaśnienie którego zjawiska Albert Einstein otrzymał Nagrodę Nobla z fizyki w 1921 roku?',
+    options: [
+      'Ogólna Teoria Względności',
+      'Zjawisko Fotoelektryczne',
+      'Ruchy Browna',
+      'Szczególna Teoria Względności'
+    ],
+    correctIndex: 1,
+    explanation: 'Einstein otrzymał Nagrodę Nobla za wyjaśnienie efektu fotoelektrycznego, wykazując kwantową naturę światła (E = hf).',
+    difficulty: 'medium',
+    tags: ['physics', 'quantum', 'nobel'],
+    baseElo: 1480,
+  },
+  {
+    id: 'sci-004-pl',
+    category: 'Science',
+    question: 'Który enzym odpowiada za rozplecenie struktury podwójnej helisy podczas replikacji DNA?',
+    options: ['Polimeraza DNA', 'Helikaza', 'Prymaza RNA', 'Ligaza DNA'],
+    correctIndex: 1,
+    explanation: 'Helikaza DNA zrywa wiązania wodorowe między parami zasad azotowych, rozplatając nici DNA.',
+    difficulty: 'medium',
+    tags: ['biology', 'genetics', 'dna'],
+    baseElo: 1430,
+  },
+  {
+    id: 'sci-005-pl',
+    category: 'Science',
+    question: 'Co matematycznie dowodzi Twierdzenie Bella w fizyce kwantowej?',
+    options: [
+      'Stany kwantowe mogą przekraczać prędkość światła',
+      'Żadna fizyczna teoria lokalnych zmiennych ukrytych nie jest w stanie odtworzyć wszystkich przewidywań mechaniki kwantowej',
+      'Elektrony krążą wokół jąder po stałych klasycznych torach',
+      'Energia jest ciągła w skali podatomowej'
+    ],
+    correctIndex: 1,
+    explanation: 'Twierdzenie Bella pokazuje, że lokalny realizm (teorie z lokalnymi zmiennymi ukrytymi) jest niezgodny z kwantowym splątaniem.',
+    difficulty: 'hard',
+    tags: ['quantum-physics', 'bell-theorem', 'quantum-entanglement'],
+    baseElo: 1950,
+  },
+  {
+    id: 'sci-006-pl',
+    category: 'Science',
+    question: 'Który bozon cechowania odpowiada za przenoszenie oddziaływań silnych wiążących kwarki w hadrony?',
+    options: ['Foton', 'Bozon W/Z', 'Gluon', 'Grawiton'],
+    correctIndex: 2,
+    explanation: 'Gluony to bezmasowe bozony cechowania przenoszące oddziaływania silne (ładunek kolorowy) w chromodynamice kwantowej (QCD).',
+    difficulty: 'expert',
+    tags: ['particle-physics', 'standard-model', 'qcd'],
+    baseElo: 2300,
+  },
+
+  // MATHEMATICS
+  {
+    id: 'math-001-pl',
+    category: 'Mathematics',
+    question: 'Jaka jest wartość liczby Pi (π) w zaokrągleniu do dwóch miejsc po przecinku?',
+    options: ['3.12', '3.14', '3.16', '3.18'],
+    correctIndex: 1,
+    explanation: 'Liczba Pi (π) wynosi w przybliżeniu 3.14159..., co w zaokrągleniu daje 3.14.',
+    difficulty: 'easy',
+    tags: ['geometry', 'pi', 'constants'],
+    baseElo: 1000,
+  },
+  {
+    id: 'math-002-pl',
+    category: 'Mathematics',
+    question: 'Jaka jest pierwsza pochodna funkcji f(x) = sin(x) względem x?',
+    options: ['-cos(x)', 'cos(x)', '-sin(x)', 'tan(x)'],
+    correctIndex: 1,
+    explanation: 'Pochodną funkcji sin(x) jest cos(x). Pochodną cos(x) jest -sin(x).',
+    difficulty: 'easy',
+    tags: ['calculus', 'derivatives'],
+    baseElo: 1100,
+  },
+  {
+    id: 'math-003-pl',
+    category: 'Mathematics',
+    question: 'Która tożsamość matematyczna słynie z połączenia e, i, π, 1 oraz 0 w jednym równaniu?',
+    options: ['Twierdzenie Pitagorasa', 'Tożsamość Eulera (e^(iπ) + 1 = 0)', 'Twierdzenie Gaussa-Ostrogradskiego', 'Rozwinięcie w szereg Taylera'],
+    correctIndex: 1,
+    explanation: 'Tożsamość Eulera e^(iπ) + 1 = 0 łączy pięć fundamentalnych stałych matematycznych.',
+    difficulty: 'medium',
+    tags: ['complex-analysis', 'euler', 'identity'],
+    baseElo: 1450,
+  },
+  {
+    id: 'math-004-pl',
+    category: 'Mathematics',
+    question: 'Jak oblicza się wartości własne λ macierzy kwadratowej A?',
+    options: [
+      'Rozwiązując równanie charakterystyczne det(A - λI) = 0',
+      'Obliczając ślad macierzy A',
+      'Obliczając macierz odwrotną A^(-1)',
+      'Rozwiązując det(A + λI) = 1'
+    ],
+    correctIndex: 0,
+    explanation: 'Wartości własne λ spełniają równanie A v = λ v, co wymaga zerowania wyznacznika det(A - λI) = 0.',
+    difficulty: 'hard',
+    tags: ['linear-algebra', 'eigenvalues', 'matrices'],
+    baseElo: 1880,
+  },
+  {
+    id: 'math-005-pl',
+    category: 'Mathematics',
+    question: 'Co ustala pierwsza część Podstawowego Twierdzenia Rachunku Różniczkowego i Całkowego?',
+    options: [
+      'Że wszystkie funkcje ciągłe są całkowalne',
+      'Że różniczkowanie i całkowanie są operacjami odwrotnymi',
+      'Że pole pod każdą krzywą jest zawsze dodatnie',
+      'Że każdy wielomian stopnia n ma n pierwiastków'
+    ],
+    correctIndex: 1,
+    explanation: 'Podstawowe Twierdzenie Rachunku Różniczkowego i Całkowego wykazuje, że całkowanie i różniczkowanie to procesy wzajemnie odwrotne.',
+    difficulty: 'medium',
+    tags: ['calculus', 'analysis', 'theorems'],
+    baseElo: 1520,
+  },
+  {
+    id: 'math-006-pl',
+    category: 'Mathematics',
+    question: 'Według hipotezy Riemanna, wszystkie nietrywialne zera funkcji dzeta Riemanna ζ(s) leżą na jakiej prostej krytycznej w płaszczyźnie zespolonej?',
+    options: ['Re(s) = 0', 'Re(s) = 1/2', 'Re(s) = 1', 'Im(s) = 0'],
+    correctIndex: 1,
+    explanation: 'Hipoteza Riemanna zakłada, że każde nietrywialne zero funkcji ζ(s) ma część rzeczywistą Re(s) = 1/2.',
+    difficulty: 'expert',
+    tags: ['number-theory', 'riemann-hypothesis', 'complex-analysis'],
+    baseElo: 2350,
+  },
+
+  // HISTORY
+  {
+    id: 'hist-001-pl',
+    category: 'History',
+    question: 'W którym roku uchwalono Deklarację Niepodległości Stanów Zjednoczonych?',
+    options: ['1776', '1789', '1791', '1765'],
+    correctIndex: 0,
+    explanation: 'Deklaracja Niepodległości została uchwalona przez II Kongres Kontynentalny 4 lipca 1776 roku.',
+    difficulty: 'easy',
+    tags: ['american-history', 'dates'],
+    baseElo: 1000,
+  },
+  {
+    id: 'hist-002-pl',
+    category: 'History',
+    question: 'Która starożytna cywilizacja wzniosła Wielkie Piramidy w Gizie?',
+    options: ['Starożytny Rzym', 'Mezopotamia', 'Starożytny Egipt', 'Starożytna Grecja'],
+    correctIndex: 2,
+    explanation: 'Piramidy w Gizie powstały w okresie Starego Państwa w Starożytnym Egipcie (ok. 2500 p.n.e.).',
+    difficulty: 'easy',
+    tags: ['ancient-history', 'egypt', 'monuments'],
+    baseElo: 1020,
+  },
+  {
+    id: 'hist-003-pl',
+    category: 'History',
+    question: 'Upadek Konstantynopola na rzecz Imperium Osmańskiego miał miejsce w którym przełomowym roku?',
+    options: ['1204', '1453', '1492', '1517'],
+    correctIndex: 1,
+    explanation: 'Sułtan Mehmed II zdobył Konstantynopol w 1453 roku, co zakończyło istniejące od stuleci Cesarstwo Bizantyjskie.',
+    difficulty: 'medium',
+    tags: ['world-history', 'byzantine', 'ottoman'],
+    baseElo: 1460,
+  },
+  {
+    id: 'hist-004-pl',
+    category: 'History',
+    question: 'Który traktat pokojowy z 1648 roku zakończył wojnę trzydziestoletnią i ukształtował nowożytny system suwerennych państw?',
+    options: ['Traktat Wersalski', 'Pokój Westfalski', 'Kongres Wiedeński', 'Traktat w Utrechcie'],
+    correctIndex: 1,
+    explanation: 'Pokój Westfalski (1648) ustanowił zasadę suwerenności westfalskiej, dając początek współczesnemu prawu międzynarodowemu.',
+    difficulty: 'hard',
+    tags: ['european-history', 'westphalia', 'treaties'],
+    baseElo: 1840,
+  },
+  {
+    id: 'hist-005-pl',
+    category: 'History',
+    question: 'W którym roku król Anglii Jan bez Ziemi został zmuszony przez zbuntowanych baronów do podpisania Wielkiej Karty Swobód (Magna Carta)?',
+    options: ['1066', '1215', '1314', '1415'],
+    correctIndex: 1,
+    explanation: 'Magna Carta została wydana w czerwcu 1215 roku, ustanawiając zasadę, że nikt – nawet król – nie stoi ponad prawem.',
+    difficulty: 'medium',
+    tags: ['british-history', 'magna-carta', 'medieval'],
+    baseElo: 1490,
+  },
+  {
+    id: 'hist-006-pl',
+    category: 'History',
+    question: 'Który cesarz rzymski wydał Edykt Mediolański w 313 roku n.e., wprowadzając wolność wyznania dla chrześcijan w całym cesarstwie?',
+    options: ['Oktawian August', 'Konstantyn Wielki (wraz z Licyniuszem)', 'Neron', 'Marek Aureliusz'],
+    correctIndex: 1,
+    explanation: 'Edykt Mediolański wydali wspólnie Konstantyn I i Licyniusz w 313 r. n.e., zalegalizowawszy chrześcijaństwo.',
+    difficulty: 'expert',
+    tags: ['roman-history', 'constantine', 'edict-of-milan'],
+    baseElo: 2200,
+  },
+
+  // POP CULTURE
+  {
+    id: 'pop-001-pl',
+    category: 'Pop Culture',
+    question: 'Kto jest autorką bestsellerowej serii książek fantasy o Harrym Potterze?',
+    options: ['J.R.R. Tolkien', 'J.K. Rowling', 'George R.R. Martin', 'C.S. Lewis'],
+    correctIndex: 1,
+    explanation: 'J.K. Rowling napisała siedmiotomowy cykl powieści o Harrym Potterze wydawany w latach 1997–2007.',
+    difficulty: 'easy',
+    tags: ['literature', 'harry-potter', 'pop-culture'],
+    baseElo: 1000,
+  },
+  {
+    id: 'pop-002-pl',
+    category: 'Pop Culture',
+    question: 'Który film dzierży rekord najwyższych globalnych przychodów z biletów w historii kina (bez uwzględnienia inflacji)?',
+    options: ['Titanic', 'Avengers: Koniec gry', 'Avatar', 'Gwiezdne wojny: Przebudzenie Mocy'],
+    correctIndex: 2,
+    explanation: 'Film "Avatar" Jamesa Camerona z 2009 roku zarobił na całym świecie ponad 2,9 miliarda dolarów.',
+    difficulty: 'easy',
+    tags: ['movies', 'box-office', 'cinema'],
+    baseElo: 1050,
+  },
+  {
+    id: 'pop-003-pl',
+    category: 'Pop Culture',
+    question: 'Kto był kultowym wokalistą brytyjskiego zespołu rockowego Queen?',
+    options: ['David Bowie', 'Freddie Mercury', 'Robert Plant', 'Mick Jagger'],
+    correctIndex: 1,
+    explanation: 'Freddie Mercury był charyzmatycznym liderem zespołu Queen od 1970 roku aż do swojej śmierci w 1991 roku.',
+    difficulty: 'medium',
+    tags: ['music', 'rock', 'queen'],
+    baseElo: 1380,
+  },
+  {
+    id: 'pop-004-pl',
+    category: 'Pop Culture',
+    question: 'Słynny mem internetowy "The cake is a lie" pochodzi z której gry wideo wydanej przez studio Valve w 2007 roku?',
+    options: ['Half-Life 2', 'Portal', 'Team Fortress 2', 'Left 4 Dead'],
+    correctIndex: 1,
+    explanation: 'W grze logicznej "Portal" z 2007 roku napis na ścianie ostrzega gracza słowami "The cake is a lie".',
+    difficulty: 'medium',
+    tags: ['gaming', 'portal', 'memes'],
+    baseElo: 1420,
+  },
+  {
+    id: 'pop-005-pl',
+    category: 'Pop Culture',
+    question: 'Jaki był pierwszy pełnometrażowy film animowany wyprodukowany przez Walt Disney Productions w 1937 roku?',
+    options: ['Pinokio', 'Królewna Śnieżka i siedmiu krasnoludków', 'Bambi', 'Fantazja'],
+    correctIndex: 1,
+    explanation: '"Królewna Śnieżka i siedmiu krasnoludków" miała premierę w grudniu 1937 roku jako pierwszy pełnometrażowy film animowany.',
+    difficulty: 'hard',
+    tags: ['disney', 'animation', 'cinema-history'],
+    baseElo: 1810,
+  },
+  {
+    id: 'pop-006-pl',
+    category: 'Pop Culture',
+    question: 'Jaki jest pełny numer rejestracyjny okrętu USS Enterprise dowodzonego przez kapitana Jean-Luc Picarda w Star Trek: Następne Pokolenie?',
+    options: ['NCC-1701', 'NCC-1701-A', 'NCC-1701-D', 'NCC-74656'],
+    correctIndex: 2,
+    explanation: 'Okręt klasy Galaxy w serialu Star Trek: TNG pod komendą Jean-Luc Picarda to USS Enterprise NCC-1701-D.',
+    difficulty: 'expert',
+    tags: ['star-trek', 'sci-fi', 'pop-culture'],
+    baseElo: 2180,
+  },
+];
+
+export const STATIC_QUESTION_BANK: Question[] = STATIC_QUESTION_BANK_PL;
+
+export function getStaticQuestionBank(lang: 'pl' | 'en' = 'pl'): Question[] {
+  return lang === 'en' ? STATIC_QUESTION_BANK_EN : STATIC_QUESTION_BANK_PL;
+}

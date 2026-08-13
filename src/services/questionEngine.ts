@@ -1,6 +1,6 @@
 import type { Category, Difficulty, Question } from '../types/quiz.ts';
 import { generateDailyChallenge } from '../algorithms/seedRng.ts';
-import { STATIC_QUESTION_BANK } from '../data/questions.ts';
+import { getStaticQuestionBank } from '../data/questions.ts';
 import { generateQuestions } from './aiProvider.ts';
 import type { AISettings } from './storageService.ts';
 
@@ -26,18 +26,20 @@ export class QuestionEngine {
     onProgress?: (loadedCount: number, total: number) => void
   ): Promise<Question[]> {
     const { mode, category, difficulty, questionCount, customPrompt, seedStr, aiSettings, lang } = config;
+    const currentLang = lang || 'pl';
 
     // 1. Daily Challenge (Deterministic static pool shuffle)
     if (mode === 'daily') {
       const dateStr = seedStr || new Date().toISOString().split('T')[0];
-      const challenge = generateDailyChallenge(dateStr, STATIC_QUESTION_BANK, questionCount);
+      const bank = getStaticQuestionBank(currentLang);
+      const challenge = generateDailyChallenge(dateStr, bank, questionCount);
       if (onProgress) onProgress(questionCount, questionCount);
       return challenge.questions;
     }
 
     // 2. Offline provider selected -> Instant synchronous return
     if (aiSettings.activeProvider === 'offline') {
-      const questions = QuestionEngine.selectFromStaticBank(category, difficulty, questionCount);
+      const questions = QuestionEngine.selectFromStaticBank(category, difficulty, questionCount, currentLang);
       if (onProgress) onProgress(questions.length, questionCount);
       return questions;
     }
@@ -55,7 +57,7 @@ export class QuestionEngine {
           difficulty: targetDifficulty,
           count: questionCount,
           topicFocus: customPrompt || (mode === 'blitz' ? 'Fast trivia' : undefined),
-          lang: lang || 'pl',
+          lang: currentLang,
         },
         aiSettings
       );
@@ -63,8 +65,8 @@ export class QuestionEngine {
       if (onProgress) onProgress(aiQuestions.length, questionCount);
       return aiQuestions;
     } catch (err) {
-      console.warn('[QuestionEngine] AI generation failed, falling back to curated static pool.', err);
-      const fallbackQuestions = QuestionEngine.selectFromStaticBank(category, difficulty, questionCount);
+      console.warn('[QuestionEngine] Question generation failed, falling back to curated static pool.', err);
+      const fallbackQuestions = QuestionEngine.selectFromStaticBank(category, difficulty, questionCount, currentLang);
       if (onProgress) onProgress(fallbackQuestions.length, questionCount);
       return fallbackQuestions;
     }
@@ -76,9 +78,10 @@ export class QuestionEngine {
   public static selectFromStaticBank(
     category: Category | 'all',
     difficulty: Difficulty | 'dynamic',
-    count: number
+    count: number,
+    lang: 'pl' | 'en' = 'pl'
   ): Question[] {
-    let pool = [...STATIC_QUESTION_BANK];
+    let pool = [...getStaticQuestionBank(lang)];
 
     if (category !== 'all') {
       const catPool = pool.filter((q) => q.category === category);
