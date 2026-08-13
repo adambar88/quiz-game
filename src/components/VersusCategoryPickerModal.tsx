@@ -17,7 +17,7 @@ export const VersusCategoryPickerModal: React.FC<VersusCategoryPickerModalProps>
   onCategoryChosen,
 }) => {
   const { lang, versusPickIndex, versusOpponentState, versusPlayerName, questions } = useQuizStore();
-  const t = translations[lang];
+  const t = translations[lang] || translations.pl;
 
   const playerCount = Math.max(2, peerService.getConnectedCount());
   const questionsPerPick = getQuestionsPerPick(playerCount);
@@ -37,21 +37,21 @@ export const VersusCategoryPickerModal: React.FC<VersusCategoryPickerModalProps>
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
-      <div className="w-full max-w-xl p-6 glass-panel rounded-2xl border border-[var(--border)] shadow-2xl space-y-5 max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
+      <div className="w-full max-w-xl p-3.5 sm:p-6 glass-panel rounded-2xl border border-[var(--border)] shadow-2xl space-y-3 sm:space-y-4 max-h-[92vh] flex flex-col">
         {/* Header */}
-        <div className="text-center space-y-1.5 flex-shrink-0">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold">
+        <div className="text-center space-y-1 flex-shrink-0">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[11px] font-mono font-bold">
             🏁 Runda {versusPickIndex + 1} ({questionsPerPick} {questionsPerPick === 1 ? 'pytanie' : 'pytania'} z wybranej kategorii)
           </div>
-          <h2 className="text-xl font-extrabold tracking-tight">
+          <h2 className="text-base sm:text-xl font-extrabold tracking-tight">
             {isMyTurn
               ? `🎯 Twoja Kolej na Wybór (${myName})!`
               : isOpponentStillAnswering
               ? `⏳ ${opponentName} Dokańcza Pytania...`
               : `⏳ ${opponentName} Wybiera Kategorię...`}
           </h2>
-          <p className="text-xs text-[var(--text-dim)] max-w-md mx-auto">
+          <p className="text-[11px] sm:text-xs text-[var(--text-dim)] max-w-md mx-auto leading-tight">
             {isMyTurn
               ? `Wybierz kategorię pytań dla Waszego pojedynku.`
               : isOpponentStillAnswering
@@ -60,9 +60,9 @@ export const VersusCategoryPickerModal: React.FC<VersusCategoryPickerModalProps>
           </p>
         </div>
 
-        {/* Content */}
+        {/* Content Grid */}
         {isMyTurn ? (
-          <div className="flex-1 overflow-y-auto pr-1 grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+          <div className="flex-1 overflow-y-auto pr-1 grid grid-cols-2 sm:grid-cols-3 gap-1.5 sm:gap-2.5 scrollbar-thin">
             {categoriesList.map((cat) => {
               const meta = CATEGORY_METADATA[cat];
               const categoryName = (t.categories as Record<string, string>)[cat] || cat;
@@ -70,16 +70,11 @@ export const VersusCategoryPickerModal: React.FC<VersusCategoryPickerModalProps>
                 <button
                   key={cat}
                   onClick={() => onCategoryChosen(cat)}
-                  className="p-3 rounded-xl text-left glass-panel border border-[var(--border)] hover:border-emerald-500 hover:scale-[1.02] active:scale-[0.98] transition-all flex flex-col justify-between group h-24 relative overflow-hidden"
+                  className="p-2 sm:p-3 rounded-xl text-left glass-panel border border-[var(--border)] hover:border-emerald-500 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2 group h-14 sm:h-20 relative overflow-hidden"
                 >
-                  <div className={`absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl ${meta.gradient} opacity-10 rounded-bl-full group-hover:opacity-25 transition-opacity`} />
-                  <div className="flex items-center justify-between z-10">
-                    <span className="text-2xl">{meta.icon}</span>
-                    <span className="text-[10px] font-bold text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                      Wybierz →
-                    </span>
-                  </div>
-                  <span className="text-xs font-bold text-[var(--text)] leading-snug line-clamp-2 z-10">
+                  <div className={`absolute top-0 right-0 w-12 h-12 bg-gradient-to-bl ${meta.gradient} opacity-15 rounded-bl-full group-hover:opacity-30 transition-opacity`} />
+                  <span className="text-xl sm:text-2xl flex-shrink-0 z-10">{meta.icon}</span>
+                  <span className="text-[11px] sm:text-xs font-bold text-[var(--text)] leading-snug line-clamp-2 z-10">
                     {categoryName}
                   </span>
                 </button>
@@ -87,24 +82,11 @@ export const VersusCategoryPickerModal: React.FC<VersusCategoryPickerModalProps>
             })}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-10 space-y-4 text-center">
-            <div className="relative flex items-center justify-center w-20 h-20">
-              <div className="absolute inset-0 rounded-full border-4 border-emerald-500/20 animate-ping opacity-75" />
-              <div className="absolute inset-0 rounded-full border-4 border-t-emerald-500 border-r-emerald-500 border-b-transparent border-l-transparent animate-spin" />
-              <span className="text-3xl">🏎️</span>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm font-bold text-emerald-400 font-mono animate-pulse">
-                {isOpponentStillAnswering
-                  ? `${opponentName} odpowiada na pytania...`
-                  : `${opponentName} właśnie wybiera kategorię...`}
-              </p>
-              <p className="text-xs text-[var(--text-dim)]">
-                {isOpponentStillAnswering
-                  ? `Gdy ${opponentName} dokończy pytania, przejdziemy do kolejnego wyboru kategorii!`
-                  : `Gdy kategoria zostanie wybrana, od razu rozpocznie się generowanie pytań!`}
-              </p>
-            </div>
+          <div className="flex flex-col items-center justify-center py-6 sm:py-10 space-y-3 text-center">
+            <div className="w-10 h-10 border-3 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-xs sm:text-sm font-medium text-[var(--text-dim)] animate-pulse">
+              Oczekiwanie na ruch drugiego gracza...
+            </p>
           </div>
         )}
       </div>
