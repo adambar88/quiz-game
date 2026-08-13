@@ -34,8 +34,8 @@ export const ModeSelector: React.FC = () => {
         </div>
       )}
 
-      {/* Mode Selection Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {/* Mode Selection Cards (3 columns x 2 rows = 6 compact cards) */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-2.5">
         {modeKeys.map((modeId) => {
           const m = t.modes[modeId];
           const active = mode === modeId;
@@ -43,24 +43,26 @@ export const ModeSelector: React.FC = () => {
             <button
               key={modeId}
               onClick={() => quizStore.setMode(modeId)}
-              className={`p-4 rounded-xl text-left transition-all relative glass-panel ${
+              className={`p-2.5 sm:p-3 rounded-xl text-left transition-all relative glass-panel flex flex-col justify-between h-full ${
                 active
                   ? 'border-emerald-500 bg-emerald-500/10 ring-1 ring-emerald-500'
                   : 'hover:border-[var(--border-hover)]'
               }`}
             >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-2xl">{modeIcons[modeId]}</span>
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-xl sm:text-2xl">{modeIcons[modeId]}</span>
                 <span
-                  className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full ${
+                  className={`text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded-full ${
                     active ? 'bg-emerald-500/20 text-emerald-400 font-bold' : 'bg-white/5 text-[var(--text-dim)]'
                   }`}
                 >
                   {m.badge}
                 </span>
               </div>
-              <h3 className="font-bold text-sm mb-1">{m.title}</h3>
-              <p className="text-xs text-[var(--text-dim)] leading-relaxed">{m.description}</p>
+              <div>
+                <h3 className="font-bold text-xs sm:text-sm mb-0.5 truncate">{m.title}</h3>
+                <p className="text-[10px] sm:text-xs text-[var(--text-dim)] leading-tight line-clamp-2">{m.description}</p>
+              </div>
             </button>
           );
         })}
