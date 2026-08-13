@@ -28,12 +28,12 @@ export const VersusCategoryPickerModal: React.FC<VersusCategoryPickerModalProps>
   const opponentName = versusOpponentState?.name || (peerService.getIsHost() ? 'Gracz 2' : 'Gracz 1');
 
   // Check if opponent is still answering current round's questions
-  const opponentIdx = versusOpponentState?.currentIndex ?? 0;
+  const opponentAnsCount = versusOpponentState?.answers?.length ?? versusOpponentState?.currentIndex ?? 0;
   const isOpponentStillAnswering = Boolean(
     versusOpponentState &&
     !versusOpponentState.isFinished &&
     questions.length > 0 &&
-    opponentIdx < questions.length
+    opponentAnsCount < questions.length
   );
 
   return (

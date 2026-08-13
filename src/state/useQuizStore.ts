@@ -421,7 +421,7 @@ export const quizStore = {
       score: storeState.score,
       streak: storeState.streak,
       lives: storeState.lives,
-      currentIndex: storeState.currentIndex,
+      currentIndex: Math.max(storeState.currentIndex, totalQ),
       isFinished: storeState.gameState === 'GAME_OVER',
       accuracy: totalQ > 0 ? Math.round((correctCount / totalQ) * 100) : 0,
       answers: storeState.userAnswers.map((a) => ({ isCorrect: a.isCorrect, timeMs: a.timeSpentMs })),
