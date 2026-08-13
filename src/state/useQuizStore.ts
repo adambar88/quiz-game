@@ -78,48 +78,79 @@ export const getQuestionsPerPick = (playerCount: number): number => {
   return 3; // 2 players = 3 questions per pick!
 };
 
-let storeState: QuizStoreState = {
-  gameState: 'IDLE',
-  mode: 'classic',
-  category: 'all',
-  difficulty: 'medium',
-  questionCount: 10,
-  customPrompt: '',
-  seedStr: new Date().toISOString().split('T')[0],
-  lang: storageService.getLanguage(),
+function getInitialStoreState(): QuizStoreState {
+  let lang: Language = 'pl';
+  let aiSettings: AISettings = {
+    activeProvider: 'server',
+    serverEndpoint: '/quiz/api/ai',
+    serverApiKey: '',
+    serverModel: 'gpt-5-mini',
+    fallbackToOffline: true,
+  };
+  let soundMuted = false;
+  let stats: QuizStats = {
+    gamesPlayed: 0,
+    totalQuestionsAnswered: 0,
+    totalCorrect: 0,
+    totalScore: 0,
+    highestStreak: 0,
+    highestEloRating: 1200,
+    totalXp: 0,
+    categoryStats: {},
+  };
+  let versusPlayerName = '';
 
-  questions: [],
-  currentIndex: 0,
-  selectedOptionIndex: null,
-  isCorrect: null,
-  pointsEarned: 0,
+  try { lang = storageService.getLanguage(); } catch (_) {}
+  try { aiSettings = storageService.getAISettings(); } catch (_) {}
+  try { soundMuted = soundEngine.isMuted(); } catch (_) {}
+  try { stats = storageService.getStats(); } catch (_) {}
+  try { versusPlayerName = storageService.getPlayerName() || ''; } catch (_) {}
 
-  score: 0,
-  streak: 0,
-  highestStreak: 0,
-  lives: 3,
-  eloState: createInitialEloState(1200, 3),
+  return {
+    gameState: 'IDLE',
+    mode: 'classic',
+    category: 'all',
+    difficulty: 'medium',
+    questionCount: 10,
+    customPrompt: '',
+    seedStr: new Date().toISOString().split('T')[0],
+    lang,
 
-  timeRemainingMs: 20000,
-  timeLimitMs: 20000,
-  questionStartTime: 0,
+    questions: [],
+    currentIndex: 0,
+    selectedOptionIndex: null,
+    isCorrect: null,
+    pointsEarned: 0,
 
-  userAnswers: [],
-  aiSettings: storageService.getAISettings(),
-  soundMuted: soundEngine.isMuted(),
+    score: 0,
+    streak: 0,
+    highestStreak: 0,
+    lives: 3,
+    eloState: createInitialEloState(1200, 3),
 
-  stats: storageService.getStats(),
-  showAIModal: false,
-  showStatsModal: false,
-  showVersusLobby: false,
-  versusRound: 1,
-  versusPickIndex: 0,
-  versusShowCategoryPicker: false,
-  versusPlayerName: storageService.getPlayerName() || '',
-  versusPlayers: [],
-  versusOpponentState: null,
-  generationError: null,
-};
+    timeRemainingMs: 20000,
+    timeLimitMs: 20000,
+    questionStartTime: 0,
+
+    userAnswers: [],
+    aiSettings,
+    soundMuted,
+
+    stats,
+    showAIModal: false,
+    showStatsModal: false,
+    showVersusLobby: false,
+    versusRound: 1,
+    versusPickIndex: 0,
+    versusShowCategoryPicker: false,
+    versusPlayerName,
+    versusPlayers: [],
+    versusOpponentState: null,
+    generationError: null,
+  };
+}
+
+let storeState: QuizStoreState = getInitialStoreState();
 
 const listeners = new Set<() => void>();
 

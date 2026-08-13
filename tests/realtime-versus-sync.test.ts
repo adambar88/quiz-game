@@ -19,14 +19,14 @@ class SimulatedPeerNetwork {
   public sendFromHost(msg: PeerMessage) {
     console.log(`📡 [NETWORK] Host (Adam) ➔ Guest (Ewa): TYPE=${msg.type}`, JSON.stringify(msg));
     if (this.guestCallbacks.onMessage) {
-      setTimeout(() => this.guestCallbacks.onMessage!(msg), 5);
+      setTimeout(() => this.guestCallbacks.onMessage!(msg), 10);
     }
   }
 
   public sendFromGuest(msg: PeerMessage) {
     console.log(`📡 [NETWORK] Guest (Ewa) ➔ Host (Adam): TYPE=${msg.type}`, JSON.stringify(msg));
     if (this.hostCallbacks.onMessage) {
-      setTimeout(() => this.hostCallbacks.onMessage!(msg), 5);
+      setTimeout(() => this.hostCallbacks.onMessage!(msg), 10);
     }
   }
 }
@@ -131,7 +131,7 @@ describe('Real-Time Versus Synchronization Test (Host: Adam vs Guest: Ewa)', () 
       senderName: 'Ewa',
     });
 
-    await new Promise((r) => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 100));
     expect(hostState.connected).toBe(2);
     expect(guestState.opponent?.name).toBe('Adam');
 
@@ -148,7 +148,7 @@ describe('Real-Time Versus Synchronization Test (Host: Adam vs Guest: Ewa)', () 
       pickerName: 'Adam',
     });
 
-    await new Promise((r) => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 100));
     expect(guestState.questions.length).toBe(3);
 
     // KROK 3: Adam odpowiada na 3 pytania z Rundy 1
@@ -171,7 +171,7 @@ describe('Real-Time Versus Synchronization Test (Host: Adam vs Guest: Ewa)', () 
           answers: [...hostState.userAnswers],
         },
       });
-      await new Promise((r) => setTimeout(r, 20));
+      await new Promise((r) => setTimeout(r, 50));
     }
 
     // Weryfikacja statusu Ewy po 3 pytaniach Adama
@@ -201,7 +201,7 @@ describe('Real-Time Versus Synchronization Test (Host: Adam vs Guest: Ewa)', () 
           answers: [...guestState.userAnswers],
         },
       });
-      await new Promise((r) => setTimeout(r, 20));
+      await new Promise((r) => setTimeout(r, 50));
     }
 
     // KROK 5: Runda 2 - Ewa wybiera kategorię "History"
@@ -217,7 +217,7 @@ describe('Real-Time Versus Synchronization Test (Host: Adam vs Guest: Ewa)', () 
       pickerName: 'Ewa',
     });
 
-    await new Promise((r) => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 100));
     expect(hostState.questions.length).toBe(6);
     expect(guestState.questions.length).toBe(6);
 

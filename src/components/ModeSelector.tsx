@@ -7,7 +7,7 @@ import { CATEGORY_METADATA } from '../data/categories.ts';
 
 export const ModeSelector: React.FC = () => {
   const { mode, category, difficulty, customPrompt, seedStr, generationError, gameState, lang } = useQuizStore();
-  const t = translations[lang];
+  const t = translations[lang] || translations.pl;
 
   const handleShareSeed = () => {
     navigator.clipboard.writeText(`Quiz Seed: ${seedStr}`);
