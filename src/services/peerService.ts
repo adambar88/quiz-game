@@ -22,7 +22,9 @@ export type PeerMessageType =
   | 'PROGRESS_UPDATE'
   | 'CATEGORY_PICK'
   | 'ROUND_QUESTIONS'
-  | 'PLAYER_FINISHED';
+  | 'PLAYER_FINISHED'
+  | 'PING'
+  | 'PONG';
 
 export interface PeerMessage {
   type: PeerMessageType;
@@ -44,6 +46,38 @@ export interface PeerMessage {
 type MessageCallback = (msg: PeerMessage) => void;
 type ConnectionCallback = (connectedCount: number) => void;
 
+// Comprehensive STUN & TURN servers for cross-network WebRTC NAT traversal (4G/5G, CGNAT, different Wi-Fi)
+const ICE_CONFIG: RTCConfiguration = {
+  iceServers: [
+    // Standard STUN servers for direct NAT discovery
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'stun:stun2.l.google.com:19302' },
+    { urls: 'stun:stun3.l.google.com:19302' },
+    { urls: 'stun:stun4.l.google.com:19302' },
+    { urls: 'stun:global.stun.twilio.com:3478' },
+    { urls: 'stun:relay.metered.ca:80' },
+
+    // TURN Relay Servers (Essential when devices are on different networks / CGNAT / LTE)
+    {
+      urls: 'turn:openrelay.metered.ca:80',
+      username: 'openrelay',
+      credential: 'openrelay',
+    },
+    {
+      urls: 'turn:openrelay.metered.ca:443',
+      username: 'openrelay',
+      credential: 'openrelay',
+    },
+    {
+      urls: 'turn:openrelay.metered.ca:443?transport=tcp',
+      username: 'openrelay',
+      credential: 'openrelay',
+    },
+  ],
+  iceCandidatePoolSize: 10,
+};
+
 class PeerService {
   private peer: Peer | null = null;
   private connections: DataConnection[] = [];
@@ -54,6 +88,7 @@ class PeerService {
   private onMessageCb: MessageCallback | null = null;
   private onConnectCb: ConnectionCallback | null = null;
   private broadcastChannel: BroadcastChannel | null = null;
+  private pingTimer: number | null = null;
 
   public getRoomCode(): string {
     return this.roomCode;
@@ -84,6 +119,20 @@ class PeerService {
     return code;
   }
 
+  private startHeartbeat() {
+    this.stopHeartbeat();
+    this.pingTimer = window.setInterval(() => {
+      this.sendMessage({ type: 'PING' });
+    }, 3500);
+  }
+
+  private stopHeartbeat() {
+    if (this.pingTimer !== null) {
+      clearInterval(this.pingTimer);
+      this.pingTimer = null;
+    }
+  }
+
   public createRoom(roomCode?: string, onConnect?: ConnectionCallback, onMessage?: MessageCallback): Promise<string> {
     this.destroy();
     this.isHost = true;
@@ -99,17 +148,12 @@ class PeerService {
     try {
       this.peer = new Peer(peerId, {
         debug: 1,
-        config: {
-          iceServers: [
-            { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'stun:stun1.l.google.com:19302' },
-            { urls: 'stun:stun2.l.google.com:19302' },
-          ],
-        },
+        config: ICE_CONFIG,
       });
 
       this.peer.on('open', () => {
         console.log('[PeerService] Host room registered on PeerJS network:', peerId);
+        this.startHeartbeat();
       });
 
       this.peer.on('connection', (conn) => {
@@ -129,12 +173,11 @@ class PeerService {
       console.warn('[PeerService] Peer init exception:', err);
     }
 
-    // Always resolve immediately with room code! Never block UI!
     return Promise.resolve(this.roomCode);
   }
 
   public joinRoom(roomCode: string, onConnect?: ConnectionCallback, onMessage?: MessageCallback, maxRetries = 4): Promise<boolean> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       let attempts = 0;
 
       const tryConnect = () => {
@@ -154,22 +197,20 @@ class PeerService {
         try {
           this.peer = new Peer({
             debug: 1,
-            config: {
-              iceServers: [
-                { urls: 'stun:stun.l.google.com:19302' },
-                { urls: 'stun:stun1.l.google.com:19302' },
-                { urls: 'stun:stun2.l.google.com:19302' },
-              ],
-            },
+            config: ICE_CONFIG,
           });
 
           this.peer.on('open', () => {
             const targetId = `bq-${this.roomCode.toLowerCase()}`;
-            const conn = this.peer!.connect(targetId, { reliable: true });
+            const conn = this.peer!.connect(targetId, {
+              reliable: true,
+              serialization: 'json',
+            });
             this.connections = [conn];
 
             conn.on('open', () => {
               this.setupConnectionHandlers(conn);
+              this.startHeartbeat();
               if (this.onConnectCb) this.onConnectCb(2);
               this.sendMessage({ type: 'HANDSHAKE', senderId: this.myId, senderName: this.myName });
               resolve(true);
@@ -180,7 +221,6 @@ class PeerService {
               if (attempts < maxRetries) {
                 setTimeout(tryConnect, 1000);
               } else {
-                // If BroadcastChannel is working, resolve anyway!
                 resolve(true);
               }
             });
@@ -213,6 +253,7 @@ class PeerService {
       this.broadcastChannel.onmessage = (event) => {
         const msg = event.data as PeerMessage;
         if (msg && msg.senderId !== this.myId) {
+          if (msg.type === 'PING' || msg.type === 'PONG') return;
           if (msg.type === 'HANDSHAKE' && this.isHost) {
             if (this.onConnectCb) this.onConnectCb(this.getConnectedCount());
           }
@@ -225,6 +266,10 @@ class PeerService {
   private setupConnectionHandlers(conn: DataConnection) {
     conn.on('data', (data: any) => {
       const msg = data as PeerMessage;
+
+      if (msg.type === 'PING' || msg.type === 'PONG') {
+        return; // Ignore heartbeat messages from triggering game callbacks
+      }
 
       // Host relays message to all other connected peers
       if (this.isHost) {
@@ -276,6 +321,7 @@ class PeerService {
   }
 
   public destroy() {
+    this.stopHeartbeat();
     this.connections.forEach((conn) => {
       try { conn.close(); } catch (_) {}
     });

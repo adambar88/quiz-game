@@ -218,9 +218,9 @@ export const translations = {
         description: 'A unique question set updated daily. Test your skills today.',
       },
       versus: {
-        title: '1v1 Duel',
-        badge: '2 Players',
-        description: 'Play with your partner on 2 separate devices! Same questions, live score, and duel summary.',
+        title: 'Race',
+        badge: '12 Questions • Race Mode',
+        description: 'Real-time multiplayer race. 12 questions with alternating category selection and live leaderboard!',
       },
     },
 
@@ -273,16 +273,16 @@ export const translations = {
     generating: 'Generating questions...',
 
     // Generating State
-    generatingTitle: 'Generating Questions',
-    generatingSubtitle: 'Crafting custom trivia questions in English...',
+    generatingTitle: 'Preparing Questions',
+    generatingSubtitle: 'Preparing and validating question set...',
     generatingDetailsMode: 'Mode',
     generatingDetailsTopic: 'Topic',
-    generatingStage1: '🔌 Connecting to server...',
-    generatingStage2: '🧠 Model is crafting questions & options...',
-    generatingStage3: '🔍 Validating JSON schema & accuracy...',
+    generatingStage1: '🔌 Preparing question engine...',
+    generatingStage2: '🧠 Generating questions & options...',
+    generatingStage3: '🔍 Verifying accuracy & options...',
     generatingStage4: '⚡ Finalizing question set...',
     elapsedTime: 'Elapsed',
-    estimatedTime: 'Est. ~5.0s',
+    estimatedTime: 'Est. ~3-5s',
     switchToOffline: '⚡ Switch to Fast Offline Bank',
 
     // Quiz Arena
@@ -338,26 +338,26 @@ export const translations = {
     highestElo: 'Highest ELO',
     close: 'Close',
 
-    // Versus Duel Mode
-    versusLobbyTitle: '1v1 Duel on 2 Devices',
-    createRoom: 'Create Room (Host)',
+    // Versus Race Mode
+    versusLobbyTitle: 'Race',
+    createRoom: 'Create New Room',
     joinRoom: 'Join Room',
-    roomCodeLabel: 'Room Code',
+    roomCodeLabel: 'Race Access Code',
     enterRoomCode: 'Enter Room Code (4 chars)',
-    shareLink: '📋 Copy Partner Game Link',
-    linkCopied: 'Game link copied!',
-    waitingForPartner: 'Waiting for partner to connect...',
-    partnerConnected: '🟢 Partner Connected!',
-    startDuel: 'START DUEL ⚔️',
+    shareLink: '📋 Copy Race Room Link',
+    linkCopied: 'Race link copied!',
+    waitingForPartner: 'Waiting for opponent to connect...',
+    partnerConnected: '🟢 Opponent Joined!',
+    startDuel: 'START RACE 🚀',
     joiningRoom: 'Connecting to room...',
-    versusWinner: '🏆 DUEL SUMMARY',
-    youWon: 'You Won the Duel! 🎉',
-    opponentWon: 'Partner Won the Duel! 👑',
-    draw: 'Duel Draw! 🤝',
+    versusWinner: '🏆 RACE SUMMARY',
+    youWon: 'You Won the Race! 🎉',
+    opponentWon: 'Opponent Won the Race! 👑',
+    draw: 'Race Tie! 🤝',
     yourScore: 'Your Score',
-    opponentScore: 'Partner Score',
+    opponentScore: 'Opponent Score',
 
     // Footer
-    footerText: '© 2026 Adam Barczynski • Quiz Engine',
+    footerText: '© 2026 Adam Barczynski • BrainSprint',
   },
 };
