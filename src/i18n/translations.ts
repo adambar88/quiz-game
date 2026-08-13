@@ -4,7 +4,7 @@ export const translations = {
   pl: {
     // Header
     title: 'BrainSprint',
-    subtitle: '.barczynski.dev',
+    subtitle: '',
     statsTooltip: 'Statystyki',
     settingsTooltip: 'Ustawienia Gry',
     soundOn: 'Włącz dźwięk',
@@ -184,7 +184,7 @@ export const translations = {
   en: {
     // Header
     title: 'BrainSprint',
-    subtitle: '.barczynski.dev',
+    subtitle: '',
     statsTooltip: 'Statistics',
     settingsTooltip: 'Server Settings',
     soundOn: 'Enable sound',
