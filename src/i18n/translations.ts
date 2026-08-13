@@ -3,7 +3,7 @@ export type Language = 'pl' | 'en';
 export const translations = {
   pl: {
     // Header
-    title: 'Quiz',
+    title: 'BrainSprint',
     subtitle: '.barczynski.dev',
     statsTooltip: 'Statystyki',
     settingsTooltip: 'Ustawienia Gry',
@@ -178,12 +178,12 @@ export const translations = {
     opponentScore: 'Wynik Przeciwnika',
 
     // Footer
-    footerText: '© 2026 Adam Barczynski • Quiz Engine',
+    footerText: '© 2026 Adam Barczynski • BrainSprint Engine',
   },
 
   en: {
     // Header
-    title: 'Quiz',
+    title: 'BrainSprint',
     subtitle: '.barczynski.dev',
     statsTooltip: 'Statistics',
     settingsTooltip: 'Server Settings',
