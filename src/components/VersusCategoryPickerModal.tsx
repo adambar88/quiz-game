@@ -16,7 +16,7 @@ export const VersusCategoryPickerModal: React.FC<VersusCategoryPickerModalProps>
   isMyTurn,
   onCategoryChosen,
 }) => {
-  const { lang, versusPickIndex, versusOpponentState, versusPlayerName } = useQuizStore();
+  const { lang, versusPickIndex, versusOpponentState, versusPlayerName, questions } = useQuizStore();
   const t = translations[lang];
 
   const playerCount = Math.max(2, peerService.getConnectedCount());
@@ -27,21 +27,36 @@ export const VersusCategoryPickerModal: React.FC<VersusCategoryPickerModalProps>
   const myName = versusPlayerName || (peerService.getIsHost() ? 'Gracz 1' : 'Gracz 2');
   const opponentName = versusOpponentState?.name || (peerService.getIsHost() ? 'Gracz 2' : 'Gracz 1');
 
+  // Check if opponent is still answering current round's questions
+  const opponentIdx = versusOpponentState?.currentIndex ?? 0;
+  const isOpponentStillAnswering = Boolean(
+    versusOpponentState &&
+    !versusOpponentState.isFinished &&
+    questions.length > 0 &&
+    opponentIdx < questions.length
+  );
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
       <div className="w-full max-w-xl p-6 glass-panel rounded-2xl border border-[var(--border)] shadow-2xl space-y-5 max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="text-center space-y-1.5 flex-shrink-0">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold">
-            🏁 Wybór {versusPickIndex + 1} ({questionsPerPick} {questionsPerPick === 1 ? 'pytanie' : 'pytania'} z wybranej kategorii)
+            🏁 Runda {versusPickIndex + 1} ({questionsPerPick} {questionsPerPick === 1 ? 'pytanie' : 'pytania'} z wybranej kategorii)
           </div>
           <h2 className="text-xl font-extrabold tracking-tight">
-            {isMyTurn ? `🎯 Twoja Kolej na Wybór (${myName})!` : `⏳ ${opponentName} Wybiera Kategorię...`}
+            {isMyTurn
+              ? `🎯 Twoja Kolej na Wybór (${myName})!`
+              : isOpponentStillAnswering
+              ? `⏳ ${opponentName} Dokańcza Pytania...`
+              : `⏳ ${opponentName} Wybiera Kategorię...`}
           </h2>
           <p className="text-xs text-[var(--text-dim)] max-w-md mx-auto">
             {isMyTurn
               ? `Wybierz kategorię pytań dla Waszego pojedynku.`
-              : `Gracz ${opponentName} wybiera w tym momencie kategorię dla całej grupy.`}
+              : isOpponentStillAnswering
+              ? `${opponentName} odpowiada jeszcze na pytania z obecnej rundy. Poczekaj na zakończenie tury.`
+              : `${opponentName} dokonuje w tym momencie wyboru nowej kategorii dla obu graczy.`}
           </p>
         </div>
 
@@ -80,10 +95,14 @@ export const VersusCategoryPickerModal: React.FC<VersusCategoryPickerModalProps>
             </div>
             <div className="space-y-1">
               <p className="text-sm font-bold text-emerald-400 font-mono animate-pulse">
-                {opponentName} właśnie wybiera kategorię...
+                {isOpponentStillAnswering
+                  ? `${opponentName} odpowiada na pytania...`
+                  : `${opponentName} właśnie wybiera kategorię...`}
               </p>
               <p className="text-xs text-[var(--text-dim)]">
-                Gdy kategoria zostanie wybrana, od razu rozpocznie się generowanie pytań!
+                {isOpponentStillAnswering
+                  ? `Gdy ${opponentName} dokończy pytania, przejdziemy do kolejnego wyboru kategorii!`
+                  : `Gdy kategoria zostanie wybrana, od razu rozpocznie się generowanie pytań!`}
               </p>
             </div>
           </div>

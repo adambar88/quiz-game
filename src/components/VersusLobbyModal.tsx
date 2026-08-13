@@ -252,7 +252,7 @@ export const VersusLobbyModal: React.FC<VersusLobbyModalProps> = ({ onStartDuel,
             {/* Connection Status */}
             {connectedCount >= 2 && (
               <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
-                🟢 Połączono z pokojem! Oczekiwanie na start Hosta...
+                🟢 Połączono z pokojem! Oczekiwanie na rozpoczęcie gry...
               </div>
             )}
           </div>
