@@ -49,11 +49,11 @@ export function App() {
   }, []);
 
   return (
-    <div className="min-h-screen py-12 px-4 flex flex-col justify-between">
+    <div className="min-h-screen py-2 sm:py-8 px-2.5 sm:px-4 flex flex-col justify-between">
       <div className="app-container flex flex-col flex-1">
         <Header />
 
-        <main className="flex-1 my-4">
+        <main className="flex-1 my-1.5 sm:my-4">
           {gameState === 'IDLE' && <ModeSelector />}
           {gameState === 'GENERATING' && <GeneratingState />}
           {(gameState === 'ACTIVE' || gameState === 'REVEAL') && <QuizArena />}
@@ -63,8 +63,8 @@ export function App() {
           {gameState === 'REVIEW' && <ReviewOverlay />}
         </main>
 
-        <footer className="mt-12 py-4 border-t border-[var(--border)] text-center text-xs text-[var(--text-dim)]">
-          <p>&copy; 2026 Adam Barczynski • Quiz Engine</p>
+        <footer className="mt-4 sm:mt-12 py-2 sm:py-4 border-t border-[var(--border)] text-center text-xs text-[var(--text-dim)]">
+          <p>&copy; 2026 Adam Barczynski • BrainSprint</p>
         </footer>
       </div>
 

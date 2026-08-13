@@ -49,28 +49,28 @@ export const QuizArena: React.FC = () => {
   const catMeta = CATEGORY_METADATA[currentQ.category];
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-2.5 sm:gap-5">
       {/* Versus Live Race Leaderboard */}
       {mode === 'versus' && <VersusLiveLeaderboard />}
 
       {/* Top Info Bar */}
-      <div className="flex items-center justify-between p-3.5 glass-panel text-xs">
+      <div className="flex items-center justify-between p-2 sm:p-3.5 glass-panel text-xs">
         {/* Question Counter & Category */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <span className="font-mono font-bold text-emerald-400">
             {t.questionCount} {currentIndex + 1} {t.of} {questions.length}
           </span>
           <span className="text-[var(--text-dim)]">•</span>
-          <span className="px-2 py-0.5 rounded bg-white/5 font-medium flex items-center gap-1">
+          <span className="px-1.5 py-0.5 rounded bg-white/5 font-medium flex items-center gap-1">
             <span>{catMeta?.icon || '💡'}</span>
-            <span>{categoryTranslated}</span>
+            <span className="truncate max-w-[100px] sm:max-w-none">{categoryTranslated}</span>
           </span>
         </div>
 
         {/* Mode Specific Stats (Lives for survival / ELO rating) */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           {mode === 'survival' && (
-            <div className="flex items-center gap-1 text-red-400 font-bold" title={t.lives}>
+            <div className="flex items-center gap-0.5 sm:gap-1 text-red-400 font-bold" title={t.lives}>
               {Array.from({ length: 3 }).map((_, i) => (
                 <span key={i} className={i < lives ? 'opacity-100 scale-100' : 'opacity-20 scale-90'}>
                   ❤️
@@ -84,7 +84,7 @@ export const QuizArena: React.FC = () => {
             <span className={streak > 0 ? 'flame-anim text-amber-400' : 'opacity-40'}>🔥</span>
             <span>{streak}</span>
             {streak > 1 && (
-              <span className="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded font-mono">
+              <span className="text-[10px] bg-amber-500/20 text-amber-300 px-1 py-0.5 rounded font-mono">
                 {(1 + Math.min(2, streak * 0.25)).toFixed(2)}x
               </span>
             )}
@@ -92,8 +92,8 @@ export const QuizArena: React.FC = () => {
 
           {/* Versus Opponent Score Badge */}
           {mode === 'versus' && (
-            <div className="flex items-center gap-1.5 font-mono font-bold bg-purple-500/10 border border-purple-500/30 px-2.5 py-1 rounded-lg text-purple-400">
-              <span>⚔️ Partner: {versusOpponentState?.score || 0}</span>
+            <div className="flex items-center gap-1 font-mono font-bold bg-purple-500/10 border border-purple-500/30 px-2 py-0.5 rounded-lg text-purple-400 text-xs">
+              <span>⚔️ {versusOpponentState?.score || 0}</span>
             </div>
           )}
 
@@ -108,18 +108,18 @@ export const QuizArena: React.FC = () => {
       {gameState === 'ACTIVE' && <TimerRing />}
 
       {/* Question Card */}
-      <div className="p-6 glass-panel flex flex-col gap-3 relative overflow-hidden">
-        <div className="flex items-center justify-between text-xs text-[var(--text-dim)] uppercase font-mono">
+      <div className="p-3.5 sm:p-6 glass-panel flex flex-col gap-1.5 sm:gap-3 relative overflow-hidden">
+        <div className="flex items-center justify-between text-[11px] sm:text-xs text-[var(--text-dim)] uppercase font-mono">
           <span>{t.difficultyLabel}: <strong className="text-emerald-400">{difficultyTranslated}</strong></span>
           {mode === 'survival' && <span>Tier: <strong className="text-amber-400">{eloState.tier}</strong></span>}
         </div>
-        <h2 className="text-lg sm:text-xl font-bold leading-snug text-[var(--text)]">
+        <h2 className="text-sm sm:text-xl font-bold leading-snug text-[var(--text)]">
           {currentQ.question}
         </h2>
       </div>
 
       {/* Option Buttons Grid */}
-      <div className="grid grid-cols-1 gap-2.5">
+      <div className="grid grid-cols-1 gap-1.5 sm:gap-2.5">
         {currentQ.options.map((opt, idx) => {
           const letter = String.fromCharCode(65 + idx);
           const isSelected = selectedOptionIndex === idx;
@@ -144,16 +144,16 @@ export const QuizArena: React.FC = () => {
               key={idx}
               disabled={gameState === 'REVEAL'}
               onClick={() => quizStore.selectOption(idx)}
-              className={`p-4 rounded-xl text-left border transition-all flex items-center justify-between group active:scale-[0.995] ${btnStyle}`}
+              className={`p-2.5 sm:p-4 rounded-xl text-left border transition-all flex items-center justify-between group active:scale-[0.995] ${btnStyle}`}
             >
-              <div className="flex items-center gap-3 pr-2">
-                <span className="w-7 h-7 rounded-lg bg-white/10 text-xs font-mono font-bold flex items-center justify-center flex-shrink-0 group-hover:bg-white/20">
+              <div className="flex items-center gap-2.5 sm:gap-3 pr-2">
+                <span className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-white/10 text-xs font-mono font-bold flex items-center justify-center flex-shrink-0 group-hover:bg-white/20">
                   {letter}
                 </span>
-                <span className="text-sm font-medium leading-normal">{opt}</span>
+                <span className="text-xs sm:text-sm font-medium leading-snug">{opt}</span>
               </div>
-              {gameState === 'REVEAL' && isCorrectIndex && <span className="text-emerald-400 font-bold">✓</span>}
-              {gameState === 'REVEAL' && isSelected && !isCorrectIndex && <span className="text-red-400 font-bold">✗</span>}
+              {gameState === 'REVEAL' && isCorrectIndex && <span className="text-emerald-400 font-bold text-xs sm:text-base">✓</span>}
+              {gameState === 'REVEAL' && isSelected && !isCorrectIndex && <span className="text-red-400 font-bold text-xs sm:text-base">✗</span>}
             </button>
           );
         })}
@@ -163,7 +163,7 @@ export const QuizArena: React.FC = () => {
       {gameState === 'ACTIVE' && selectedOptionIndex !== null && (
         <button
           onClick={() => quizStore.submitAnswer()}
-          className="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm tracking-wide shadow-md transition-all active:scale-[0.99] animate-in fade-in duration-150"
+          className="w-full py-2.5 sm:py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs sm:text-sm tracking-wide shadow-md transition-all active:scale-[0.99] animate-in fade-in duration-150"
         >
           {t.submit} ↵
         </button>
