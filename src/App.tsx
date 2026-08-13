@@ -37,6 +37,16 @@ export function App() {
     return () => window.removeEventListener('pageshow', onPageShow);
   }, []);
 
+  // Auto-launch versus race lobby when opened via link containing ?room=CODE
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomParam = urlParams.get('room');
+    if (roomParam && roomParam.trim().length >= 4) {
+      quizStore.setMode('versus');
+      quizStore.setShowVersusLobby(true);
+    }
+  }, []);
+
   const isMyTurnToPick = versusRound % 2 === 1 ? peerService.getIsHost() : !peerService.getIsHost();
 
   return (
