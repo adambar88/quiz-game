@@ -19,9 +19,16 @@ export const AnswerReveal: React.FC = () => {
   let nextButtonLabel = t.next;
   if (mode === 'versus') {
     if (totalAnswered >= 12) {
-      nextButtonLabel = 'Zobacz Podsumowanie Wyników 🏁';
+      nextButtonLabel = t.viewSummary || 'Zobacz podsumowanie wyników 🏁';
     } else if (totalAnswered % questionsPerPick === 0) {
-      nextButtonLabel = 'Przejdź do Wyboru Kolejnej Kategorii ➔';
+      const nextPick = Math.floor(totalAnswered / questionsPerPick);
+      const isMyTurnOnNextPick = (nextPick % playerCount) === (peerService.getIsHost() ? 0 : 1);
+
+      if (isMyTurnOnNextPick) {
+        nextButtonLabel = t.proceedToCategoryChoice || 'Przejdź do wyboru kategorii ➔';
+      } else {
+        nextButtonLabel = t.finishRound || 'Zakończ rundę ➔';
+      }
     }
   }
 

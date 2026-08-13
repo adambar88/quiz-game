@@ -116,6 +116,9 @@ export const translations = {
     correct: 'Świetnie! Poprawna odpowiedź',
     wrong: 'Błędna odpowiedź',
     explanation: 'Wyjaśnienie',
+    proceedToCategoryChoice: 'Przejdź do wyboru kategorii ➔',
+    finishRound: 'Zakończ rundę ➔',
+    viewSummary: 'Zobacz podsumowanie wyników 🏁',
 
     // Game Over
     gameOverTitle: 'Koniec Gry!',
@@ -176,9 +179,9 @@ export const translations = {
     draw: 'Remis w Pojedynku! 🤝',
     yourScore: 'Twój Wynik',
     opponentScore: 'Wynik Przeciwnika',
-
-    // Footer
-    footerText: '© 2026 Adam Barczynski • BrainSprint Engine',
+    versusWaitingTitle: 'Oczekiwanie na Zakończenie Gry',
+    versusWaitingSub: 'Pozostali gracze kończą swoje pytania. Końcowa klasyfikacja wyświetli się automatycznie po zakończeniu gry przez wszystkich.',
+    versusForceSummary: 'Pokaż moje podsumowanie teraz ➔',
   },
 
   en: {
@@ -296,6 +299,9 @@ export const translations = {
     correct: 'Great! Correct answer',
     wrong: 'Incorrect answer',
     explanation: 'Explanation',
+    proceedToCategoryChoice: 'Proceed to category selection ➔',
+    finishRound: 'Finish round ➔',
+    viewSummary: 'View final results 🏁',
 
     // Game Over
     gameOverTitle: 'Game Over!',
@@ -356,8 +362,8 @@ export const translations = {
     draw: 'Race Tie! 🤝',
     yourScore: 'Your Score',
     opponentScore: 'Opponent Score',
-
-    // Footer
-    footerText: '© 2026 Adam Barczynski • BrainSprint',
+    versusWaitingTitle: 'Waiting for All Players to Finish',
+    versusWaitingSub: 'Other players are completing their questions. Final results will appear automatically as soon as everyone finishes.',
+    versusForceSummary: 'View my summary now ➔',
   },
 };

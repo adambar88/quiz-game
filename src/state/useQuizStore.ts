@@ -11,7 +11,7 @@ import { translations, type Language } from '../i18n/translations.ts';
 
 import { peerService, type PlayerState } from '../services/peerService.ts';
 
-export type GameState = 'IDLE' | 'GENERATING' | 'ACTIVE' | 'REVEAL' | 'GAME_OVER' | 'REVIEW';
+export type GameState = 'IDLE' | 'GENERATING' | 'ACTIVE' | 'REVEAL' | 'GAME_OVER' | 'REVIEW' | 'VERSUS_WAITING';
 export type QuizMode = 'classic' | 'survival' | 'blitz' | 'custom' | 'daily' | 'versus';
 
 export interface UserAnswerRecord {
@@ -302,10 +302,19 @@ export const quizStore = {
 
       if (msg.type === 'PROGRESS_UPDATE' && msg.playerState) {
         const existing = storeState.versusPlayers.filter((p) => p.id !== msg.playerState!.id);
+        const updatedPlayers = [...existing, msg.playerState!];
         updateState({
-          versusPlayers: [...existing, msg.playerState!],
+          versusPlayers: updatedPlayers,
           versusOpponentState: msg.playerState,
         });
+
+        if (storeState.userAnswers.length >= 12 || storeState.gameState === 'VERSUS_WAITING') {
+          const allFinished = updatedPlayers.length > 0 && updatedPlayers.every((p) => p.isFinished);
+          if (allFinished) {
+            soundEngine.playVictoryFanfare();
+            updateState({ gameState: 'GAME_OVER' });
+          }
+        }
       } else if (msg.type === 'CATEGORY_PICK') {
         updateState({
           category: (msg.chosenCategory as any) || storeState.category,
@@ -485,10 +494,14 @@ export const quizStore = {
     });
   },
 
-  sendVersusProgress() {
+  sendVersusProgress(isFinishedOverride?: boolean) {
     if (storeState.mode !== 'versus') return;
     const totalQ = storeState.userAnswers.length;
     const correctCount = storeState.userAnswers.filter((a) => a.isCorrect).length;
+    const isFinished = isFinishedOverride !== undefined
+      ? isFinishedOverride
+      : (totalQ >= 12 || storeState.gameState === 'VERSUS_WAITING' || storeState.gameState === 'GAME_OVER');
+
     const myState: PlayerState = {
       id: peerService.getMyId(),
       name: storeState.versusPlayerName || (peerService.getIsHost() ? 'Gracz 1' : 'Gracz 2'),
@@ -496,7 +509,7 @@ export const quizStore = {
       streak: storeState.streak,
       lives: storeState.lives,
       currentIndex: Math.max(storeState.currentIndex, totalQ),
-      isFinished: storeState.gameState === 'GAME_OVER',
+      isFinished,
       accuracy: totalQ > 0 ? Math.round((correctCount / totalQ) * 100) : 0,
       answers: storeState.userAnswers.map((a) => ({ isCorrect: a.isCorrect, timeMs: a.timeSpentMs })),
     };
@@ -505,6 +518,11 @@ export const quizStore = {
     updateState({ versusPlayers: [...existing, myState] });
 
     peerService.sendMessage({ type: 'PROGRESS_UPDATE', playerState: myState });
+  },
+
+  forceVersusGameOver() {
+    soundEngine.playVictoryFanfare();
+    updateState({ gameState: 'GAME_OVER' });
   },
 
   async startQuiz() {
@@ -550,7 +568,7 @@ export const quizStore = {
   },
 
   selectOption(index: number) {
-    if (storeState.gameState !== 'ACTIVE' || storeState.selectedOptionIndex !== null) return;
+    if (storeState.gameState !== 'ACTIVE') return;
     soundEngine.playClick();
     haptics.vibrateClick();
     updateState({ selectedOptionIndex: index });
@@ -688,9 +706,15 @@ export const quizStore = {
     if (mode === 'versus') {
       const answeredCount = userAnswers.length;
       if (answeredCount >= 12) {
-        soundEngine.playVictoryFanfare();
-        updateState({ gameState: 'GAME_OVER' });
-        quizStore.sendVersusProgress();
+        quizStore.sendVersusProgress(true);
+
+        const allFinished = storeState.versusPlayers.length > 0 && storeState.versusPlayers.every((p) => p.isFinished);
+        if (allFinished) {
+          soundEngine.playVictoryFanfare();
+          updateState({ gameState: 'GAME_OVER' });
+        } else {
+          updateState({ gameState: 'VERSUS_WAITING' });
+        }
         return;
       }
 

@@ -12,6 +12,7 @@ import { StatsModal } from './components/StatsModal.tsx';
 import { VersusLobbyModal } from './components/VersusLobbyModal.tsx';
 import { VersusSummary } from './components/VersusSummary.tsx';
 import { VersusCategoryPickerModal } from './components/VersusCategoryPickerModal.tsx';
+import { VersusWaitingScreen } from './components/VersusWaitingScreen.tsx';
 import { peerService } from './services/peerService.ts';
 
 export function App() {
@@ -57,6 +58,7 @@ export function App() {
           {gameState === 'IDLE' && <ModeSelector />}
           {gameState === 'GENERATING' && <GeneratingState />}
           {(gameState === 'ACTIVE' || gameState === 'REVEAL') && <QuizArena />}
+          {gameState === 'VERSUS_WAITING' && <VersusWaitingScreen />}
           {gameState === 'GAME_OVER' && (
             mode === 'versus' ? <VersusSummary /> : <GameOverSummary />
           )}
