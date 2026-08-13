@@ -72,6 +72,12 @@ const DEFAULT_TIME_LIMITS: Record<Difficulty, number> = {
   expert: 25000,
 };
 
+export const getQuestionsPerPick = (playerCount: number): number => {
+  if (playerCount >= 4) return 1;
+  if (playerCount === 3) return 2;
+  return 3; // 2 players = 3 questions per pick!
+};
+
 let storeState: QuizStoreState = {
   gameState: 'IDLE',
   mode: 'classic',
@@ -202,6 +208,16 @@ export const quizStore = {
     updateState({ showVersusLobby: show });
   },
 
+  showVersusGeneratingState(chosenCategory?: string) {
+    updateState({
+      category: (chosenCategory as any) || storeState.category,
+      gameState: 'GENERATING',
+      showVersusLobby: false,
+      versusShowCategoryPicker: false,
+      generationError: null,
+    });
+  },
+
   startVersusDuel() {
     updateState({
       mode: 'versus',
@@ -229,13 +245,21 @@ export const quizStore = {
           versusPlayers: [...existing, msg.playerState!],
           versusOpponentState: msg.playerState,
         });
+      } else if (msg.type === 'CATEGORY_PICK') {
+        updateState({
+          category: (msg.chosenCategory as any) || storeState.category,
+          gameState: 'GENERATING',
+          versusShowCategoryPicker: false,
+          generationError: null,
+        });
       } else if (msg.type === 'ROUND_QUESTIONS' && msg.questions) {
         const updated = [...storeState.questions, ...msg.questions];
-        const firstQ = updated[storeState.currentIndex];
+        const firstQ = updated[storeState.currentIndex] || msg.questions[0];
         const timeLimit = getTimeLimitForQuestion(firstQ, 'versus');
 
         updateState({
           questions: updated,
+          versusPickIndex: (msg.pickIndex ?? storeState.versusPickIndex) + 1,
           timeLimitMs: timeLimit,
           timeRemainingMs: timeLimit,
           questionStartTime: Date.now(),
@@ -249,10 +273,12 @@ export const quizStore = {
   async handleVersusCategoryChoice(chosenCategory: Category) {
     const { versusRound, versusPickIndex, difficulty, seedStr, aiSettings, lang, questions } = storeState;
     const playerCount = Math.max(2, peerService.getConnectedCount());
-    const qCount = Math.max(1, Math.floor(12 / playerCount));
+    const qCount = getQuestionsPerPick(playerCount);
 
     updateState({
+      category: chosenCategory,
       gameState: 'GENERATING',
+      versusShowCategoryPicker: false,
       generationError: null,
     });
 
@@ -284,7 +310,7 @@ export const quizStore = {
       });
 
       const updated = [...questions, ...newQuestions];
-      const firstQ = updated[storeState.currentIndex];
+      const firstQ = updated[storeState.currentIndex] || newQuestions[0];
       const timeLimit = getTimeLimitForQuestion(firstQ, 'versus');
 
       updateState({
@@ -306,33 +332,49 @@ export const quizStore = {
 
   startQuizWithQuestions(questions: Question[]) {
     if (!questions || questions.length === 0) return;
-    const firstQ = questions[0];
+    const updated = [...storeState.questions, ...questions];
+    const firstQ = updated[storeState.currentIndex] || updated[0];
     const timeLimit = getTimeLimitForQuestion(firstQ, storeState.mode);
 
-    // Register PeerJS listener for progress updates
+    // Register PeerJS listener for progress & round updates
     peerService.setCallbacks(undefined, (msg) => {
       if (msg.type === 'PROGRESS_UPDATE' && msg.playerState) {
-        updateState({ versusOpponentState: msg.playerState });
+        const existing = storeState.versusPlayers.filter((p) => p.id !== msg.playerState!.id);
+        updateState({
+          versusPlayers: [...existing, msg.playerState!],
+          versusOpponentState: msg.playerState,
+        });
+      } else if (msg.type === 'CATEGORY_PICK') {
+        updateState({
+          category: (msg.chosenCategory as any) || storeState.category,
+          gameState: 'GENERATING',
+          versusShowCategoryPicker: false,
+          generationError: null,
+        });
+      } else if (msg.type === 'ROUND_QUESTIONS' && msg.questions) {
+        const newAll = [...storeState.questions, ...msg.questions];
+        const curQ = newAll[storeState.currentIndex] || msg.questions[0];
+        const tLimit = getTimeLimitForQuestion(curQ, 'versus');
+        updateState({
+          questions: newAll,
+          versusPickIndex: (msg.pickIndex ?? storeState.versusPickIndex) + 1,
+          timeLimitMs: tLimit,
+          timeRemainingMs: tLimit,
+          questionStartTime: Date.now(),
+          versusShowCategoryPicker: false,
+          gameState: 'ACTIVE',
+        });
       }
     });
 
     updateState({
-      questions,
-      currentIndex: 0,
-      selectedOptionIndex: null,
-      isCorrect: null,
-      pointsEarned: 0,
-      score: 0,
-      streak: 0,
-      highestStreak: 0,
-      lives: 3,
-      eloState: createInitialEloState(1200, 3),
+      questions: updated,
       timeLimitMs: timeLimit,
       timeRemainingMs: timeLimit,
       questionStartTime: Date.now(),
-      userAnswers: [],
       gameState: 'ACTIVE',
       showVersusLobby: false,
+      versusShowCategoryPicker: false,
     });
   },
 

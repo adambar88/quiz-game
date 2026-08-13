@@ -15,9 +15,10 @@ import { VersusCategoryPickerModal } from './components/VersusCategoryPickerModa
 import { peerService } from './services/peerService.ts';
 
 export function App() {
-  const { gameState, mode, showVersusLobby, versusRound, versusShowCategoryPicker } = useQuizStore();
+  const { gameState, mode, showVersusLobby, versusRound, versusPickIndex, versusShowCategoryPicker } = useQuizStore();
 
-  // Sync theme with system / barczynski-theme
+  const playerCount = Math.max(2, peerService.getConnectedCount());
+  const isMyTurnToPick = (versusPickIndex % playerCount) === (peerService.getIsHost() ? 0 : 1);
   useEffect(() => {
     const currentTheme = storageService.getTheme();
     document.documentElement.setAttribute('data-theme', currentTheme);
@@ -46,8 +47,6 @@ export function App() {
       quizStore.setShowVersusLobby(true);
     }
   }, []);
-
-  const isMyTurnToPick = versusRound % 2 === 1 ? peerService.getIsHost() : !peerService.getIsHost();
 
   return (
     <div className="min-h-screen py-12 px-4 flex flex-col justify-between">

@@ -1,5 +1,4 @@
-import React from 'react';
-import { useQuizStore } from '../state/useQuizStore.ts';
+import { useQuizStore, getQuestionsPerPick } from '../state/useQuizStore.ts';
 import { CATEGORY_METADATA } from '../data/categories.ts';
 import { translations } from '../i18n/translations.ts';
 import type { Category } from '../types/quiz.ts';
@@ -20,7 +19,7 @@ export const VersusCategoryPickerModal: React.FC<VersusCategoryPickerModalProps>
   const t = translations[lang];
 
   const playerCount = Math.max(2, peerService.getConnectedCount());
-  const questionsPerPick = Math.max(1, Math.floor(12 / playerCount));
+  const questionsPerPick = getQuestionsPerPick(playerCount);
 
   const categoriesList = Object.keys(CATEGORY_METADATA) as Category[];
 
