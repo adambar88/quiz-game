@@ -343,11 +343,15 @@ export const quizStore = {
       });
 
       const updated = [...questions, ...newQuestions];
-      const firstQ = updated[storeState.currentIndex] || newQuestions[0];
+      const nextIdx = storeState.userAnswers.length;
+      const firstQ = updated[nextIdx] || newQuestions[0];
       const timeLimit = getTimeLimitForQuestion(firstQ, 'versus');
 
       updateState({
         questions: updated,
+        currentIndex: nextIdx,
+        selectedOptionIndex: null,
+        isCorrect: null,
         versusPickIndex: versusPickIndex + 1,
         timeLimitMs: timeLimit,
         timeRemainingMs: timeLimit,
@@ -386,10 +390,14 @@ export const quizStore = {
         });
       } else if (msg.type === 'ROUND_QUESTIONS' && msg.questions) {
         const newAll = [...storeState.questions, ...msg.questions];
-        const curQ = newAll[storeState.currentIndex] || msg.questions[0];
+        const nextIdx = storeState.userAnswers.length;
+        const curQ = newAll[nextIdx] || msg.questions[0];
         const tLimit = getTimeLimitForQuestion(curQ, 'versus');
         updateState({
           questions: newAll,
+          currentIndex: nextIdx,
+          selectedOptionIndex: null,
+          isCorrect: null,
           versusPickIndex: (msg.pickIndex ?? storeState.versusPickIndex) + 1,
           timeLimitMs: tLimit,
           timeRemainingMs: tLimit,

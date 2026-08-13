@@ -93,7 +93,7 @@ export const QuizArena: React.FC = () => {
           {/* Versus Opponent Score Badge */}
           {mode === 'versus' && (
             <div className="flex items-center gap-1 font-mono font-bold bg-purple-500/10 border border-purple-500/30 px-2 py-0.5 rounded-lg text-purple-400 text-xs">
-              <span>⚔️ {versusOpponentState?.score || 0}</span>
+              <span>⚔️ {versusOpponentState?.name || 'Partner'}: {versusOpponentState?.score || 0}</span>
             </div>
           )}
 
