@@ -111,7 +111,7 @@ async function fetchQuestionsFromProvider(
 
   switch (provider) {
     case 'server': {
-      const rawEndpoint = settings.serverEndpoint || (import.meta as any).env?.VITE_OPENCLAW_ENDPOINT || '/quiz/api/ai';
+      const rawEndpoint = settings.serverEndpoint || (import.meta as any).env?.VITE_OPENCLAW_ENDPOINT || '/mindclash/api/ai';
       const endpoint = rawEndpoint.replace(/\/+$/, '');
       const apiKey = settings.serverApiKey || (import.meta as any).env?.VITE_OPENCLAW_API_KEY || '';
       const model = settings.serverModel || (import.meta as any).env?.VITE_OPENCLAW_MODEL || 'gpt-5-mini';

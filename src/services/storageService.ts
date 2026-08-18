@@ -38,7 +38,7 @@ export interface QuizStats {
 
 const DEFAULT_AI_SETTINGS: AISettings = {
   activeProvider: 'server',
-  serverEndpoint: (import.meta as any).env?.VITE_OPENCLAW_ENDPOINT || '/quiz/api/ai',
+  serverEndpoint: (import.meta as any).env?.VITE_OPENCLAW_ENDPOINT || '/mindclash/api/ai',
   serverApiKey: '',
   serverModel: (import.meta as any).env?.VITE_OPENCLAW_MODEL || 'gpt-5-mini',
   fallbackToOffline: true,
@@ -100,7 +100,11 @@ export const storageService = {
     try {
       const raw = localStorage.getItem('quiz_ai_settings');
       if (raw) {
-        return { ...DEFAULT_AI_SETTINGS, ...JSON.parse(raw) };
+        const parsed = JSON.parse(raw);
+        if (parsed.serverEndpoint && (parsed.serverEndpoint.includes('/quiz/api/ai') || parsed.serverEndpoint.includes('/brainsprint/api/ai'))) {
+          parsed.serverEndpoint = '/mindclash/api/ai';
+        }
+        return { ...DEFAULT_AI_SETTINGS, ...parsed };
       }
     } catch {
       // ignore

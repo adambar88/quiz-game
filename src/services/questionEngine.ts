@@ -101,22 +101,16 @@ export class QuestionEngine {
 
     if (category !== 'all') {
       const catPool = pool.filter((q) => q.category === category);
-      if (catPool.length >= count) {
+      if (catPool.length > 0) {
         pool = catPool;
-      } else if (catPool.length > 0) {
-        const remainingNeeded = count - catPool.length;
-        const otherPool = pool.filter((q) => q.category !== category);
-        for (let i = otherPool.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [otherPool[i], otherPool[j]] = [otherPool[j], otherPool[i]];
-        }
-        pool = [...catPool, ...otherPool.slice(0, remainingNeeded)];
       }
     }
 
     if (difficulty !== 'dynamic') {
       const diffPool = pool.filter((q) => q.difficulty === difficulty);
-      if (diffPool.length >= count) pool = diffPool;
+      if (diffPool.length >= Math.min(count, pool.length)) {
+        pool = diffPool;
+      }
     }
 
     // Fisher-Yates shuffle
@@ -155,7 +149,7 @@ export class QuestionEngine {
       selected.push({
         ...item,
         id: `static-${item.id}-${i}-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
-        category: category !== 'all' ? category : item.category,
+        category: item.category,
         options,
         correctIndex,
       });
