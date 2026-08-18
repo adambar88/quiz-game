@@ -66,7 +66,7 @@ export function App() {
         </main>
 
         <footer className="mt-4 sm:mt-12 py-2 sm:py-4 border-t border-[var(--border)] text-center text-xs text-[var(--text-dim)]">
-          <p>&copy; 2026 Adam Barczynski • BrainSprint</p>
+          <p>&copy; 2026 Adam Barczynski • MindClash</p>
         </footer>
       </div>
 

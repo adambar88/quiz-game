@@ -3,7 +3,7 @@ export type Language = 'pl' | 'en';
 export const translations = {
   pl: {
     // Header
-    title: 'BrainSprint',
+    title: 'MindClash',
     subtitle: '',
     statsTooltip: 'Statystyki',
     settingsTooltip: 'Ustawienia Gry',
@@ -166,7 +166,7 @@ export const translations = {
 
   en: {
     // Header
-    title: 'BrainSprint',
+    title: 'MindClash',
     subtitle: '',
     statsTooltip: 'Statistics',
     settingsTooltip: 'Server Settings',

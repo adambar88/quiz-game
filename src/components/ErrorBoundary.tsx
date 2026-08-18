@@ -29,7 +29,7 @@ export class ErrorBoundary extends Component<Props, State> {
         <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center text-white bg-[#050505]">
           <div className="glass-panel p-8 rounded-2xl max-w-md space-y-4 border border-emerald-500/30">
             <div className="text-4xl">🚀</div>
-            <h2 className="text-xl font-bold">Zaktualizowano BrainSprint!</h2>
+            <h2 className="text-xl font-bold">Zaktualizowano MindClash!</h2>
             <p className="text-xs text-gray-400">
               Przeglądarka wczytała poprzednią wersję z pamięci podręcznej. Kliknij przycisk poniżej, aby pobrać najnowszą wersję.
             </p>

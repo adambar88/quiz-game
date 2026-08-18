@@ -7,15 +7,15 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <title>BrainSprint</title>
-  <meta name="description" content="BrainSprint: Real-time multiplayer & AI trivia race game. Adaptive ELO survival, time attack blitz, daily challenges, and custom topic question generation.">
+  <title>MindClash</title>
+  <meta name="description" content="MindClash: Real-time multiplayer & AI trivia race game. Adaptive ELO survival, time attack blitz, daily challenges, and custom topic question generation.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://games.barczynski.dev/brainsprint">
-  <meta property="og:title" content="BrainSprint">
-  <meta property="og:description" content="BrainSprint trivia & race game with speed decay scoring, adaptive ELO survival, blitz mode & multi-player duel races.">
+  <meta property="og:url" content="https://games.barczynski.dev/mindclash">
+  <meta property="og:title" content="MindClash">
+  <meta property="og:description" content="MindClash trivia & race game with speed decay scoring, adaptive ELO survival, blitz mode & multi-player duel races.">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="BrainSprint">
-  <meta name="twitter:description" content="BrainSprint trivia & race game with speed decay scoring, adaptive ELO survival, blitz mode & multi-player duel races.">
+  <meta name="twitter:title" content="MindClash">
+  <meta name="twitter:description" content="MindClash trivia & race game with speed decay scoring, adaptive ELO survival, blitz mode & multi-player duel races.">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#050505">
@@ -139,8 +139,8 @@
       }
     }
   </style>
-  <script type="module" crossorigin src="/brainsprint/assets/index-vtP8w8Yh.js"></script>
-  <link rel="stylesheet" crossorigin href="/brainsprint/assets/index-ClV0S0Dz.css">
+  <script type="module" crossorigin src="/mindclash/assets/index-98MtrGHj.js"></script>
+  <link rel="stylesheet" crossorigin href="/mindclash/assets/index-ClV0S0Dz.css">
 </head>
 
 <body>
@@ -154,10 +154,18 @@
   <div id="root" role="main">
     <div style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #050505; color: #34d399; font-family: system-ui, sans-serif; gap: 12px; text-align: center;">
       <div style="width: 36px; height: 36px; border: 3px solid rgba(52, 211, 153, 0.2); border-top-color: #34d399; border-radius: 50%; animation: initial-spin 0.8s linear infinite;"></div>
-      <span style="font-size: 13px; font-weight: 600; letter-spacing: 0.5px; color: #9ca3af;">Ładowanie BrainSprint...</span>
+      <span style="font-size: 13px; font-weight: 600; letter-spacing: 0.5px; color: #9ca3af;">Ładowanie MindClash...</span>
     </div>
     <style>@keyframes initial-spin { to { transform: rotate(360deg); } }</style>
   </div>
+  <script>
+    window.addEventListener('error', function(e) {
+      if (e.message && e.message.includes('module')) {
+        // Fallback for module load errors
+        document.getElementById('root').innerHTML = '<div style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; color: #fff; background: #050505; font-family: system-ui, sans-serif; gap: 16px;"><div style="font-size: 32px;">🚀</div><h2 style="font-size: 18px; font-weight: bold;">Zaktualizowano MindClash!</h2><p style="font-size: 12px; color: #9ca3af; max-width: 320px;">Przeglądarka ma nieaktualne pliki. Kliknij przycisk poniżej, aby załadować najnowszą wersję gry.</p><button onclick="window.location.reload(true)" style="padding: 10px 20px; border-radius: 12px; background: #34d399; color: #000; font-weight: bold; font-size: 14px; border: none; cursor: pointer;">🔄 Odśwież Aplikację</button></div>';
+      }
+    });
+  </script>
 </body>
 
 </html>

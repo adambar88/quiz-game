@@ -1,8 +1,8 @@
 version: '3.8'
 
 services:
-  brainsprint:
-    container_name: brainsprint
+  mindclash:
+    container_name: mindclash
     build:
       context: .
       dockerfile: Dockerfile
@@ -10,7 +10,7 @@ services:
     networks:
       coolify:
         aliases:
-          - brainsprint
+          - mindclash
 
 networks:
   coolify:

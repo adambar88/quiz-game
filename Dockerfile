@@ -31,9 +31,9 @@ RUN rm -rf /usr/share/nginx/html/*
 # Install wget for health checks
 RUN apk add --no-cache wget
 
-# Copy dist to /brainsprint subpath (for non-stripped proxy)
-RUN mkdir -p /usr/share/nginx/html/brainsprint
-COPY --from=build /app/dist /usr/share/nginx/html/brainsprint
+# Copy dist to /mindclash subpath (for non-stripped proxy)
+RUN mkdir -p /usr/share/nginx/html/mindclash
+COPY --from=build /app/dist /usr/share/nginx/html/mindclash
 
 # Also copy dist to root (for stripped proxy)
 COPY --from=build /app/dist /usr/share/nginx/html
