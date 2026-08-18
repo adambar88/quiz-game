@@ -70,16 +70,10 @@ export const QuizArena: React.FC = () => {
 
       {/* Top Info Bar */}
       <div className="flex items-center justify-between p-2 sm:p-3 glass-panel text-xs">
-        {/* Question Counter & Category */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          <span className="font-mono font-bold text-emerald-400">
-            {t.questionCount} {currentIndex + 1} {t.of} {questions.length}
-          </span>
-          <span className="text-[var(--text-dim)]">•</span>
-          <span className="px-1.5 py-0.5 rounded bg-white/5 font-medium flex items-center gap-1">
-            <span>{catMeta?.icon || '💡'}</span>
-            <span className="truncate max-w-[110px] sm:max-w-none">{categoryTranslated}</span>
-          </span>
+        {/* Question Counter */}
+        <div className="flex items-center gap-1.5 font-mono font-bold text-emerald-400">
+          <span>{t.questionCount} {currentIndex + 1}</span>
+          <span className="text-[var(--text-dim)] font-normal">{t.of} {questions.length}</span>
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
@@ -114,11 +108,18 @@ export const QuizArena: React.FC = () => {
       {gameState === 'ACTIVE' && <TimerRing />}
 
       {/* Question Card */}
-      <div className="p-3 sm:p-5 glass-panel flex flex-col gap-1.5 sm:gap-2.5 relative overflow-hidden">
-        <div className="flex items-center justify-between text-[10px] sm:text-xs text-[var(--text-dim)] uppercase font-mono">
-          <span>{t.difficultyLabel}: <strong className="text-emerald-400">{difficultyTranslated}</strong></span>
+      <div className="p-3 sm:p-5 glass-panel flex flex-col gap-2 sm:gap-2.5 relative overflow-hidden">
+        {/* Category & Difficulty Header */}
+        <div className="flex items-center justify-between gap-2 text-[10px] sm:text-xs">
+          <div className="px-2 py-0.5 rounded-full bg-white/5 border border-[var(--border)] font-semibold flex items-center gap-1.5 text-[var(--text)]">
+            <span className="text-xs sm:text-sm">{catMeta?.icon || '💡'}</span>
+            <span>{categoryTranslated}</span>
+          </div>
+          <span className="text-[var(--text-dim)] uppercase font-mono tracking-wider font-medium">
+            {t.difficultyLabel}: <strong className="text-emerald-400 font-bold">{difficultyTranslated}</strong>
+          </span>
         </div>
-        <h2 className="text-xs sm:text-lg font-bold leading-snug text-[var(--text)]">
+        <h2 className="text-sm sm:text-lg font-bold leading-snug text-[var(--text)] pt-0.5">
           {currentQ.question}
         </h2>
       </div>
